@@ -7,7 +7,8 @@ public enum DamageSource {
 
 
 	public String damageName;
-	DamageSource(String name){
+
+	DamageSource( String name ) {
 		this.damageName = name;
 	}
 }

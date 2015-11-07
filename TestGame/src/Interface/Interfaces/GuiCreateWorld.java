@@ -19,10 +19,12 @@ import java.awt.geom.Line2D;
 
 public class GuiCreateWorld extends AbstractMainMenuGui {
 
+	public EnumWorldSize selected;
+	public boolean textInput = false;
+	public String worldName = "";
 	createWorldButton createWorldButton;
-
 	//TODO Add world loading. (Make it its own gui and have load/create buttons in this one?)
-	public GuiCreateWorld(){
+	public GuiCreateWorld() {
 		super();
 
 		int buttonSize = 50, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize);
@@ -35,20 +37,16 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		guiObjects.add(createWorldButton);
 
 		buttonPos += (buttonSize * 3);
-		for(EnumWorldSize size : EnumWorldSize.values()){
+		for (EnumWorldSize size : EnumWorldSize.values()) {
 			guiObjects.add(new worldSizeButton(buttonPos += buttonSize, size));
 		}
 	}
 
-	public EnumWorldSize selected;
-	public boolean textInput = false;
-	public String worldName = "";
-
 	@Override
-	public void render(JFrame frame, Graphics2D g2) {
-		if(!worldName.isEmpty() && selected != null){
+	public void render( JFrame frame, Graphics2D g2 ) {
+		if (!worldName.isEmpty() && selected != null) {
 			createWorldButton.enabled = true;
-		}else{
+		} else {
 			createWorldButton.enabled = false;
 		}
 
@@ -83,52 +81,52 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 	}
 
 	@Override
-	public boolean canRender(JFrame frame) {
+	public boolean canRender( JFrame frame ) {
 		return true;
 	}
 
-	public void buttonPressed(GuiButton button){}
+	public void buttonPressed( GuiButton button ) {
+	}
 
-	public void keyPressed(KeyEvent e, JFrame frame)
-	{
-		if(textInput) {
-				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-					if (worldName.length() > 0) {
-						worldName = worldName.substring(0, worldName.length() - 1);
-					}
-				} else {
-					if(worldName.length() < 15) {
-						char c = e.getKeyChar();
+	public void keyPressed( KeyEvent e, JFrame frame ) {
+		if (textInput) {
+			if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+				if (worldName.length() > 0) {
+					worldName = worldName.substring(0, worldName.length() - 1);
+				}
+			} else {
+				if (worldName.length() < 15) {
+					char c = e.getKeyChar();
 
-						if(Character.isDefined(c)) {
-							worldName += c;
-						}
+					if (Character.isDefined(c)) {
+						worldName += c;
 					}
 				}
+			}
 
 		}
 	}
 
 	class backButton extends MainMenuButton {
 
-		public backButton(int y){
+		public backButton( int y ) {
 			super(renderStart + 65, y, 120, 16, "Back");
 		}
 
 
 		@Override
-		public void onClicked(MouseEvent e, JFrame frame, Gui gui) {
+		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
 			MainFile.currentGui = new GuiMainMenu();
 		}
 	}
 
-	class createWorldButton extends MainMenuButton{
-		public createWorldButton(int y){
+	class createWorldButton extends MainMenuButton {
+		public createWorldButton( int y ) {
 			super(renderStart + (30), y, 120, 16, "Create world");
 		}
 
 		@Override
-		public void onClicked(MouseEvent e, JFrame frame, Gui gui) {
+		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
 			MainFile.currentWorld = new World(worldName, selected);
 			MainFile.currentWorld.generate();
 			MainFile.currentWorld.start();
@@ -138,40 +136,39 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		}
 	}
 
-	class worldNameInput extends MainMenuButton{
-		public worldNameInput(int y){
-			super(0, y, 120, 16, null);
-		}
-
-
+	class worldNameInput extends MainMenuButton {
 		boolean render = false;
 		int i = -1, m = 600;
 
+		public worldNameInput( int y ) {
+			super(0, y, 120, 16, null);
+		}
+
 		@Override
-		public void onClicked(MouseEvent e, JFrame frame, Gui gui) {
+		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
 			textInput ^= true;
 		}
 
 		@Override
-		public void renderObject(JFrame frame, Graphics2D g2, Gui gui) {
+		public void renderObject( JFrame frame, Graphics2D g2, Gui gui ) {
 			Color temp = g2.getColor();
 
-			if(textInput) {
+			if (textInput) {
 				if (i >= m) {
 					i = 0;
 					render ^= true;
 				} else {
 					i += 1;
 				}
-			}else if(i > 0 || render){
+			} else if (i > 0 || render) {
 				i = 0;
 				render = false;
-			}else if(i == -1){
+			} else if (i == -1) {
 				i = 0;
 				render = true;
 			}
 
-			if(textInput){
+			if (textInput) {
 				g2.setColor(new Color(91, 91, 91, 185));
 
 			} else {
@@ -186,7 +183,7 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 			g2.drawString(worldName, renderStart + 3, y - height);
 
 			RenderUtil.resetFont(g2);
-			if(render){
+			if (render) {
 
 				FontRenderContext frc = g2.getFontRenderContext();
 
@@ -201,35 +198,35 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		}
 	}
 
-	class worldSizeButton extends MainMenuButton{
+	class worldSizeButton extends MainMenuButton {
 
 		public EnumWorldSize size;
 
-		public worldSizeButton(int y, EnumWorldSize size){
+		public worldSizeButton( int y, EnumWorldSize size ) {
 			super(renderStart + (53), y, 120, 16, size.name());
 			this.size = size;
 		}
 
 		@Override
-		public void onClicked(MouseEvent e, JFrame frame, Gui gui) {
+		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
 			selected = size;
 			textInput = false;
 		}
 
 		@Override
-		public void renderObject(JFrame frame, Graphics2D g2, Gui gui) {
+		public void renderObject( JFrame frame, Graphics2D g2, Gui gui ) {
 			Color temp = g2.getColor();
 
 			boolean hover = isMouseOver(frame.getMousePosition());
 
-		if(selected != null && selected.name().equalsIgnoreCase(size.name())){
-			g2.setColor(new Color(58, 58, 58, 174));
+			if (selected != null && selected.name().equalsIgnoreCase(size.name())) {
+				g2.setColor(new Color(58, 58, 58, 174));
 
-		}else if (hover) {
-			g2.setColor(new Color(95, 95, 95, 174));
-		} else {
-			g2.setColor(new Color(95, 95, 95, 86));
-		}
+			} else if (hover) {
+				g2.setColor(new Color(95, 95, 95, 174));
+			} else {
+				g2.setColor(new Color(95, 95, 95, 86));
+			}
 
 			g2.fill(new Rectangle(renderStart, y - 6 - (height * 2), renderWidth, height * 2));
 

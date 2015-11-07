@@ -13,7 +13,10 @@ import java.util.ArrayList;
 public class Registrations {
 
 	public static ArrayList<AbstractWindowRender> windowRenders = new ArrayList<>();
-	public static void registerWindowRenders(){
+	public static ArrayList<GenerationBase> generationBases = new ArrayList<GenerationBase>();
+	public static ArrayList<StructureGeneration> structureGenerations = new ArrayList<StructureGeneration>();
+
+	public static void registerWindowRenders() {
 		windowRenders.add(new BackgroundRender());
 
 		windowRenders.add(new BlockRendering());
@@ -26,9 +29,7 @@ public class Registrations {
 		windowRenders.add(new WorldGenerationScreen());
 	}
 
-	public static ArrayList<GenerationBase> generationBases = new ArrayList<GenerationBase>();
-	public static ArrayList<StructureGeneration> structureGenerations = new ArrayList<StructureGeneration>();
-	public static void registerGenerations(){
+	public static void registerGenerations() {
 		structureGenerations.add(new GrassGeneration());
 		structureGenerations.add(new StoneGeneration());
 	}

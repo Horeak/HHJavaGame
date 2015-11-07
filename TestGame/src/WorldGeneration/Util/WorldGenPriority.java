@@ -5,8 +5,7 @@ package WorldGeneration.Util;
 * Created: 26.07.2015
 */
 
-public enum WorldGenPriority
-{
+public enum WorldGenPriority {
 
 	TOP_PRIORITY,
 	HIGH_PRIORITY,

@@ -19,12 +19,13 @@ public class GrassGeneration extends StructureGeneration {
 	public boolean canGenerate() {
 		return true;
 	}
+
 	@Override
 	public void generate() {
 		SimplexNoise noise = new SimplexNoise();
 		int frequency = MainFile.currentWorld.worldSize == EnumWorldSize.LARGE ? 230 : MainFile.currentWorld.worldSize == EnumWorldSize.MEDIUM ? 90 : 30;
 
-		for(int x = 0; x < MainFile.currentWorld.worldSize.xSize; x++) {
+		for (int x = 0; x < MainFile.currentWorld.worldSize.xSize; x++) {
 			float h = (noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
 			for (int y = 0; y < (MainFile.currentWorld.worldSize.ySize); y++) {
 
@@ -34,12 +35,10 @@ public class GrassGeneration extends StructureGeneration {
 				Block b = null;
 				Block temp = MainFile.currentWorld.getBlock(x, y + 1);
 
-				if(temp == null || !temp.isBlockSolid())
-					b = new BlockGrass();
-				else if(temp != null && temp.isBlockSolid())
-					b = new BlockDirt();
+				if (temp == null || !temp.isBlockSolid()) b = new BlockGrass();
+				else if (temp != null && temp.isBlockSolid()) b = new BlockDirt();
 
-				if(current < h) MainFile.currentWorld.setBlock(b, x, y);
+				if (current < h) MainFile.currentWorld.setBlock(b, x, y);
 			}
 		}
 	}

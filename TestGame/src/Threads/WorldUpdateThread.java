@@ -7,7 +7,9 @@ import WorldFiles.EnumWorldTime;
 
 public class WorldUpdateThread extends Thread {
 
-	public WorldUpdateThread(){setName("WorldUpdateThread");}
+	public WorldUpdateThread() {
+		setName("WorldUpdateThread");
+	}
 
 	//TODO Time updating too fast?
 	public void run() {
@@ -27,18 +29,18 @@ public class WorldUpdateThread extends Thread {
 
 				MainFile.currentWorld.updateBlocks();
 
-				for(Entity ent : MainFile.currentWorld.Entities){
+				for (Entity ent : MainFile.currentWorld.Entities) {
 					ent.updateEntity();
 				}
 
 				try {
 					sleep(1000);
-				}catch (Exception e){
+				} catch (Exception e) {
 
 				}
 
 
-			}catch (Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

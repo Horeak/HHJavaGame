@@ -15,7 +15,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 	public static int fps = 0;
 
 	@Override
-	public void render(JFrame frame, Graphics2D g2) {
+	public void render( JFrame frame, Graphics2D g2 ) {
 		Color temp = g2.getColor();
 		Shape c = g2.getClip();
 
@@ -53,7 +53,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 		g2.drawString("FPS: " + fps, textStartX, linePos += (lineLength * 2));
 		RenderUtil.resetFont(g2);
 
-		if(MainFile.currentWorld != null){
+		if (MainFile.currentWorld != null) {
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("World Size: ", textStartX, linePos += (lineLength * 2));
 			RenderUtil.resetFont(g2);
@@ -61,22 +61,22 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString(" - " + (MainFile.currentWorld.worldSize.xSize) + " blocks wide.", textStartX, linePos += lineLength);
 			g2.drawString(" - " + (MainFile.currentWorld.worldSize.ySize) + " blocks high.", textStartX, linePos += lineLength);
 
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
-		RenderUtil.resetFont(g2);
+			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
+			RenderUtil.resetFont(g2);
 
-		g2.drawString(" - World time: " + MainFile.currentWorld.WorldTime + " / " + MainFile.currentWorld.WorldTimeDayEnd, textStartX, linePos += (lineLength));
-		g2.drawString(" - Time until next day phase (" + MainFile.currentWorld.getNextWorldTime().name + "): " + ((MainFile.currentWorld.getNextWorldTime() == EnumWorldTime.MORNING ? 1800 : MainFile.currentWorld.getNextWorldTime().timeBegin) - MainFile.currentWorld.WorldTime), textStartX, linePos += (lineLength));
-		g2.drawString(" - Time of day: " + MainFile.currentWorld.worldTimeOfDay.name, textStartX, linePos += (lineLength));
-		g2.drawString(" - Day number: " + MainFile.currentWorld.WorldDay, textStartX, linePos += (lineLength));
+			g2.drawString(" - World time: " + MainFile.currentWorld.WorldTime + " / " + MainFile.currentWorld.WorldTimeDayEnd, textStartX, linePos += (lineLength));
+			g2.drawString(" - Time until next day phase (" + MainFile.currentWorld.getNextWorldTime().name + "): " + ((MainFile.currentWorld.getNextWorldTime() == EnumWorldTime.MORNING ? 1800 : MainFile.currentWorld.getNextWorldTime().timeBegin) - MainFile.currentWorld.WorldTime), textStartX, linePos += (lineLength));
+			g2.drawString(" - Time of day: " + MainFile.currentWorld.worldTimeOfDay.name, textStartX, linePos += (lineLength));
+			g2.drawString(" - Day number: " + MainFile.currentWorld.WorldDay, textStartX, linePos += (lineLength));
 
 
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString("Player info:", textStartX, linePos += (lineLength * 2));
-		RenderUtil.resetFont(g2);
+			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			g2.drawString("Player info:", textStartX, linePos += (lineLength * 2));
+			RenderUtil.resetFont(g2);
 
-		g2.drawString(" - Player pos: " + MainFile.currentWorld.player.getEntityPostion(), textStartX, linePos += (lineLength));
-		g2.drawString(" - Block below: " + (MainFile.currentWorld.player.getBlockBelow() != null ? MainFile.currentWorld.player.getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
+			g2.drawString(" - Player pos: " + MainFile.currentWorld.player.getEntityPostion(), textStartX, linePos += (lineLength));
+			g2.drawString(" - Block below: " + (MainFile.currentWorld.player.getBlockBelow() != null ? MainFile.currentWorld.player.getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
 
 		}
 
@@ -84,7 +84,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 		g2.drawString("Block render size: " + ConfigValues.size, textStartX, linePos += (lineLength * 2));
 		RenderUtil.resetFont(g2);
 
-		if(MainFile.currentWorld != null){
+		if (MainFile.currentWorld != null) {
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("Currently selected block: " + (BlockSelectionRender.selectedBlock != null ? BlockSelectionRender.selectedBlock.getBlockDisplayName() : "None"), textStartX, linePos += (lineLength * 2));
 			RenderUtil.resetFont(g2);
@@ -110,7 +110,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 
 	@Override
-	public boolean canRender(JFrame frame) {
+	public boolean canRender( JFrame frame ) {
 		return ConfigValues.debug;
 	}
 

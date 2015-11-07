@@ -23,7 +23,6 @@ public class SimpleRenderOption extends ConfigOption {
 	public void changeValue() {
 		ConfigValues.simpleBlockRender ^= true;
 
-		if(ConfigValues.simpleBlockRender)
-			ConfigValues.renderMod = EnumRenderMode.render2D;
+		if (ConfigValues.simpleBlockRender) ConfigValues.renderMod = EnumRenderMode.render2D;
 	}
 }

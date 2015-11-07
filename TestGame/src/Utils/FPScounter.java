@@ -1,14 +1,13 @@
 package Utils;
 
-public class FPScounter
-{
+public class FPScounter {
 	public int currentFPS = 0;
 	public int FPS = 0;
 	public long start = 0;
 
 	public void tick() {
 		currentFPS++;
-		if(System.currentTimeMillis() - start >= 1000) {
+		if (System.currentTimeMillis() - start >= 1000) {
 			FPS = currentFPS;
 			currentFPS = 0;
 			start = System.currentTimeMillis();

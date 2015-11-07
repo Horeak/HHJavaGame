@@ -13,10 +13,11 @@ public class BlockDirt extends Block {
 
 	BufferedImage dirtImage;
 
-	public BlockDirt(int x, int y){
-		super(x,y);
+	public BlockDirt( int x, int y ) {
+		super(x, y);
 	}
-	public BlockDirt(){
+
+	public BlockDirt() {
 		super();
 	}
 
@@ -26,7 +27,7 @@ public class BlockDirt extends Block {
 	}
 
 	@Override
-	public void renderBlock(Graphics2D g2, int renderX, int renderY) {
+	public void renderBlock( Graphics2D g2, int renderX, int renderY ) {
 //		if(dirtImage == null){
 //			dirtImage = getDirtImage();
 //		}
@@ -35,7 +36,7 @@ public class BlockDirt extends Block {
 
 		Color temp = g2.getColor();
 
-		if(ConfigValues.renderMod == EnumRenderMode.render2_5D && MainFile.currentWorld != null) {
+		if (ConfigValues.renderMod == EnumRenderMode.render2_5D && MainFile.currentWorld != null) {
 			RenderUtil.renderDefault2_5DBlock(g2, this, renderX, renderY, MainFile.currentWorld.getBlock(x, y - 1) == null, MainFile.currentWorld.getBlock(x + 1, y) == null);
 		}
 

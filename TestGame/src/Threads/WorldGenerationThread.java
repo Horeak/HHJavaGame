@@ -9,15 +9,17 @@ import WorldGeneration.Util.WorldGenPriority;
 
 public class WorldGenerationThread extends Thread {
 
-	public WorldGenerationThread(){setName("WorldGenerationThread");}
+	public WorldGenerationThread() {
+		setName("WorldGenerationThread");
+	}
 
-	public void run(){
+	public void run() {
 
 		MainFile.currentWorld.generating = true;
 
-		for(WorldGenPriority priority : WorldGenPriority.values()) {
+		for (WorldGenPriority priority : WorldGenPriority.values()) {
 			for (GenerationBase gen : Registrations.generationBases) {
-				if(gen.generationPriority().equals(priority)){
+				if (gen.generationPriority().equals(priority)) {
 
 					for (int x = 0; x < MainFile.currentWorld.worldSize.xSize; x++) {
 						for (int y = MainFile.currentWorld.worldSize.ySize - 1; y > 0; y--) {
@@ -30,8 +32,8 @@ public class WorldGenerationThread extends Thread {
 					}
 				}
 			}
-			for(StructureGeneration gen : Registrations.structureGenerations){
-				if(gen.generationPriority().equals(priority)) {
+			for (StructureGeneration gen : Registrations.structureGenerations) {
+				if (gen.generationPriority().equals(priority)) {
 					if (gen.canGenerate()) {
 						MainFile.currentWorld.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
 						gen.generate();

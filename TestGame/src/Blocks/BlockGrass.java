@@ -16,11 +16,17 @@ public class BlockGrass extends Block implements BlockUpdate {
 	//TODO Improve grass rendering. Instead of one random height try to use smooth noise on grass depth
 	int randHeight = MainFile.random.nextInt(5) + 1;
 
-	public BlockGrass(int x, int y){
-		super(x,y);
+	public BlockGrass( int x, int y ) {
+		super(x, y);
 	}
-	public BlockGrass(){
+
+	public BlockGrass() {
 		super();
+	}
+
+	public static boolean canGrassGrow( Block block ) {
+		Block temp = MainFile.currentWorld.getBlock(block.x, block.y - 1);
+		return temp == null || block != null && !temp.isBlockSolid();
 	}
 
 	@Override
@@ -29,14 +35,14 @@ public class BlockGrass extends Block implements BlockUpdate {
 	}
 
 	@Override
-	public void renderBlock(Graphics2D g2, int renderX, int renderY) {
-		if(randHeight != -1){
+	public void renderBlock( Graphics2D g2, int renderX, int renderY ) {
+		if (randHeight != -1) {
 			Color c = g2.getColor();
 			Color g = getDefaultBlockColor();
 
 			//Render dirt underlay
 			BlockDirt dirt = new BlockDirt();
-			if(ConfigValues.renderMod == EnumRenderMode.render2_5D && MainFile.currentWorld != null) {
+			if (ConfigValues.renderMod == EnumRenderMode.render2_5D && MainFile.currentWorld != null) {
 				RenderUtil.renderDefault2_5DBlock(g2, dirt, renderX, renderY, MainFile.currentWorld.getBlock(x, y - 1) == null, MainFile.currentWorld.getBlock(x + 1, y) == null);
 			}
 			g2.setColor(dirt.getDefaultBlockColor());
@@ -46,7 +52,7 @@ public class BlockGrass extends Block implements BlockUpdate {
 
 
 			//Render 2.5D grass
-			if(MainFile.currentWorld != null) {
+			if (MainFile.currentWorld != null) {
 				boolean right = MainFile.currentWorld.getBlock(x + 1, y) == null, top = MainFile.currentWorld.getBlock(x, y - 1) == null;
 
 				if (ConfigValues.renderMod == EnumRenderMode.render2_5D) {
@@ -100,7 +106,6 @@ public class BlockGrass extends Block implements BlockUpdate {
 		}
 	}
 
-
 	@Override
 	public Color getDefaultBlockColor() {
 		return new Color(0, 127, 14);
@@ -118,19 +123,18 @@ public class BlockGrass extends Block implements BlockUpdate {
 
 	@Override
 	public void updateBlock() {
-		if(!canGrassGrow(this)){
+		if (!canGrassGrow(this)) {
 			MainFile.currentWorld.setBlock(new BlockDirt(), x, y);
 		}
 
-		if(canGrassGrow(this)) {
+		if (canGrassGrow(this)) {
 			if (MainFile.random.nextInt(32) == 1) {
 				int tempX = 0, tempY = 0;
 				for (int x = this.x - 1; x < this.x + 2; x++) {
 					for (int y = this.y - 1; y < this.y + 2; y++) {
 						Block block = MainFile.currentWorld.getBlock(x, y);
 
-						if(tempX == 1 && tempY == 0 ||tempX == 1 && tempY == 2)
-							continue;
+						if (tempX == 1 && tempY == 0 || tempX == 1 && tempY == 2) continue;
 
 
 						if (block != null) {
@@ -151,13 +155,8 @@ public class BlockGrass extends Block implements BlockUpdate {
 			}
 		}
 	}
-	public void addInfo()
-	{
-		blockInfoList.add("Grass depth: " + randHeight);
-	}
 
-	public static boolean canGrassGrow(Block block){
-		Block temp = MainFile.currentWorld.getBlock(block.x, block.y - 1);
-		return temp == null || block != null && !temp.isBlockSolid();
+	public void addInfo() {
+		blockInfoList.add("Grass depth: " + randHeight);
 	}
 }

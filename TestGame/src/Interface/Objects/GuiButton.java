@@ -12,18 +12,18 @@ public class GuiButton extends GuiObject {
 
 	public String text;
 
-	public GuiButton(int x, int y, int width, int height, String text) {
+	public GuiButton( int x, int y, int width, int height, String text ) {
 		super(x, y, width, height);
 		this.text = text;
 	}
 
 	@Override
-	public void onClicked(MouseEvent e, JFrame frame, Gui gui) {
+	public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
 		gui.buttonPressed(this);
 	}
 
 	@Override
-	public void renderObject(JFrame frame, Graphics2D g2, Gui gui) {
+	public void renderObject( JFrame frame, Graphics2D g2, Gui gui ) {
 		Color temp = g2.getColor();
 
 		int tempY = y - 15;

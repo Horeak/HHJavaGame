@@ -14,7 +14,7 @@ public enum EnumWorldTime {
 	public int timeBegin, timeEnd;
 	public Color SkyColor;
 
-	EnumWorldTime(String name, int timeBegin, int timeEnd, Color skyColor){
+	EnumWorldTime( String name, int timeBegin, int timeEnd, Color skyColor ) {
 		this.name = name;
 		this.timeBegin = timeBegin;
 		this.timeEnd = timeEnd;

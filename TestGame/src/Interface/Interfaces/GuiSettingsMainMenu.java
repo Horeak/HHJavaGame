@@ -18,18 +18,18 @@ import java.awt.geom.Line2D;
 
 public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
-	public GuiSettingsMainMenu(){
+	public GuiSettingsMainMenu() {
 		super();
 	}
 
 	@Override
-	public void render(JFrame frame, Graphics2D g2) {
+	public void render( JFrame frame, Graphics2D g2 ) {
 		Color temp = g2.getColor();
 
 		guiObjects.clear();
 		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
 
-		for(ConfigOption option : Config.options){
+		for (ConfigOption option : Config.options) {
 			guiObjects.add(new configButton(buttonPos += buttonSize, option));
 		}
 
@@ -64,17 +64,14 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 	}
 
 	@Override
-	public boolean canRender(JFrame frame) {
+	public boolean canRender( JFrame frame ) {
 		return true;
 	}
 
-	public void buttonPressed(GuiButton button)
-	{
-		if(button.text.toLowerCase().contains("rendermod")){
-			if(ConfigValues.renderMod == EnumRenderMode.render2_5D)
-				ConfigValues.renderMod = EnumRenderMode.render2D;
-			else
-				ConfigValues.renderMod = EnumRenderMode.render2_5D;
+	public void buttonPressed( GuiButton button ) {
+		if (button.text.toLowerCase().contains("rendermod")) {
+			if (ConfigValues.renderMod == EnumRenderMode.render2_5D) ConfigValues.renderMod = EnumRenderMode.render2D;
+			else ConfigValues.renderMod = EnumRenderMode.render2_5D;
 		}
 	}
 
@@ -82,7 +79,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 		ConfigOption option;
 
-		public configButton(int y, ConfigOption option) {
+		public configButton( int y, ConfigOption option ) {
 			super(0, y, 120, 16, "button." + option.getOptionCodeName());
 
 			this.option = option;
@@ -90,13 +87,13 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 
 		@Override
-		public void onClicked(MouseEvent e, JFrame frame, Gui gui) {
+		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
 			option.changeValue();
 		}
 
 
 		@Override
-		public void renderObject(JFrame frame, Graphics2D g2, Gui gui) {
+		public void renderObject( JFrame frame, Graphics2D g2, Gui gui ) {
 			Color temp = g2.getColor();
 
 			boolean hover = isMouseOver(frame.getMousePosition());
@@ -107,7 +104,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 				g2.setColor(new Color(95, 95, 95, 86));
 			}
 
-			if(!enabled){
+			if (!enabled) {
 				g2.setColor(new Color(41, 41, 41, 174));
 			}
 
@@ -115,7 +112,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 			g2.setColor(hover ? Color.WHITE : Color.LIGHT_GRAY);
 
-			if(!enabled) g2.setColor(Color.GRAY);
+			if (!enabled) g2.setColor(Color.GRAY);
 
 			RenderUtil.resizeFont(g2, 12);
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
@@ -129,12 +126,12 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 	class backButton extends MainMenuButton {
 
-		public backButton(int y){
+		public backButton( int y ) {
 			super((BlockRendering.START_X_POS) + (((ConfigValues.renderXSize - 1) / 2) * ConfigValues.size) - 13, y, 120, 16, "Back");
 		}
 
 		@Override
-		public void onClicked(MouseEvent e, JFrame frame, Gui gui) {
+		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
 			MainFile.currentGui = new GuiMainMenu();
 		}
 	}

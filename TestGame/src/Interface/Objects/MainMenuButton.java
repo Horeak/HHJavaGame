@@ -12,15 +12,14 @@ import java.awt.event.MouseEvent;
 public abstract class MainMenuButton extends GuiButton {
 
 	//TODO Remove the hardcoded 325-x position when adding window resizing
-	public MainMenuButton(int x, int y, int width, int height, String name) {
+	public MainMenuButton( int x, int y, int width, int height, String name ) {
 		super(x, y, width, height, name);
 	}
 
 
+	public abstract void onClicked( MouseEvent e, JFrame frame, Gui gui );
 
-	public abstract void onClicked(MouseEvent e, JFrame frame, Gui gui);
-
-	public boolean isMouseOver(Point p) {
+	public boolean isMouseOver( Point p ) {
 		try {
 			return p.x > AbstractMainMenuGui.renderStart && p.x < (AbstractMainMenuGui.renderStart + AbstractMainMenuGui.renderWidth) && p.y > (y - 14) && p.y < (y + 24);
 		} catch (Exception e) {
@@ -30,7 +29,7 @@ public abstract class MainMenuButton extends GuiButton {
 	}
 
 	@Override
-	public void renderObject(JFrame frame, Graphics2D g2, Gui gui) {
+	public void renderObject( JFrame frame, Graphics2D g2, Gui gui ) {
 		Color temp = g2.getColor();
 
 		boolean hover = isMouseOver(frame.getMousePosition());
@@ -41,7 +40,7 @@ public abstract class MainMenuButton extends GuiButton {
 			g2.setColor(new Color(95, 95, 95, 86));
 		}
 
-		if(!enabled){
+		if (!enabled) {
 			g2.setColor(new Color(41, 41, 41, 174));
 		}
 
@@ -49,7 +48,7 @@ public abstract class MainMenuButton extends GuiButton {
 
 		g2.setColor(hover ? Color.WHITE : Color.LIGHT_GRAY);
 
-		if(!enabled) g2.setColor(Color.GRAY);
+		if (!enabled) g2.setColor(Color.GRAY);
 
 		RenderUtil.resizeFont(g2, 22);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);

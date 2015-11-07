@@ -5,10 +5,10 @@ package WorldGeneration.Util;
 * Created: 26.07.2015
 */
 
-public abstract class StructureGeneration
-{
+public abstract class StructureGeneration {
 
 	public abstract boolean canGenerate();
+
 	public abstract void generate();
 
 	public abstract String getGenerationName();

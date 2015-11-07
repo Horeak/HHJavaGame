@@ -7,7 +7,7 @@ public enum EnumWorldSize {
 
 	public int xSize, ySize;
 
-	 EnumWorldSize(int xSize, int ySize){
+	EnumWorldSize( int xSize, int ySize ) {
 		this.xSize = xSize;
 		this.ySize = ySize;
 	}

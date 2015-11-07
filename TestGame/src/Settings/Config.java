@@ -10,9 +10,10 @@ public class Config {
 
 	//TODO
 	@Deprecated
-	public static void writeToFile(){}
+	public static void writeToFile() {
+	}
 
-	public static void addOptionsToList(){
+	public static void addOptionsToList() {
 		options.add(new DebugModeOption());
 		options.add(new SimpleRenderOption());
 		options.add(new RenderModeOption());

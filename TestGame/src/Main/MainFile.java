@@ -42,22 +42,20 @@ public class MainFile implements KeyListener {
 	public static Gui currentGui;
 
 	public static CustomFrame frame;
+	public static Rectangle blockRenderBounds = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size) - ConfigValues.renderXSize, (ConfigValues.renderYSize * ConfigValues.size));
+	public FPScounter fpScounter = new FPScounter();
+	boolean hasDebugSize = false;
+	int debugSize = 300;
 
-	public static void main(String[] args){
+	public static void main( String[] args ) {
 		file.run();
 	}
 
-	public FPScounter fpScounter = new FPScounter();
-
-
-	public static Rectangle blockRenderBounds = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size) - ConfigValues.renderXSize, (ConfigValues.renderYSize * ConfigValues.size));
-
-
-	public static JFrame getFrame(){
+	public static JFrame getFrame() {
 		return frame;
 	}
 
-	public void run(){
+	public void run() {
 		Registrations.registerGenerations();
 		Registrations.registerWindowRenders();
 
@@ -73,15 +71,14 @@ public class MainFile implements KeyListener {
 		frame.setResizable(true);
 		frame.getContentPane().addMouseListener(new MouseAdapter() {
 			@Override
-			public void mousePressed(MouseEvent e) {
+			public void mousePressed( MouseEvent e ) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
 
-						for (AbstractWindowRender render : Registrations.windowRenders) {
-							if(currentGui == null || render.canRenderWithGui())
-							render.mouseClick(e, frame);
-						}
+					for (AbstractWindowRender render : Registrations.windowRenders) {
+						if (currentGui == null || render.canRenderWithGui()) render.mouseClick(e, frame);
+					}
 
-					if(currentGui != null){
+					if (currentGui != null) {
 						currentGui.mouseClick(e, frame);
 					}
 				}
@@ -94,10 +91,10 @@ public class MainFile implements KeyListener {
 		frame.pack();
 		frame.setVisible(true);
 
-		while(true) {
+		while (true) {
 
 			//TODO Fix resizable
-			if(ConfigValues.resizeable) {
+			if (ConfigValues.resizeable) {
 				ConfigValues.renderXSize = Math.round((frame.getWidth() - (BlockRendering.START_X_POS * 2)) / ConfigValues.size);
 				ConfigValues.renderYSize = Math.round((frame.getHeight() - (BlockRendering.START_Y_POS * 2)) / ConfigValues.size);
 
@@ -105,18 +102,17 @@ public class MainFile implements KeyListener {
 //
 //			float temp = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 25;
 //			ConfigValues.renderDistance = 20;
-			}else{
+			} else {
 				ConfigValues.renderXSize = 25;
 				ConfigValues.renderYSize = 25;
 
 				ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
 			}
 
-			if(ConfigValues.resizeable && !frame.isResizable() || !ConfigValues.resizeable && frame.isResizable())
-			frame.setResizable(ConfigValues.resizeable);
+			if (ConfigValues.resizeable && !frame.isResizable() || !ConfigValues.resizeable && frame.isResizable())
+				frame.setResizable(ConfigValues.resizeable);
 
-			if(frame != null && frame.getContentPane() != null)
-				frame.getContentPane().repaint();
+			if (frame != null && frame.getContentPane() != null) frame.getContentPane().repaint();
 
 
 			if (ConfigValues.debug && !hasDebugSize) {
@@ -136,29 +132,25 @@ public class MainFile implements KeyListener {
 
 	}
 
-	boolean hasDebugSize = false;
-	int debugSize = 300;
-
 	@Override
-	public void keyTyped(KeyEvent e) {
+	public void keyTyped( KeyEvent e ) {
 		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if(currentGui == null || render.canRenderWithGui())
-			render.keyTyped(e, frame);
+			if (currentGui == null || render.canRenderWithGui()) render.keyTyped(e, frame);
 		}
 
-		if(currentGui != null){
+		if (currentGui != null) {
 			currentGui.keyTyped(e, frame);
 		}
 	}
 
 	//TODO Add proper move controls with motion instead of block moving
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed( KeyEvent e ) {
 
 		if (MainFile.currentWorld != null) {
 			if (e.getKeyChar() == 'a') {
 				if (currentWorld.player.facing == 1) {
-						currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x - 0.4F, currentWorld.player.getEntityPostion().y);
+					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x - 0.4F, currentWorld.player.getEntityPostion().y);
 				}
 
 				currentWorld.player.facing = 1;
@@ -173,39 +165,37 @@ public class MainFile implements KeyListener {
 
 
 			if (e.getKeyChar() == 'w') {
-				if(currentWorld.player.jump && currentWorld.getBlock((int)currentWorld.player.getEntityPostion().x, (int)currentWorld.player.getEntityPostion().y +1) != null) {
-					if(currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x, currentWorld.player.getEntityPostion().y - 1.5F)){
+				if (currentWorld.player.jump && currentWorld.getBlock((int) currentWorld.player.getEntityPostion().x, (int) currentWorld.player.getEntityPostion().y + 1) != null) {
+					if (currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x, currentWorld.player.getEntityPostion().y - 1.5F)) {
 						currentWorld.player.jump = false;
 					}
 				}
+			}
 		}
-	}
 
 		//TODO Make it open a ingame version of the main menu
-		if(currentGui == null && currentWorld != null){
-			if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+		if (currentGui == null && currentWorld != null) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				currentGui = new GuiMainMenu();
 			}
 		}
 
 		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if(currentGui == null || render.canRenderWithGui())
-			render.keyPressed(e, frame);
+			if (currentGui == null || render.canRenderWithGui()) render.keyPressed(e, frame);
 		}
 
-		if(currentGui != null){
+		if (currentGui != null) {
 			currentGui.keyPressed(e, frame);
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased( KeyEvent e ) {
 		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if(currentGui == null || render.canRenderWithGui())
-			render.keyReleased(e, frame);
+			if (currentGui == null || render.canRenderWithGui()) render.keyReleased(e, frame);
 		}
 
-		if(currentGui != null){
+		if (currentGui != null) {
 			currentGui.keyReleased(e, frame);
 		}
 	}
@@ -218,9 +208,12 @@ public class MainFile implements KeyListener {
 			setContentPane(panel);
 			addMouseWheelListener(panel);
 		}
+
 		class CustomJpanel extends JPanel implements MouseWheelListener {
+			boolean hasScrolled = false;
+
 			@Override
-			public void paintComponent(Graphics g) {
+			public void paintComponent( Graphics g ) {
 				super.paintComponent(g);
 
 				fpScounter.tick();
@@ -232,19 +225,18 @@ public class MainFile implements KeyListener {
 
 				g2.setClip(blockRenderBounds);
 
-				if(currentGui != null){
-					if(currentGui.canRender(frame)){
+				if (currentGui != null) {
+					if (currentGui.canRender(frame)) {
 						currentGui.render(frame, g2);
 						currentGui.renderObject(frame, g2);
 					}
 				}
 
-					for (AbstractWindowRender render : Registrations.windowRenders) {
-						if(currentGui == null || render.canRenderWithGui())
-						if (render.canRender(frame)) {
-							render.render(frame, g2);
-						}
+				for (AbstractWindowRender render : Registrations.windowRenders) {
+					if (currentGui == null || render.canRenderWithGui()) if (render.canRender(frame)) {
+						render.render(frame, g2);
 					}
+				}
 
 
 				g2.setClip(blockRenderBounds);
@@ -258,20 +250,17 @@ public class MainFile implements KeyListener {
 
 			}
 
-			boolean hasScrolled = false;
 			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				if(!hasScrolled) {
+			public void mouseWheelMoved( MouseWheelEvent e ) {
+				if (!hasScrolled) {
 					HotbarRender.slotSelected += (e.getWheelRotation());
 
-					if (HotbarRender.slotSelected > 10)
-						HotbarRender.slotSelected = 1;
+					if (HotbarRender.slotSelected > 10) HotbarRender.slotSelected = 1;
 
-					if (HotbarRender.slotSelected <= 0)
-						HotbarRender.slotSelected = 10;
+					if (HotbarRender.slotSelected <= 0) HotbarRender.slotSelected = 10;
 
 					hasScrolled = true;
-				}else{
+				} else {
 					hasScrolled = false;
 				}
 			}

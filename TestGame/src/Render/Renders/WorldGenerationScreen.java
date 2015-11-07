@@ -13,7 +13,7 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 	String text = "Generating world.";
 
 	@Override
-	public void render(JFrame frame, Graphics2D g2) {
+	public void render( JFrame frame, Graphics2D g2 ) {
 		Color c = g2.getColor();
 
 		Rectangle rect = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
@@ -31,9 +31,9 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 		g2.drawString("Currently generating: " + MainFile.currentWorld.generationStatus.replace("-|-", " - "), rect.x + (rect.width / 2) - (170), rect.y + (rect.height / 2) + 18);
 
 
-		if(text.contains("....")){
+		if (text.contains("....")) {
 			text = "Generating world.";
-		}else{
+		} else {
 			text = text + ".";
 		}
 
@@ -41,7 +41,7 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 	}
 
 	@Override
-	public boolean canRender(JFrame frame) {
+	public boolean canRender( JFrame frame ) {
 		return MainFile.currentWorld.generating;
 	}
 

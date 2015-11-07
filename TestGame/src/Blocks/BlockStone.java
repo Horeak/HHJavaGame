@@ -13,10 +13,11 @@ public class BlockStone extends Block {
 
 	//TODO Add noise
 
-	public BlockStone(int x, int y){
-		super(x,y);
+	public BlockStone( int x, int y ) {
+		super(x, y);
 	}
-	public BlockStone(){
+
+	public BlockStone() {
 		super();
 	}
 
@@ -26,7 +27,7 @@ public class BlockStone extends Block {
 	}
 
 	@Override
-	public void renderBlock(Graphics2D g2, int renderX, int renderY) {
+	public void renderBlock( Graphics2D g2, int renderX, int renderY ) {
 		Color temp = g2.getColor();
 
 		if (ConfigValues.renderMod == EnumRenderMode.render2_5D && MainFile.currentWorld != null) {
