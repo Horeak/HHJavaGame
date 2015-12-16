@@ -1,26 +1,17 @@
 package Render;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
-
 public abstract class AbstractWindowRender {
-	public abstract void render( JFrame frame, Graphics2D g2 );
+	public abstract void render( org.newdawn.slick.Graphics graphics );
 
-	public abstract boolean canRender( JFrame frame );
+	public abstract boolean canRender();
 
-	public void keyTyped( KeyEvent e, JFrame frame ) {
+	public void keyPressed( int key, char c ) {
 	}
 
-	public void keyPressed( KeyEvent e, JFrame frame ) {
+	public void keyReleased( int key, char c ) {
 	}
 
-	public void keyReleased( KeyEvent e, JFrame frame ) {
-	}
-
-	public void mouseClick( MouseEvent e, JFrame frame ) {
+	public void mouseClick( int button, int x, int y ) {
 	}
 
 	public abstract boolean canRenderWithGui();

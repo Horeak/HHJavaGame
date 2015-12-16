@@ -9,21 +9,27 @@ import Interface.Interfaces.GuiMainMenu;
 import Render.AbstractWindowRender;
 import Render.Renders.BlockRendering;
 import Render.Renders.BlockSelectionRender;
-import Render.Renders.DebugInfoRender;
 import Render.Renders.HotbarRender;
 import Settings.Config;
 import Utils.ConfigValues;
-import Utils.FPScounter;
 import Utils.Registrations;
+import Utils.RenderUtil;
 import WorldFiles.World;
+import org.newdawn.slick.*;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class MainFile implements KeyListener {
 
+public class MainFile extends BasicGame implements InputListener {
+
+	//TODO Recreate game with Slick2D as the base to allow easier physics
+	//TODO Add physics to both blocks and player
 
 	//TODO Create an util to make it easier to add random noise to blocks
 	//TODO Add main menu and world saving/creation
@@ -35,127 +41,62 @@ public class MainFile implements KeyListener {
 	//TODO Change AbstractWindowRender system to allow window renders in guis (ingame guis like inventories and ingame options)
 
 
-	public static MainFile file = new MainFile();
+	public static MainFile file = new MainFile("Test Game");
 	public static Random random = new Random();
 
 	public static World currentWorld;
-	public static Gui currentGui;
-
-	public static CustomFrame frame;
 	public static Rectangle blockRenderBounds = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size) - ConfigValues.renderXSize, (ConfigValues.renderYSize * ConfigValues.size));
-	public FPScounter fpScounter = new FPScounter();
+	public static boolean hasScrolled = false;
+	public static AppGameContainer gameContainer;
+	public static int xWindowSize = (BlockRendering.START_X_POS * 2) + (ConfigValues.renderXSize * ConfigValues.size);
+	public static int yWindowSize = (BlockRendering.START_Y_POS * 2) + (ConfigValues.renderYSize * ConfigValues.size) + ConfigValues.hotbarRenderSize + 25;
+	private static Gui currentGui;
 	boolean hasDebugSize = false;
 	int debugSize = 300;
 
+	public MainFile( String title ) {
+		super(title);
+	}
+
 	public static void main( String[] args ) {
-		file.run();
-	}
+		try {
+			//Try make it use ScaleableGame?
+			gameContainer = new AppGameContainer(file);
 
-	public static JFrame getFrame() {
-		return frame;
-	}
+			gameContainer.setDisplayMode(xWindowSize, yWindowSize, false);
 
-	public void run() {
-		Registrations.registerGenerations();
-		Registrations.registerWindowRenders();
+			gameContainer.setShowFPS(false);
+			gameContainer.setVSync(true);
 
-		Config.addOptionsToList();
-
-		frame = new CustomFrame();
-		frame.setTitle(ConfigValues.gameTitle);
-
-		frame.addKeyListener(this);
-
-		frame.setPreferredSize(new Dimension((BlockRendering.START_X_POS * 2) + (ConfigValues.renderXSize * ConfigValues.size), (BlockRendering.START_Y_POS * 2) + (ConfigValues.renderYSize * ConfigValues.size) + ConfigValues.hotbarRenderSize + 25));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(true);
-		frame.getContentPane().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed( MouseEvent e ) {
-				if (e.getButton() == MouseEvent.BUTTON1) {
-
-					for (AbstractWindowRender render : Registrations.windowRenders) {
-						if (currentGui == null || render.canRenderWithGui()) render.mouseClick(e, frame);
-					}
-
-					if (currentGui != null) {
-						currentGui.mouseClick(e, frame);
-					}
-				}
-			}
-
-		});
-
-		currentGui = new GuiMainMenu();
-
-		frame.pack();
-		frame.setVisible(true);
-
-		while (true) {
-
-			//TODO Fix resizable
-			if (ConfigValues.resizeable) {
-				ConfigValues.renderXSize = Math.round((frame.getWidth() - (BlockRendering.START_X_POS * 2)) / ConfigValues.size);
-				ConfigValues.renderYSize = Math.round((frame.getHeight() - (BlockRendering.START_Y_POS * 2)) / ConfigValues.size);
-
-//			ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
-//
-//			float temp = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 25;
-//			ConfigValues.renderDistance = 20;
-			} else {
-				ConfigValues.renderXSize = 25;
-				ConfigValues.renderYSize = 25;
-
-				ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
-			}
-
-			if (ConfigValues.resizeable && !frame.isResizable() || !ConfigValues.resizeable && frame.isResizable())
-				frame.setResizable(ConfigValues.resizeable);
-
-			if (frame != null && frame.getContentPane() != null) frame.getContentPane().repaint();
-
-
-			if (ConfigValues.debug && !hasDebugSize) {
-				frame.setPreferredSize(new Dimension(frame.getPreferredSize().width + debugSize, frame.getPreferredSize().height));
-				frame.pack();
-				hasDebugSize = true;
-
-			} else if (!ConfigValues.debug && hasDebugSize) {
-				frame.setPreferredSize(new Dimension(frame.getPreferredSize().width - debugSize, frame.getPreferredSize().height));
-				frame.pack();
-				hasDebugSize = false;
-
-				BlockSelectionRender.selectedX = -1;
-				BlockSelectionRender.selectedY = -1;
-			}
-		}
-
-	}
-
-	@Override
-	public void keyTyped( KeyEvent e ) {
-		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if (currentGui == null || render.canRenderWithGui()) render.keyTyped(e, frame);
-		}
-
-		if (currentGui != null) {
-			currentGui.keyTyped(e, frame);
+			gameContainer.start();
+		} catch (SlickException ex) {
+			Logger.getLogger(MainFile.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
+	//TODO Setting the gui crashes the game. Perhaps because of the Update or Render method using at the same time?
+	public synchronized static Gui getCurrentGui() {
+		return currentGui;
+	}
+
+	public synchronized static void setCurrentGui( Gui currentGui ) {
+		MainFile.currentGui = currentGui;
+	}
+
+	//TODO Add keyregister
 	//TODO Add proper move controls with motion instead of block moving
 	@Override
-	public void keyPressed( KeyEvent e ) {
+	public void keyPressed( int key, char c ) {
 
 		if (MainFile.currentWorld != null) {
-			if (e.getKeyChar() == 'a') {
+			if (c == 'a') {
 				if (currentWorld.player.facing == 1) {
 					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x - 0.4F, currentWorld.player.getEntityPostion().y);
 				}
 
 				currentWorld.player.facing = 1;
 
-			} else if (e.getKeyChar() == 'd') {
+			} else if (c == 'd') {
 				if (currentWorld.player.facing == 2) {
 					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x + 0.4F, currentWorld.player.getEntityPostion().y);
 				}
@@ -164,7 +105,7 @@ public class MainFile implements KeyListener {
 			}
 
 
-			if (e.getKeyChar() == 'w') {
+			if (c == 'w') {
 				if (currentWorld.player.jump && currentWorld.getBlock((int) currentWorld.player.getEntityPostion().x, (int) currentWorld.player.getEntityPostion().y + 1) != null) {
 					if (currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x, currentWorld.player.getEntityPostion().y - 1.5F)) {
 						currentWorld.player.jump = false;
@@ -175,88 +116,49 @@ public class MainFile implements KeyListener {
 
 		//TODO Make it open a ingame version of the main menu
 		if (currentGui == null && currentWorld != null) {
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			if (key == Input.KEY_ESCAPE) {
 				currentGui = new GuiMainMenu();
 			}
 		}
 
 		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if (currentGui == null || render.canRenderWithGui()) render.keyPressed(e, frame);
+			if (currentGui == null || render.canRenderWithGui()) render.keyPressed(key, c);
 		}
 
 		if (currentGui != null) {
-			currentGui.keyPressed(e, frame);
+			currentGui.keyPressed(key, c);
 		}
 	}
 
 	@Override
-	public void keyReleased( KeyEvent e ) {
+	public void keyReleased( int key, char c ) {
 		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if (currentGui == null || render.canRenderWithGui()) render.keyReleased(e, frame);
+			if (currentGui == null || render.canRenderWithGui()) render.keyReleased(key, c);
 		}
 
 		if (currentGui != null) {
-			currentGui.keyReleased(e, frame);
+			currentGui.keyReleased(key, c);
 		}
 	}
 
-	class CustomFrame extends JFrame {
+	@Override
+	public void init( GameContainer container ) throws SlickException {
+		Registrations.registerGenerations();
+		Registrations.registerWindowRenders();
 
-		public CustomFrame() {
-			CustomJpanel panel = new CustomJpanel();
+		Config.addOptionsToList();
+		container.getInput().addKeyListener(this);
 
-			setContentPane(panel);
-			addMouseWheelListener(panel);
-		}
+		currentGui = new GuiMainMenu();
 
-		class CustomJpanel extends JPanel implements MouseWheelListener {
-			boolean hasScrolled = false;
+		container.getInput().addMouseListener(new MouseListener() {
 
-			@Override
-			public void paintComponent( Graphics g ) {
-				super.paintComponent(g);
-
-				fpScounter.tick();
-
-				Graphics2D g2 = (Graphics2D) g;
-
-				Shape c = g2.getClip();
-
-
-				g2.setClip(blockRenderBounds);
-
-				if (currentGui != null) {
-					if (currentGui.canRender(frame)) {
-						currentGui.render(frame, g2);
-						currentGui.renderObject(frame, g2);
-					}
-				}
-
-				for (AbstractWindowRender render : Registrations.windowRenders) {
-					if (currentGui == null || render.canRenderWithGui()) if (render.canRender(frame)) {
-						render.render(frame, g2);
-					}
-				}
-
-
-				g2.setClip(blockRenderBounds);
-
-				Rectangle e = new Rectangle(blockRenderBounds.x, blockRenderBounds.y, blockRenderBounds.width - 1, blockRenderBounds.height - 1);
-				g2.draw(e);
-
-				g2.setClip(c);
-
-				DebugInfoRender.fps = fpScounter.getFPS();
-
-			}
-
-			@Override
-			public void mouseWheelMoved( MouseWheelEvent e ) {
+			//TODO Registery for mouse wheel (or add it to the keybind system i have to make)
+			public void mouseWheelMoved( int change ) {
 				if (!hasScrolled) {
-					HotbarRender.slotSelected += (e.getWheelRotation());
+					HotbarRender.slotSelected += (change / -120);
 
 					if (HotbarRender.slotSelected > 10) HotbarRender.slotSelected = 1;
-
 					if (HotbarRender.slotSelected <= 0) HotbarRender.slotSelected = 10;
 
 					hasScrolled = true;
@@ -264,9 +166,123 @@ public class MainFile implements KeyListener {
 					hasScrolled = false;
 				}
 			}
-		}
+
+			public void mouseClicked( int button, int x, int y, int clickCount ) {
+			}
+
+			public void mousePressed( int button, int x, int y ) {
+				if (button == Input.MOUSE_LEFT_BUTTON) {
+
+					for (AbstractWindowRender render : Registrations.windowRenders) {
+						if (currentGui == null || render.canRenderWithGui()) render.mouseClick(button, x, y);
+					}
+
+					if (currentGui != null) {
+						currentGui.mouseClick(button, x, y);
+					}
+				}
+			}
+
+			public void mouseReleased( int button, int x, int y ) {
+			}
+
+			public void mouseMoved( int oldx, int oldy, int newx, int newy ) {
+			}
+
+			public void mouseDragged( int oldx, int oldy, int newx, int newy ) {
+			}
+
+			public void setInput( Input input ) {
+			}
+
+			public boolean isAcceptingInput() {
+				return true;
+			}
+
+			public void inputEnded() {
+			}
+
+			public void inputStarted() {
+			}
+		});
+
 	}
 
+	@Override
+	public void update( GameContainer container, int delta ) throws SlickException {
+		//TODO Fix resizable
+		if (ConfigValues.resizeable) {
+			ConfigValues.renderXSize = Math.round((container.getWidth() - (BlockRendering.START_X_POS * 2)) / ConfigValues.size);
+			ConfigValues.renderYSize = Math.round((container.getHeight() - (BlockRendering.START_Y_POS * 2)) / ConfigValues.size);
+
+//			ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
+//
+//			float temp = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 25;
+//			ConfigValues.renderDistance = 20;
+
+
+		} else {
+			ConfigValues.renderXSize = 25;
+			ConfigValues.renderYSize = 25;
+
+			ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
+		}
+
+//			if (ConfigValues.resizeable && !frame.isResizable() || !ConfigValues.resizeable && frame.isResizable())
+//				frame.setResizable(ConfigValues.resizeable);
+
+//			if (frame != null && frame.getContentPane() != null) frame.getContentPane().repaint();
+
+
+		if (ConfigValues.debug && !hasDebugSize) {
+			gameContainer.setDisplayMode(container.getWidth() + debugSize, container.getHeight(), false);
+			hasDebugSize = true;
+
+		} else if (!ConfigValues.debug && hasDebugSize) {
+			gameContainer.setDisplayMode(container.getWidth() - debugSize, container.getHeight(), false);
+			hasDebugSize = false;
+
+			BlockSelectionRender.selectedX = -1;
+			BlockSelectionRender.selectedY = -1;
+			}
+	}
+
+	@Override
+	public void render( GameContainer container, Graphics g2 ) throws SlickException {
+		Rectangle c = g2.getClip();
+
+		if (g2.getFont() instanceof AngelCodeFont) {
+			g2.setFont(RenderUtil.getFont(new Font("Arial", 0, 0)));
+		}
+
+		g2.setBackground(Color.lightGray);
+		g2.setClip(blockRenderBounds);
+
+		if (currentGui != null) {
+			if (currentGui.canRender()) {
+				currentGui.render(g2);
+				currentGui.renderObject(g2);
+			}
+		}
+
+		for (AbstractWindowRender render : Registrations.windowRenders) {
+			Color tempC = g2.getColor();
+
+			if (currentGui == null || render.canRenderWithGui()) if (render.canRender()) {
+				render.render(g2);
+			}
+			g2.setColor(tempC);
+		}
+
+
+		g2.setClip(blockRenderBounds);
+		g2.setColor(Color.white);
+
+		Rectangle e = new Rectangle(blockRenderBounds.getX() + 1, blockRenderBounds.getY(), blockRenderBounds.getWidth() - 1, blockRenderBounds.getHeight() - 1);
+
+		g2.draw(e);
+		g2.setClip(c);
+	}
 }
 
 

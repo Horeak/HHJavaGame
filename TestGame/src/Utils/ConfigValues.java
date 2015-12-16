@@ -20,7 +20,7 @@ public class ConfigValues {
 
 	public static int renderDistance = 16;
 	public static int renderRange = ((renderXSize + renderYSize) / 2) / 2;
-	public static int hotbarRenderSize = 56;
+	public static int hotbarRenderSize = 75;
 
 	public static boolean resizeable = false;
 

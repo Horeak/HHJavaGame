@@ -1,42 +1,42 @@
 package Render.Renders;
 
-import Blocks.BlockDirt;
-import Blocks.BlockGrass;
-import Blocks.BlockStone;
 import Blocks.Util.Block;
 import Main.MainFile;
 import Render.AbstractWindowRender;
 import Utils.BlockUtils;
 import Utils.ConfigValues;
 import com.sun.javafx.geom.Vec2d;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Line2D;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Line;
+import org.newdawn.slick.geom.Point;
+import org.newdawn.slick.geom.Rectangle;
 
 public class BlockSelectionRender extends AbstractWindowRender {
+
+
+	//TODO BlockSelection not rendering with Slick2D
 
 	public static Block selectedBlock = null;
 	//TODO Remove debug feature and replace with proper hotbar/inventory
 	public static int selectedX = -1, selectedY = -1;
 
 	@Override
-	public void render( JFrame frame, Graphics2D g2 ) {
-		Color temp = g2.getColor();
+	public void render( Graphics g2 ) {
+		org.newdawn.slick.Color temp = g2.getColor();
 
 		//TODO Make block selectrion be block locked even when player moves over the block-lock
 		Vec2d plPos = new Vec2d(MainFile.currentWorld.player.getEntityPostion().x, MainFile.currentWorld.player.getEntityPostion().y);
 
-		if (frame != null && frame.getMousePosition() != null) {
-			Point mousePoint = frame.getMousePosition();
+		if (MainFile.gameContainer != null && MainFile.gameContainer.getInput() != null) {
+			Point mousePoint = new Point(MainFile.gameContainer.getInput().getMouseX(), MainFile.gameContainer.getInput().getMouseY());
 			if (mousePoint != null)
-				if (mousePoint.x > BlockRendering.START_X_POS && mousePoint.x < (ConfigValues.renderXSize * ConfigValues.size) + BlockRendering.START_X_POS) {
-					if (mousePoint.y > (BlockRendering.START_Y_POS) && mousePoint.y < (ConfigValues.renderYSize * ConfigValues.size) + BlockRendering.START_Y_POS) {
+				if (mousePoint.getX() > BlockRendering.START_X_POS && mousePoint.getX() < (ConfigValues.renderXSize * ConfigValues.size) + BlockRendering.START_X_POS) {
+					if (mousePoint.getY() > (BlockRendering.START_Y_POS) && mousePoint.getY() < (ConfigValues.renderYSize * ConfigValues.size) + BlockRendering.START_Y_POS) {
 
 						//TODO Why do i need +24 on y-axis?
-						int mouseX = mousePoint.x - (BlockRendering.START_X_POS);
-						int mouseY = mousePoint.y - (BlockRendering.START_Y_POS + 24);
+						int mouseX = (int) mousePoint.getX() - (BlockRendering.START_X_POS);
+						int mouseY = (int) mousePoint.getY() - (BlockRendering.START_Y_POS + 24);
 
 						int mouseBlockX = mouseX / (ConfigValues.size);
 						int mouseBlockY = mouseY / (ConfigValues.size);
@@ -72,31 +72,30 @@ public class BlockSelectionRender extends AbstractWindowRender {
 						float tY = (float) (plPos.y - (int) plPos.y);
 
 						selectedX = Math.round(tempX + tX);
-						selectedY = Math.round(tempY + tY);
+						selectedY = Math.round(tempY + tY) + 1;
 
 						Block b = MainFile.currentWorld.getBlock(selectedX, selectedY);
 						selectedBlock = b;
 
 						if (selectedX >= 0 && selectedY >= 0) {
-							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
+							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((selectedX) * ConfigValues.size), BlockRendering.START_Y_POS + ((selectedY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 							g2.setColor(new Color(255, 255, 255, 64));
 							g2.fill(rectangle);
 
-							g2.setColor(Color.WHITE);
+							g2.setColor(Color.white);
 							g2.draw(rectangle);
 						} else {
-							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
+							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((selectedX) * ConfigValues.size), BlockRendering.START_Y_POS + ((selectedY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 							g2.setColor(new Color(255, 0, 0, 64));
 							g2.fill(rectangle);
 
-							g2.setColor(Color.RED);
+							g2.setColor(Color.red);
 							g2.draw(rectangle);
 
-							g2.draw(new Line2D.Double(rectangle.x, rectangle.y, rectangle.x + rectangle.width, rectangle.y + rectangle.height));
-							g2.draw(new Line2D.Double(rectangle.x + rectangle.width, rectangle.y, rectangle.x, rectangle.y + rectangle.height));
+							g2.draw(new Line(rectangle.getX(), rectangle.getY(), rectangle.getX() + rectangle.getWidth(), rectangle.getY() + rectangle.getHeight()));
+							g2.draw(new Line(rectangle.getX() + rectangle.getWidth(), rectangle.getY(), rectangle.getX(), rectangle.getY() + rectangle.getHeight()));
 
 						}
-
 
 					} else {
 						selectedY = -1;
@@ -115,31 +114,34 @@ public class BlockSelectionRender extends AbstractWindowRender {
 		g2.setColor(temp);
 	}
 
-	public void mouseClick( MouseEvent e, JFrame frame ) {
-		if (HotbarRender.slotSelected == 1) {
+	public void mouseClick( int button, int x, int y ) {
+		try {
 
-			if (BlockUtils.canPlaceBlockAt(new BlockGrass(), selectedX, selectedY))
-				MainFile.currentWorld.setBlock(new BlockGrass(), selectedX, selectedY);
+			int selected = (HotbarRender.slotSelected - 1);
 
-		} else if (HotbarRender.slotSelected == 2) {
+			if (selected < HotbarRender.blocks.length) {
+				if (HotbarRender.blocks[ selected ] instanceof Block) {
+					Block block = (Block) HotbarRender.blocks[ selected ].getClass().newInstance();
 
-			if (BlockUtils.canPlaceBlockAt(new BlockDirt(), selectedX, selectedY))
-				MainFile.currentWorld.setBlock(new BlockDirt(), selectedX, selectedY);
-
-		} else if (HotbarRender.slotSelected == 3) {
-
-			if (BlockUtils.canPlaceBlockAt(new BlockStone(), selectedX, selectedY))
-				MainFile.currentWorld.setBlock(new BlockStone(), selectedX, selectedY);
-
-		} else if (HotbarRender.slotSelected > 3) {
-
-			if (BlockUtils.canPlaceBlockAt(null, selectedX, selectedY))
+					if (block != null) {
+						if (BlockUtils.canPlaceBlockAt(block, selectedX, selectedY)) {
+							MainFile.currentWorld.setBlock(block, selectedX, selectedY);
+						}
+					}
+				}
+			} else {
+				if (BlockUtils.canPlaceBlockAt(null, selectedX, selectedY)) {
 				MainFile.currentWorld.setBlock(null, selectedX, selectedY);
+				}
+		}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public boolean canRender( JFrame frame ) {
+	public boolean canRender() {
 		return ConfigValues.RENDER_HOTBAR;
 	}
 

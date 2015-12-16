@@ -10,20 +10,26 @@ import Settings.Config;
 import Settings.Values.ConfigOption;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Line;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.util.FontUtils;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Line2D;
+
 
 public class GuiSettingsMainMenu extends AbstractMainMenuGui {
+
+
+	public GuiSettingsMainMenu guiInst = this;
 
 	public GuiSettingsMainMenu() {
 		super();
 	}
 
 	@Override
-	public void render( JFrame frame, Graphics2D g2 ) {
+	public void render( Graphics g2 ) {
 		Color temp = g2.getColor();
 
 		guiObjects.clear();
@@ -35,24 +41,25 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 		guiObjects.add(new backButton(buttonPos += (buttonSize * (11))));
 
-		Paint p = g2.getPaint();
+		//TODO What was Paint used for and should it be reimplemented?
+		//Paint p = g2.getPaint();
 		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
 
-		super.render(frame, g2);
+		super.render(g2);
 
-		g2.setPaint(p);
+		//g2.setPaint(p);
 		g2.setColor(Color.black);
 
 
 		RenderUtil.resizeFont(g2, 22);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString("Settings: ", 328, 100);
+		g2.drawString("Settings: ", 328, 80);
 		RenderUtil.resetFont(g2);
 
 
 		int pos = 325;
-		g2.draw(new Line2D.Double(pos, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
-		g2.draw(new Line2D.Double(pos += 190, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
+		g2.draw(new Line(pos, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
+		g2.draw(new Line(pos += 190, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
 
 		g2.setColor(new Color(95, 95, 95, 112));
 		g2.fill(new Rectangle(325, BlockRendering.START_Y_POS, 190, (ConfigValues.renderYSize * ConfigValues.size)));
@@ -64,7 +71,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 	}
 
 	@Override
-	public boolean canRender( JFrame frame ) {
+	public boolean canRender() {
 		return true;
 	}
 
@@ -80,23 +87,23 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 		ConfigOption option;
 
 		public configButton( int y, ConfigOption option ) {
-			super(0, y, 120, 16, "button." + option.getOptionCodeName());
+			super(renderStart, y, 190, 32, "button." + option.getOptionCodeName(), guiInst);
 
 			this.option = option;
 		}
 
 
 		@Override
-		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
+		public void onClicked( int button, int x, int y, Gui gui ) {
 			option.changeValue();
 		}
 
 
 		@Override
-		public void renderObject( JFrame frame, Graphics2D g2, Gui gui ) {
+		public void renderObject( Graphics g2, Gui gui ) {
 			Color temp = g2.getColor();
 
-			boolean hover = isMouseOver(frame.getMousePosition());
+			boolean hover = isMouseOver();
 
 			if (hover) {
 				g2.setColor(new Color(95, 95, 95, 174));
@@ -108,15 +115,15 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 				g2.setColor(new Color(41, 41, 41, 174));
 			}
 
-			g2.fill(new Rectangle(325, y - 6 - (height * 2), 190, height * 2));
+			g2.fill(new Rectangle(renderStart, y, width, height));
 
-			g2.setColor(hover ? Color.WHITE : Color.LIGHT_GRAY);
+			g2.setColor(hover ? Color.white : Color.lightGray);
 
-			if (!enabled) g2.setColor(Color.GRAY);
+			if (!enabled) g2.setColor(Color.gray);
 
 			RenderUtil.resizeFont(g2, 12);
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			g2.drawString(option.getOptionDisplayName() + ": " + option.getValueDisplay(), 328, y - height);
+			FontUtils.drawLeft(g2.getFont(), (option.getOptionDisplayName() + ": " + option.getValueDisplay()), x + 5, y);
 
 			RenderUtil.resetFont(g2);
 
@@ -127,12 +134,12 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 	class backButton extends MainMenuButton {
 
 		public backButton( int y ) {
-			super((BlockRendering.START_X_POS) + (((ConfigValues.renderXSize - 1) / 2) * ConfigValues.size) - 13, y, 120, 16, "Back");
+			super(renderStart, y, 190, 32, "Back", guiInst);
 		}
 
 		@Override
-		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
-			MainFile.currentGui = new GuiMainMenu();
+		public void onClicked( int button, int x, int y, Gui gui ) {
+			MainFile.setCurrentGui(new GuiMainMenu());
 		}
 	}
 }

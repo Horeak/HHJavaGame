@@ -7,13 +7,17 @@ import Main.MainFile;
 import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Line;
+import org.newdawn.slick.geom.Rectangle;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Line2D;
+
 
 public class GuiMainMenu extends AbstractMainMenuGui {
+
+	public GuiMainMenu guiInst = this;
 
 	public GuiMainMenu() {
 		super();
@@ -34,24 +38,27 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 	}
 
 	@Override
-	public void render( JFrame frame, Graphics2D g2 ) {
+	public void render( Graphics g2 ) {
 		Color temp = g2.getColor();
 
-		Paint p = g2.getPaint();
+//		Paint p = g2.getPaint();
 		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
 
-		super.render(frame, g2);
+		super.render(g2);
 
-		g2.setPaint(p);
+//		g2.setPaint(p);
 		g2.setColor(Color.black);
 
 		int pos = renderStart;
-		g2.draw(new Line2D.Double(pos, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
-		g2.draw(new Line2D.Double(pos += 190, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
+		g2.draw(new Line(pos, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
+		g2.draw(new Line(pos += 190, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
 
 		RenderUtil.resizeFont(g2, 22);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString(ConfigValues.gameTitle, renderStart + ((ConfigValues.gameTitle.length() / 2) * (g2.getFont().getSize() / 3)) + 10, 80);
+
+		int size = RenderUtil.getFontFromSlick(g2.getFont()) != null ? RenderUtil.getFontFromSlick(g2.getFont()).getSize() : 3;
+
+		g2.drawString(ConfigValues.gameTitle, renderStart + ((ConfigValues.gameTitle.length() / 2) * (size / 3)) + 10, 80);
 		RenderUtil.resetFont(g2);
 
 
@@ -65,7 +72,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 	}
 
 	@Override
-	public boolean canRender( JFrame frame ) {
+	public boolean canRender() {
 		return true;
 	}
 
@@ -78,12 +85,12 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 	public class NewGameButton extends MainMenuButton {
 
 		public NewGameButton( int y ) {
-			super(renderStart + 40, y, 120, 16, "Start Game");
+			super(renderStart, y, 190, 32, "Start Game", guiInst);
 		}
 
 		@Override
-		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
-			MainFile.currentGui = new GuiCreateWorld();
+		public void onClicked( int button, int x, int y, Gui gui ) {
+			MainFile.setCurrentGui(new GuiCreateWorld());
 		}
 
 	}
@@ -91,13 +98,13 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 	class SettingsButton extends MainMenuButton {
 
 		public SettingsButton( int y ) {
-			super(renderStart + 55, y, 120, 16, "Settings");
+			super(renderStart, y, 190, 32, "Settings", guiInst);
 		}
 
 
 		@Override
-		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
-			MainFile.currentGui = new GuiSettingsMainMenu();
+		public void onClicked( int button, int x, int y, Gui gui ) {
+			MainFile.setCurrentGui(new GuiSettingsMainMenu());
 		}
 
 	}
@@ -105,11 +112,11 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 	class ExitButton extends MainMenuButton {
 
 		public ExitButton( int y ) {
-			super(renderStart + 70, y, 120, 16, "Exit");
+			super(renderStart, y, 190, 32, "Exit", guiInst);
 		}
 
 		@Override
-		public void onClicked( MouseEvent e, JFrame frame, Gui gui ) {
+		public void onClicked( int button, int x, int y, Gui gui ) {
 			//TODO Add proper exit with saving
 			System.exit(0);
 		}

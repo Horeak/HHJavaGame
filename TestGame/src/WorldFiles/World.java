@@ -92,6 +92,8 @@ public class World {
 					block.y = y;
 				}
 
+				if (block != null) block.world = this;
+
 				Blocks[ x ][ y ] = block;
 			}
 		}
@@ -105,7 +107,7 @@ public class World {
 
 			boolean t1 = getBlock(x, y) == null, t2 = getBlock(x, y - 1) == null, t3 = getBlock(x, y + 1) != null;
 
-			System.out.println(t1 + " | " + t2 + " | " + t3);
+//			System.out.println(t1 + " | " + t2 + " | " + t3);
 
 			if (t1 && t2 && t3) {
 				xx = x;

@@ -1,44 +1,38 @@
 package Interface;
 
 import Interface.Objects.GuiButton;
+import org.newdawn.slick.Graphics;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public abstract class Gui {
 
 	public ArrayList<GuiObject> guiObjects = new ArrayList<>();
 
-	public abstract void render( JFrame frame, Graphics2D g2 );
+	public abstract void render( org.newdawn.slick.Graphics g2 );
 
-	public abstract boolean canRender( JFrame frame );
+	public abstract boolean canRender();
 
 	public boolean renderOtherWindowsRenders() {
 		return true;
 	}
 
-	public void keyTyped( KeyEvent e, JFrame frame ) {
+	public void keyPressed( int key, char c ) {
 	}
 
-	public void keyPressed( KeyEvent e, JFrame frame ) {
+	public void keyReleased( int key, char c ) {
 	}
 
-	public void keyReleased( KeyEvent e, JFrame frame ) {
-	}
-
-	public void renderObject( JFrame frame, Graphics2D g2 ) {
+	public void renderObject( Graphics g2 ) {
 		for (GuiObject object : guiObjects) {
-			object.renderObject(frame, g2, this);
+			object.renderObject(g2, this);
 		}
 	}
 
-	public void mouseClick( MouseEvent e, JFrame frame ) {
-		for (GuiObject object : guiObjects) {
-			if (object.isMouseOver(frame.getMousePosition()) && object.enabled) {
-				object.onClicked(e, frame, this);
+	public void mouseClick( int button, int x, int y ) {
+		for (GuiObject ob : guiObjects) {
+			if (ob.isMouseOver()) {
+				ob.onClicked(button, x, y, this);
 			}
 		}
 	}

@@ -4,11 +4,8 @@ import Blocks.Util.Block;
 import Main.MainFile;
 import Render.AbstractWindowRender;
 import Utils.ConfigValues;
-import Utils.RenderUtil;
 import com.sun.javafx.geom.Vec2d;
 
-import javax.swing.*;
-import java.awt.*;
 import java.text.DecimalFormat;
 
 
@@ -23,10 +20,10 @@ public class BlockRendering extends AbstractWindowRender {
 	//TODO Translate block location when inbetween 0.1F and 0.9F? and then use the current system for full numbers
 
 	@Override
-	public void render( JFrame frame, Graphics2D g2 ) {
+	public void render( org.newdawn.slick.Graphics g2 ) {
 		Vec2d plPos = new Vec2d(MainFile.currentWorld.player.getEntityPostion().x, MainFile.currentWorld.player.getEntityPostion().y);
 
-		Shape c = g2.getClip();
+		org.newdawn.slick.geom.Rectangle c = g2.getClip();
 		g2.setClip(MainFile.blockRenderBounds);
 
 		int renderDistance = ConfigValues.renderDistance + 2;
@@ -52,7 +49,7 @@ public class BlockRendering extends AbstractWindowRender {
 						if (MainFile.currentWorld.getBlock(xx, yy) != null) {
 							Block block = MainFile.currentWorld.getBlock(xx, yy);
 
-							RenderUtil.renderBlock(g2, block, START_X_POS + (int) ((renderX - (plPos.x - (int) plPos.x)) * ConfigValues.size), START_Y_POS + (int) ((renderY - (plPos.y - (int) plPos.y)) * ConfigValues.size));
+							block.getRender().renderItem(g2, START_X_POS + (int) ((renderX - (plPos.x - (int) plPos.x)) * ConfigValues.size), START_Y_POS + (int) ((renderY - (plPos.y - (int) plPos.y)) * ConfigValues.size), ConfigValues.renderMod, block);
 						}
 					}
 				}
@@ -67,7 +64,7 @@ public class BlockRendering extends AbstractWindowRender {
 	}
 
 	@Override
-	public boolean canRender( JFrame frame ) {
+	public boolean canRender() {
 		return ConfigValues.RENDER_BLOCKS && !MainFile.currentWorld.generating;
 	}
 

@@ -5,16 +5,14 @@ import Main.MainFile;
 import Render.AbstractWindowRender;
 import Utils.ConfigValues;
 import com.sun.javafx.geom.Vec2d;
-
-import javax.swing.*;
-import java.awt.*;
+import org.newdawn.slick.Color;
 
 
 public class EntityRendering extends AbstractWindowRender {
 
 
 	@Override
-	public void render( JFrame frame, Graphics2D g2 ) {
+	public void render( org.newdawn.slick.Graphics g2 ) {
 		Vec2d plPos = new Vec2d(MainFile.currentWorld.player.getEntityPostion().x, MainFile.currentWorld.player.getEntityPostion().y);
 
 		//TODO Fix entity rendering postion (only working with intergers) or simply rewrite the system with something proper...
@@ -28,9 +26,14 @@ public class EntityRendering extends AbstractWindowRender {
 			for (int y = yStart; y < yEnd; y += 1) {
 
 				for (Entity ent : MainFile.currentWorld.Entities) {
+
+					Color c = g2.getColor();
+
 					if ((int) ent.getEntityPostion().x == x && (int) ent.getEntityPostion().y == y) {
-						ent.renderEntity(frame, g2, (renderX - (int) (ent.getEntityPostion().x - (int) ent.getEntityPostion().x)) * ConfigValues.size, (renderY - (int) (ent.getEntityPostion().y - (int) ent.getEntityPostion().y)) * ConfigValues.size);
+						ent.renderEntity(g2, (renderX - (int) (ent.getEntityPostion().x - (int) ent.getEntityPostion().x)) * ConfigValues.size, (renderY - (int) (ent.getEntityPostion().y - (int) ent.getEntityPostion().y)) * ConfigValues.size);
 					}
+
+					g2.setColor(c);
 				}
 
 				renderY += 1;
@@ -41,7 +44,7 @@ public class EntityRendering extends AbstractWindowRender {
 	}
 
 	@Override
-	public boolean canRender( JFrame frame ) {
+	public boolean canRender() {
 		return ConfigValues.RENDER_ENTITIES && !MainFile.currentWorld.generating;
 	}
 

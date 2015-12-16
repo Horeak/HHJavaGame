@@ -1,138 +1,139 @@
 package Render.Renders;
 
-import Main.MainFile;
+import Blocks.BlockDirt;
+import Blocks.BlockGrass;
+import Blocks.BlockRender.BlockRenderer;
+import Blocks.BlockStone;
+import Blocks.Util.Block;
+import Interface.Gui;
+import Interface.Objects.GuiButton;
+import Items.Item;
 import Render.AbstractWindowRender;
+import Render.EnumRenderMode;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.geom.Rectangle;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class HotbarRender extends AbstractWindowRender {
 
 	public static int slotSelected = 1;
+	public static Item[] blocks = new Item[]{ new BlockGrass(), new BlockDirt(), new BlockStone() };
 
+	public static ArrayList<hotbarButton> hotbarButtons = new ArrayList<>();
 
-	int startX = BlockRendering.START_X_POS;
+	int startX = 10;
 	int startY = BlockRendering.START_Y_POS + (ConfigValues.renderYSize * ConfigValues.size) + (BlockRendering.START_Y_POS / 2);
 
+	int size = 75;
+
+	public HotbarRender() {
+		for (int i = 0; i < 10; i++) {
+			hotbarButtons.add(new hotbarButton(startX + ((size + 7) * i) + 2, startY + 2, null, i, i < blocks.length ? blocks[ i ] : null));
+		}
+	}
+
 	@Override
-	public void render( JFrame frame, Graphics2D g2 ) {
+	public void render( org.newdawn.slick.Graphics g2 ) {
 		Color temp = g2.getColor();
-		Shape c = g2.getClip();
+		Rectangle c = g2.getClip();
 
 		//TODO Remove debug feature
-		String[] blocks = new String[]{ "Grass", "Dirt", "Stone" };
-
-		Rectangle rect = new Rectangle(startX - 3, startY - 1, ConfigValues.renderXSize * ConfigValues.size + 5, ConfigValues.hotbarRenderSize + 6);
+		Rectangle rect = new Rectangle(startX, startY, startX + (size * 10) + (size / 1.3F), ConfigValues.hotbarRenderSize + 4);
 		g2.setClip(rect);
 
-		g2.setColor(Color.GRAY);
+		g2.setColor(Color.gray);
 		g2.fill(rect);
 
 		g2.setColor(Color.black);
-		g2.draw(new Rectangle(startX - 3, startY - 1, ConfigValues.renderXSize * ConfigValues.size + 4, ConfigValues.hotbarRenderSize + 5));
+		g2.draw(new Rectangle(startX + 1, startY + 1, startX + (size * 10) + (size / 1.3F) - 2, ConfigValues.hotbarRenderSize + 2));
 
-		int size = 79;
-
-		for (int i = 0; i < 10; i++) {
-			boolean hover = false;
-
-			try {
-				if (frame != null && frame.getMousePosition() != null && frame.isFocused()) {
-					Point p = frame.getMousePosition();
-					if (p != null) {
-						int mouseX = p.x;
-						int mouseY = p.y;
-
-						int tempX = startX, tempY = startY;
-
-						tempX -= 1;
-						tempY += 1 + (ConfigValues.hotbarRenderSize) - 7;
-
-						if (mouseX > tempX && mouseY > tempY) {
-							if (mouseX < (tempX + (ConfigValues.renderXSize * ConfigValues.size)) && mouseY < (tempY + ConfigValues.hotbarRenderSize)) {
-								mouseX -= tempX;
-
-								int g = mouseX / 80;
-								if (i == g) hover = true;
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			boolean selected = (i + 1) == slotSelected;
-
-			g2.setColor(Color.DARK_GRAY);
-
-			if (selected) g2.setColor(Color.GRAY);
-
-			if (hover) g2.setColor(Color.LIGHT_GRAY);
-
-			Rectangle rectt = new Rectangle(startX - 1 + (i * size) + (i * 1), startY + 1, size, ConfigValues.hotbarRenderSize - 1);
-			g2.fill(rectt);
-
-			g2.setColor(Color.ORANGE);
-
-			if (hover) g2.setColor(Color.RED);
-
-			g2.draw(rectt);
-
-			g2.setColor(Color.WHITE);
-			RenderUtil.resizeFont(g2, 14);
-
-			if (selected) RenderUtil.changeFontStyle(g2, Font.BOLD);
-
-			g2.drawString((i + 1) + "", rectt.x + 5, rectt.y + 14);
-			RenderUtil.resetFont(g2);
-
-			//TODO Remove debug feature
-			if (MainFile.currentGui == null) if (blocks.length > i && blocks[ i ] != null) {
-				g2.drawString(blocks[ i ], rectt.x + 5, rectt.y + 34);
-			}
-
+		for (hotbarButton bt : hotbarButtons) {
+			bt.renderObject(g2, null);
 		}
 
 		g2.setColor(temp);
 		g2.setClip(c);
 	}
 
-	public void mouseClick( MouseEvent e, JFrame frame ) {
-		try {
-			if (frame != null && frame.getMousePosition() != null) {
-				int mouseX = frame.getMousePosition().x;
-				int mouseY = frame.getMousePosition().y;
-
-				int tempX = startX, tempY = startY;
-
-				tempX -= 1;
-				tempY += 1 + (ConfigValues.hotbarRenderSize) - 7;
-
-				if (mouseX > tempX && mouseY > tempY) {
-					if (mouseX < (tempX + (ConfigValues.renderXSize * ConfigValues.size)) && mouseY < (tempY + ConfigValues.hotbarRenderSize)) {
-						mouseX -= tempX;
-
-						slotSelected = (mouseX / 80) + 1;
-					}
-				}
-			}
-		} catch (Exception ee) {
-			ee.printStackTrace();
-		}
-	}
-
 	@Override
-	public boolean canRender( JFrame frame ) {
+	public boolean canRender() {
 		return ConfigValues.RENDER_HOTBAR;
 	}
-
-
 	@Override
 	public boolean canRenderWithGui() {
 		return true;
+	}
+
+	public void mouseClick( int button, int x, int y ) {
+		for (hotbarButton bt : hotbarButtons) {
+			if (bt.isMouseOver()) {
+				bt.onClicked(button, x, y, null);
+			}
+		}
+
+	}
+
+
+	class hotbarButton extends GuiButton {
+		int num;
+		Item item;
+
+		public hotbarButton( int x, int y, Gui gui, int num, Item item ) {
+			super(x, y, size, size, "", gui);
+
+			this.num = num;
+			this.item = item;
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, Gui gui ) {
+			slotSelected = num + 1;
+		}
+
+		@Override
+		public void renderObject( org.newdawn.slick.Graphics g2, Gui gui ) {
+			boolean selected = (num + 1) == slotSelected;
+
+			g2.setColor(Color.darkGray);
+			if (selected) g2.setColor(Color.gray);
+			if (isMouseOver()) g2.setColor(Color.lightGray);
+
+			Rectangle rectt = new Rectangle(x, y, width, height);
+			g2.fill(rectt);
+
+			g2.setColor(Color.orange);
+			if (isMouseOver()) g2.setColor(Color.red);
+			g2.draw(rectt);
+
+			g2.setColor(Color.white);
+			RenderUtil.resizeFont(g2, 14);
+
+			if (selected) RenderUtil.changeFontStyle(g2, Font.BOLD);
+
+			g2.drawString((num + 1) + "", rectt.getX() + 5, rectt.getY() + 4);
+			RenderUtil.resetFont(g2);
+
+			g2.setColor(Color.white);
+			RenderUtil.resizeFont(g2, 10);
+
+			if (item != null) {
+				g2.drawString(item.getItemName(), x + 3, y + 60);
+			}
+
+			RenderUtil.resetFont(g2);
+
+			if (item != null && item.getRender() != null) {
+				if (item instanceof Block) {
+					((BlockRenderer) (item.getRender())).renderBlock(g2, x + 15, y + 25, EnumRenderMode.render2_5D, (Block) item, true, true);
+				} else {
+					item.getRender().renderItem(g2, x + 15, y + 25, EnumRenderMode.render2_5D, item);
+				}
+			}
+		}
+
 	}
 }

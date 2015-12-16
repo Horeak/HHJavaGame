@@ -4,8 +4,6 @@ import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import com.sun.javafx.geom.Point2D;
 
-import javax.swing.*;
-import java.awt.*;
 import java.text.DecimalFormat;
 
 public abstract class Entity {
@@ -39,7 +37,7 @@ public abstract class Entity {
 
 	public abstract void damageEntity( DamageSource source, DamageBase damage );
 
-	public abstract void renderEntity( JFrame frame, Graphics2D g2, int renderX, int renderY );
+	public abstract void renderEntity( org.newdawn.slick.Graphics g2, int renderX, int renderY );
 
 	public void updateEntity() {
 	}

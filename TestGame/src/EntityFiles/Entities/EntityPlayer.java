@@ -6,8 +6,10 @@ import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
 import Main.MainFile;
+import Utils.RenderUtil;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
@@ -58,7 +60,9 @@ public class EntityPlayer extends Entity {
 	}
 
 	@Override
-	public void renderEntity( JFrame frame, Graphics2D g2, int renderX, int renderY ) {
+	public void renderEntity( Graphics g2, int renderX, int renderY ) {
+		g2.setColor(RenderUtil.getColorToSlick(new Color(141, 141, 141)));
+
 		g2.draw(new Rectangle(renderX - 4, renderY - 36, 21, 21));
 		g2.draw(new Rectangle(renderX + 2, renderY - 15, 10, 26));
 		g2.draw(new Rectangle(renderX - 6, renderY + 11, 25, 11));

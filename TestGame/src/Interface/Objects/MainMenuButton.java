@@ -1,38 +1,27 @@
 package Interface.Objects;
 
 import Interface.Gui;
-import Interface.Interfaces.AbstractMainMenuGui;
 import Utils.RenderUtil;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.util.FontUtils;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 
 
 public abstract class MainMenuButton extends GuiButton {
 
 	//TODO Remove the hardcoded 325-x position when adding window resizing
-	public MainMenuButton( int x, int y, int width, int height, String name ) {
-		super(x, y, width, height, name);
-	}
-
-
-	public abstract void onClicked( MouseEvent e, JFrame frame, Gui gui );
-
-	public boolean isMouseOver( Point p ) {
-		try {
-			return p.x > AbstractMainMenuGui.renderStart && p.x < (AbstractMainMenuGui.renderStart + AbstractMainMenuGui.renderWidth) && p.y > (y - 14) && p.y < (y + 24);
-		} catch (Exception e) {
-		}
-
-		return false;
+	public MainMenuButton( int x, int y, int width, int height, String name, Gui gui ) {
+		super(x, y, width, height, name, gui);
 	}
 
 	@Override
-	public void renderObject( JFrame frame, Graphics2D g2, Gui gui ) {
+	public void renderObject( Graphics g2, Gui gui ) {
 		Color temp = g2.getColor();
 
-		boolean hover = isMouseOver(frame.getMousePosition());
+		boolean hover = isMouseOver();
 
 		if (hover) {
 			g2.setColor(new Color(95, 95, 95, 174));
@@ -44,15 +33,15 @@ public abstract class MainMenuButton extends GuiButton {
 			g2.setColor(new Color(41, 41, 41, 174));
 		}
 
-		g2.fill(new Rectangle(AbstractMainMenuGui.renderStart, y - 6 - (height * 2), AbstractMainMenuGui.renderWidth, height * 2));
+		g2.fill(new Rectangle(x, y, width, height));
 
-		g2.setColor(hover ? Color.WHITE : Color.LIGHT_GRAY);
+		g2.setColor(hover ? Color.white : Color.lightGray);
 
-		if (!enabled) g2.setColor(Color.GRAY);
+		if (!enabled) g2.setColor(Color.gray);
 
 		RenderUtil.resizeFont(g2, 22);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString(text, x, y - height);
+		FontUtils.drawCenter(g2.getFont(), text, x, y, 185);
 
 		RenderUtil.resetFont(g2);
 
