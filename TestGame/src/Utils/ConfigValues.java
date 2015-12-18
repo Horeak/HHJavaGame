@@ -14,13 +14,12 @@ public class ConfigValues {
 
 	public static boolean RENDER_HOTBAR = true;
 
-	//TODO Add screen resize (Test screen size with Macbook Air and windows laptop)
 	public static int renderXSize = 25;
 	public static int renderYSize = 25;
 
 	public static int renderDistance = 16;
 	public static int renderRange = ((renderXSize + renderYSize) / 2) / 2;
-	public static int hotbarRenderSize = 75;
+	public static int hotbarRenderSize = 54;
 
 	public static boolean resizeable = false;
 

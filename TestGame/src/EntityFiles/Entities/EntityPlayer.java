@@ -1,11 +1,12 @@
 package EntityFiles.Entities;
 
 
-import Blocks.Util.Block;
+import Blocks.TorchBlock;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
-import Main.MainFile;
+import Items.Inventory;
+import Items.Item;
 import Utils.RenderUtil;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
@@ -14,7 +15,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 
-public class EntityPlayer extends Entity {
+public class EntityPlayer extends Entity implements Inventory {
 
 	//TODO Add inventory
 	//TODO Make hotbar connected to player/inventory
@@ -22,19 +23,20 @@ public class EntityPlayer extends Entity {
 	//TODO Add entity physics to make player fall and not able to fly.
 	//TODO Make player spawn above ground instead of at a fixed position under ground
 
-	public static float motionIncreaseY = 0.8F;
-	public static float motionMaxY = 6F;
 	/**
 	 * 1 = left
 	 * 2 = right
 	 */
 	public int facing = 0;
-	public float motionY;
-	public boolean jump = true;
 	private int playerHealth = 100, playerMaxHealth = 100;
+	//TODO Change items size when adding proper inventory
+	private Item[] inventoryItems = new Item[ 10 ];
 
 	public EntityPlayer( float x, float y ) {
 		super(x, y);
+
+		for (int i = 0; i < 10; i++)
+			addItem(new TorchBlock());
 	}
 
 	@Override
@@ -63,70 +65,114 @@ public class EntityPlayer extends Entity {
 	public void renderEntity( Graphics g2, int renderX, int renderY ) {
 		g2.setColor(RenderUtil.getColorToSlick(new Color(141, 141, 141)));
 
-		g2.draw(new Rectangle(renderX - 4, renderY - 36, 21, 21));
-		g2.draw(new Rectangle(renderX + 2, renderY - 15, 10, 26));
-		g2.draw(new Rectangle(renderX - 6, renderY + 11, 25, 11));
+		g2.draw(new Rectangle(renderX - 4, renderY - 58, 21, 21));
+		g2.draw(new Rectangle(renderX + 2, renderY - 37, 10, 26));
+		g2.draw(new Rectangle(renderX - 6, renderY - 11, 25, 11));
 
 		if (facing == 1) {
-			g2.draw(new Rectangle(renderX - 10, renderY - 28, 6, 6));
+			g2.draw(new Rectangle(renderX - 10, renderY - 50, 6, 6));
 
 		} else if (facing == 2) {
-			g2.draw(new Rectangle(renderX + 17, renderY - 30, 6, 6));
+			g2.draw(new Rectangle(renderX + 17, renderY - 50, 6, 6));
 		}
 	}
-
 
 	public Rectangle2D getPlayerBounds() {
-		return new Rectangle2D.Double(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y - 1), 1, 2);
+		return new Rectangle2D.Double(getEntityPostion().x, getEntityPostion().y - 1, 1, 2);
 	}
 
-	public Block getBlockBelow() {
-		return MainFile.currentWorld.getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);
+	@Override
+	public Rectangle2D getEntityBounds() {
+		return getPlayerBounds();
 	}
 
-	public boolean canMoveTo( float x, float y ) {
-		if (x >= 0 && x < MainFile.currentWorld.worldSize.xSize && y >= 0 && y < MainFile.currentWorld.worldSize.ySize) {
+	@Override
+	public Item[] getItems() {
+		return inventoryItems;
+	}
 
-			//TODO Fix render issue when going x12 or less
-			if (x >= 12 || getEntityPostion().x < 12)
-				return MainFile.currentWorld.getBlock(Math.round(x), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x), Math.round(y) - 1) == null;
+	@Override
+	public Item getItem( int i ) {
+		return i < inventoryItems.length ? inventoryItems[ i ] : null;
+	}
+
+	@Override
+	public void setItem( int i, Item item ) {
+		if (i < inventoryItems.length) {
+			inventoryItems[ i ] = item;
 		}
-		return false;
 	}
 
-	public boolean moveTo( float x, float y ) {
-		Block targetBlock = MainFile.currentWorld.getBlock(Math.round(x), Math.round(y));
+	@Override
+	public int getInvetorySize() {
+		return inventoryItems.length;
+	}
 
-		if (targetBlock != null && !targetBlock.blockBounds().contains(x, y) && targetBlock != null && !targetBlock.blockBounds().intersects(getPlayerBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
-			if (canMoveTo(x, y)) {
-				setEntityPosition(x, y);
-				return true;
+	@Override
+	public String getInventoryName() {
+		return "Player Inventory";
+	}
+
+
+	//TODO Improve both the consumeItem and the addItem as these are only rough temp versions
+	public void consumeItem( Item item ) {
+		for (int i = 0; i < getInvetorySize(); i++) {
+			Item it = getItem(i);
+
+			if (it != null) {
+				if (it.getItemID().equals(item.getItemID())) {
+					if (it.getItemStackSize() <= 1) {
+						setItem(i, null);
+						return;
+					} else {
+						it.decreaseStackSize(1);
+						return;
+					}
+				}
 			}
 		}
-
-		return false;
 	}
 
-	//TODO Improve movement. (Round up numbers for checking if the player can walk there?)
-	public void updateEntity() {
-		if (motionY > motionMaxY) motionY = motionMaxY;
+	//TODO Fix bug when adding a item that fills up a stack it also creates a new one before getting the next item
+	public boolean addItem( Item item ) {
+		int stack = item.getItemStackSize();
 
-		Block b = getBlockBelow();
+		boolean checkedCurrent = false;
 
-		if (b == null) {
-			moveTo(getEntityPostion().x, getEntityPostion().y + motionY);
+		start:
+		for (int g = 0; g < 2; g++)
+			for (int i = 0; i < getInvetorySize(); i++) {
+				Item it = getItem(i);
 
-			if (motionY < motionMaxY) {
-				motionY += motionIncreaseY;
+				if (checkedCurrent) {
+					if (it == null && item != null) {
+						setItem(i, item);
+						return true;
+					}
+				} else {
+					if (it != null && it.getItemID().equals(item.getItemID()) && it.getItemStackSize() < it.getItemMaxStackSize()) {
+						int t = it.getItemMaxStackSize() - it.getItemStackSize();
+						int tt = t - stack;
+
+						if (tt > 0) {
+							it.setStackSize(it.getItemMaxStackSize() - tt);
+							return true;
+						} else {
+							it.setStackSize(it.getItemMaxStackSize() - tt);
+							stack = -(it.getItemMaxStackSize() - tt);
+
+							continue;
+						}
+
+					}
+				}
+
+				if (i == (getInvetorySize() - 1)) {
+					checkedCurrent = true;
+					continue start;
+				}
 			}
 
-		} else if (b != null) {
-			motionY = 0;
-			jump = true;
-
-			moveTo(getEntityPostion().x, Math.round(getEntityPostion().y));
-		}
-
-
+		return false;
 	}
 }

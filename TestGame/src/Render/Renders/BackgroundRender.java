@@ -11,8 +11,6 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class BackgroundRender extends AbstractWindowRender {
 
-	//TODO Somehow add lighting. For example make Night time darken all rendering calls unless light nearby
-
 	public Color skyColor;
 
 	@Override

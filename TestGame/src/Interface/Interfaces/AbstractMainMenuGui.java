@@ -19,7 +19,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class AbstractMainMenuGui extends Gui {
 
-	public static int renderStart = 325;
+	public static int renderStart = 305;
 	public static int renderWidth = 190;
 	public static World world;
 
@@ -46,8 +46,9 @@ public class AbstractMainMenuGui extends Gui {
 			for (int x = 0; x < ConfigValues.renderXSize; x++) {
 				world.setBlock(new BlockStone(x, (ConfigValues.renderYSize - 1)), x, ConfigValues.renderYSize - 1);
 			}
-
 		}
+
+		world.updateLightForBlocks();
 	}
 
 	@Override
@@ -70,6 +71,16 @@ public class AbstractMainMenuGui extends Gui {
 			}
 		}
 		}
+
+		g2.setColor(org.newdawn.slick.Color.black);
+		g2.drawLine(renderStart, BlockRendering.START_Y_POS, renderStart, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+		g2.drawLine(renderStart + renderWidth, BlockRendering.START_Y_POS, renderStart + renderWidth, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+
+		g2.setColor(new Color(152, 152, 152, 96));
+		g2.fill(rectangle);
+
+		g2.setColor(new Color(95, 95, 95, 112));
+		g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
 
 	}
 

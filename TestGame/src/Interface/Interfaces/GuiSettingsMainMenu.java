@@ -12,7 +12,6 @@ import Utils.ConfigValues;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.FontUtils;
 
@@ -41,13 +40,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 		guiObjects.add(new backButton(buttonPos += (buttonSize * (11))));
 
-		//TODO What was Paint used for and should it be reimplemented?
-		//Paint p = g2.getPaint();
-		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
-
 		super.render(g2);
-
-		//g2.setPaint(p);
 		g2.setColor(Color.black);
 
 
@@ -55,17 +48,6 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
 		g2.drawString("Settings: ", 328, 80);
 		RenderUtil.resetFont(g2);
-
-
-		int pos = 325;
-		g2.draw(new Line(pos, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
-		g2.draw(new Line(pos += 190, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
-
-		g2.setColor(new Color(95, 95, 95, 112));
-		g2.fill(new Rectangle(325, BlockRendering.START_Y_POS, 190, (ConfigValues.renderYSize * ConfigValues.size)));
-
-		g2.setColor(new Color(152, 152, 152, 96));
-		g2.fill(rectangle);
 
 		g2.setColor(temp);
 	}
@@ -139,7 +121,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.setCurrentGui(new GuiMainMenu());
+			MainFile.currentGui = new GuiMainMenu();
 		}
 	}
 }

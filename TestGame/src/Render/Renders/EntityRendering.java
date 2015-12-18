@@ -15,13 +15,10 @@ public class EntityRendering extends AbstractWindowRender {
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Vec2d plPos = new Vec2d(MainFile.currentWorld.player.getEntityPostion().x, MainFile.currentWorld.player.getEntityPostion().y);
 
-		//TODO Fix entity rendering postion (only working with intergers) or simply rewrite the system with something proper...
-		//TODO Make entity rendering work with floats
-
 		int xStart = (int) (plPos.x - ConfigValues.renderRange), xEnd = (int) (plPos.x + ConfigValues.renderRange + 1);
 		int yStart = (int) (plPos.y - ConfigValues.renderRange), yEnd = (int) (plPos.y + ConfigValues.renderRange + 1);
 
-		int renderX = 1, renderY = 1;
+		int renderX = 0, renderY = 0;
 		for (int x = xStart; x < xEnd; x += 1) {
 			for (int y = yStart; y < yEnd; y += 1) {
 
@@ -30,6 +27,7 @@ public class EntityRendering extends AbstractWindowRender {
 					Color c = g2.getColor();
 
 					if ((int) ent.getEntityPostion().x == x && (int) ent.getEntityPostion().y == y) {
+						renderY += 1;
 						ent.renderEntity(g2, (renderX - (int) (ent.getEntityPostion().x - (int) ent.getEntityPostion().x)) * ConfigValues.size, (renderY - (int) (ent.getEntityPostion().y - (int) ent.getEntityPostion().y)) * ConfigValues.size);
 					}
 
@@ -38,7 +36,7 @@ public class EntityRendering extends AbstractWindowRender {
 
 				renderY += 1;
 			}
-			renderY = 1;
+			renderY = 0;
 			renderX += 1;
 		}
 	}

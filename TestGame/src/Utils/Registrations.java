@@ -22,8 +22,8 @@ public class Registrations {
 		windowRenders.add(new BlockRendering());
 		windowRenders.add(new EntityRendering());
 
-		windowRenders.add(new HotbarRender());
 		windowRenders.add(new BlockSelectionRender());
+		windowRenders.add(new HotbarRender());
 
 		windowRenders.add(new DebugInfoRender());
 		windowRenders.add(new WorldGenerationScreen());

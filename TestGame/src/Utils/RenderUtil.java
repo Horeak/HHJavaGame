@@ -8,6 +8,7 @@ package Utils;
 
 import Main.MainFile;
 import WorldFiles.EnumWorldTime;
+import WorldFiles.World;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -148,13 +149,21 @@ public class RenderUtil {
 		if (temp != null) setFont(g2, getFont(temp));
 	}
 
-	public static void darkenColorBasedOnTime( Graphics g2 ) {
+	public static org.newdawn.slick.Color getColorBasedOnLight( org.newdawn.slick.Color c, World world, int x, int y ) {
 		if (MainFile.currentWorld != null) if (MainFile.currentWorld.worldTimeOfDay == EnumWorldTime.EVENING) {
-			g2.setColor(g2.getColor().darker());
+			return c.darker();
 
 		} else if (MainFile.currentWorld.worldTimeOfDay == EnumWorldTime.NIGHT) {
-			g2.setColor(g2.getColor().darker().darker());
+			return c.darker().darker();
 		}
+
+
+		return c;
+	}
+
+
+	public static org.newdawn.slick.Color getColorWithAlpha( org.newdawn.slick.Color c, float alpha ) {
+		return new org.newdawn.slick.Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 
 }

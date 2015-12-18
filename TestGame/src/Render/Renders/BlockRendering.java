@@ -11,8 +11,8 @@ import java.text.DecimalFormat;
 
 public class BlockRendering extends AbstractWindowRender {
 
-	public static final int START_X_POS = 23;
-	public static final int START_Y_POS = 23;
+	public static final int START_X_POS = 0; //23
+	public static final int START_Y_POS = 0; //23
 
 	//TODO Darken rendering depending on time of day/light
 	//TODO Investigate the possibility of complete 3D render like MC

@@ -18,21 +18,19 @@ public class DebugInfoRender extends AbstractWindowRender {
 		Color temp = g2.getColor();
 		Rectangle c = g2.getClip();
 
-		int xCord = (ConfigValues.renderXSize * ConfigValues.size) + 30;
-		int ySize = (ConfigValues.renderYSize * ConfigValues.size) + (BlockRendering.START_Y_POS * 2);
+		int xCord = (ConfigValues.renderXSize * ConfigValues.size) - 25;
+		int ySize = (ConfigValues.renderYSize * ConfigValues.size);
 
-		Rectangle tangle = new Rectangle(xCord, BlockRendering.START_Y_POS, 300 - (BlockRendering.START_X_POS), ySize - (BlockRendering.START_Y_POS * 2));
+		Rectangle tangle = new Rectangle(xCord, BlockRendering.START_Y_POS, 266, ySize);
 		g2.setClip(tangle);
 
 		g2.setColor(Color.darkGray);
 		g2.fill(tangle);
 		g2.setColor(Color.black);
-		g2.draw(tangle);
-		tangle.setLocation(tangle.getX() + 1, tangle.getY() + 1);
-		tangle.setSize(tangle.getWidth() - 2, tangle.getHeight() - 2);
-		g2.draw(tangle);
-		tangle.setLocation(tangle.getX() + 1, tangle.getY() + 1);
-		tangle.setSize(tangle.getWidth() - 2, tangle.getHeight() - 2);
+
+		tangle.setLocation(tangle.getX() + 1, tangle.getY());
+		tangle.setSize(tangle.getWidth() - 2, tangle.getHeight() - 1);
+
 		g2.draw(tangle);
 
 		int textStartX = xCord + 5;
@@ -76,6 +74,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 			g2.drawString(" - Player pos: " + MainFile.currentWorld.player.getEntityPostion(), textStartX, linePos += (lineLength));
 			g2.drawString(" - Block below: " + (MainFile.currentWorld.player.getBlockBelow() != null ? MainFile.currentWorld.player.getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
+			g2.drawString(" - Is on Ground: " + (MainFile.currentWorld.player.isOnGround), textStartX, linePos += (lineLength));
 
 		}
 
@@ -84,7 +83,6 @@ public class DebugInfoRender extends AbstractWindowRender {
 		if (MainFile.currentWorld != null) {
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("Currently selected block: " + (BlockSelectionRender.selectedBlock != null ? BlockSelectionRender.selectedBlock.getBlockDisplayName() : "None"), textStartX, linePos += (lineLength * 2));
-			RenderUtil.resetFont(g2);
 
 			if (BlockSelectionRender.selectedBlock != null) {
 				g2.setColor(Color.black);

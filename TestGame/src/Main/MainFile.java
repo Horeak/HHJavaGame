@@ -48,11 +48,11 @@ public class MainFile extends BasicGame implements InputListener {
 	public static Rectangle blockRenderBounds = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size) - ConfigValues.renderXSize, (ConfigValues.renderYSize * ConfigValues.size));
 	public static boolean hasScrolled = false;
 	public static AppGameContainer gameContainer;
-	public static int xWindowSize = (BlockRendering.START_X_POS * 2) + (ConfigValues.renderXSize * ConfigValues.size);
-	public static int yWindowSize = (BlockRendering.START_Y_POS * 2) + (ConfigValues.renderYSize * ConfigValues.size) + ConfigValues.hotbarRenderSize + 25;
-	private static Gui currentGui;
+	public static int xWindowSize = (ConfigValues.renderXSize * ConfigValues.size) - 25;
+	public static int yWindowSize = (ConfigValues.renderYSize * ConfigValues.size);
+	public static Gui currentGui;
 	boolean hasDebugSize = false;
-	int debugSize = 300;
+	int debugSize = 265;
 
 	public MainFile( String title ) {
 		super(title);
@@ -63,10 +63,12 @@ public class MainFile extends BasicGame implements InputListener {
 			//Try make it use ScaleableGame?
 			gameContainer = new AppGameContainer(file);
 
+			//TODO fix rendering when using ScaleableGame
 			gameContainer.setDisplayMode(xWindowSize, yWindowSize, false);
 
 			gameContainer.setShowFPS(false);
 			gameContainer.setVSync(true);
+
 
 			gameContainer.start();
 		} catch (SlickException ex) {
@@ -74,72 +76,6 @@ public class MainFile extends BasicGame implements InputListener {
 		}
 	}
 
-	//TODO Setting the gui crashes the game. Perhaps because of the Update or Render method using at the same time?
-	public synchronized static Gui getCurrentGui() {
-		return currentGui;
-	}
-
-	public synchronized static void setCurrentGui( Gui currentGui ) {
-		MainFile.currentGui = currentGui;
-	}
-
-	//TODO Add keyregister
-	//TODO Add proper move controls with motion instead of block moving
-	@Override
-	public void keyPressed( int key, char c ) {
-
-		if (MainFile.currentWorld != null) {
-			if (c == 'a') {
-				if (currentWorld.player.facing == 1) {
-					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x - 0.4F, currentWorld.player.getEntityPostion().y);
-				}
-
-				currentWorld.player.facing = 1;
-
-			} else if (c == 'd') {
-				if (currentWorld.player.facing == 2) {
-					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x + 0.4F, currentWorld.player.getEntityPostion().y);
-				}
-
-				currentWorld.player.facing = 2;
-			}
-
-
-			if (c == 'w') {
-				if (currentWorld.player.jump && currentWorld.getBlock((int) currentWorld.player.getEntityPostion().x, (int) currentWorld.player.getEntityPostion().y + 1) != null) {
-					if (currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x, currentWorld.player.getEntityPostion().y - 1.5F)) {
-						currentWorld.player.jump = false;
-					}
-				}
-			}
-		}
-
-		//TODO Make it open a ingame version of the main menu
-		if (currentGui == null && currentWorld != null) {
-			if (key == Input.KEY_ESCAPE) {
-				currentGui = new GuiMainMenu();
-			}
-		}
-
-		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if (currentGui == null || render.canRenderWithGui()) render.keyPressed(key, c);
-		}
-
-		if (currentGui != null) {
-			currentGui.keyPressed(key, c);
-		}
-	}
-
-	@Override
-	public void keyReleased( int key, char c ) {
-		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if (currentGui == null || render.canRenderWithGui()) render.keyReleased(key, c);
-		}
-
-		if (currentGui != null) {
-			currentGui.keyReleased(key, c);
-		}
-	}
 
 	@Override
 	public void init( GameContainer container ) throws SlickException {
@@ -152,7 +88,6 @@ public class MainFile extends BasicGame implements InputListener {
 		currentGui = new GuiMainMenu();
 
 		container.getInput().addMouseListener(new MouseListener() {
-
 			//TODO Registery for mouse wheel (or add it to the keybind system i have to make)
 			public void mouseWheelMoved( int change ) {
 				if (!hasScrolled) {
@@ -169,10 +104,7 @@ public class MainFile extends BasicGame implements InputListener {
 
 			public void mouseClicked( int button, int x, int y, int clickCount ) {
 			}
-
 			public void mousePressed( int button, int x, int y ) {
-				if (button == Input.MOUSE_LEFT_BUTTON) {
-
 					for (AbstractWindowRender render : Registrations.windowRenders) {
 						if (currentGui == null || render.canRenderWithGui()) render.mouseClick(button, x, y);
 					}
@@ -180,7 +112,6 @@ public class MainFile extends BasicGame implements InputListener {
 					if (currentGui != null) {
 						currentGui.mouseClick(button, x, y);
 					}
-				}
 			}
 
 			public void mouseReleased( int button, int x, int y ) {
@@ -206,33 +137,24 @@ public class MainFile extends BasicGame implements InputListener {
 			}
 		});
 
+
 	}
 
 	@Override
 	public void update( GameContainer container, int delta ) throws SlickException {
-		//TODO Fix resizable
-		if (ConfigValues.resizeable) {
-			ConfigValues.renderXSize = Math.round((container.getWidth() - (BlockRendering.START_X_POS * 2)) / ConfigValues.size);
-			ConfigValues.renderYSize = Math.round((container.getHeight() - (BlockRendering.START_Y_POS * 2)) / ConfigValues.size);
+		updateKeys(container, delta);
 
-//			ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
+//		//TODO Fix resizable
+//		if (ConfigValues.resizeable) {
+//			ConfigValues.renderXSize = Math.round((container.getWidth() - (BlockRendering.START_X_POS * 2)) / ConfigValues.size);
+//			ConfigValues.renderYSize = Math.round((container.getHeight() - (BlockRendering.START_Y_POS * 2)) / ConfigValues.size);
 //
-//			float temp = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 25;
-//			ConfigValues.renderDistance = 20;
-
-
-		} else {
-			ConfigValues.renderXSize = 25;
-			ConfigValues.renderYSize = 25;
-
-			ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
-		}
-
-//			if (ConfigValues.resizeable && !frame.isResizable() || !ConfigValues.resizeable && frame.isResizable())
-//				frame.setResizable(ConfigValues.resizeable);
-
-//			if (frame != null && frame.getContentPane() != null) frame.getContentPane().repaint();
-
+//		} else {
+//			ConfigValues.renderXSize = 25;
+//			ConfigValues.renderYSize = 25;
+//
+//			ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
+//		}
 
 		if (ConfigValues.debug && !hasDebugSize) {
 			gameContainer.setDisplayMode(container.getWidth() + debugSize, container.getHeight(), false);
@@ -244,7 +166,9 @@ public class MainFile extends BasicGame implements InputListener {
 
 			BlockSelectionRender.selectedX = -1;
 			BlockSelectionRender.selectedY = -1;
-			}
+		}
+
+
 	}
 
 	@Override
@@ -276,12 +200,73 @@ public class MainFile extends BasicGame implements InputListener {
 
 
 		g2.setClip(blockRenderBounds);
-		g2.setColor(Color.white);
-
-		Rectangle e = new Rectangle(blockRenderBounds.getX() + 1, blockRenderBounds.getY(), blockRenderBounds.getWidth() - 1, blockRenderBounds.getHeight() - 1);
-
-		g2.draw(e);
 		g2.setClip(c);
+	}
+
+	//TODO Add keyregister
+	//TODO Add proper move controls with motion instead of block moving
+	@Override
+	public void keyPressed( int key, char c ) {
+		if (Character.isDigit(c)) {
+			Integer tt = Integer.parseInt(c + "");
+			if (tt > 0 && tt < 10) {
+				HotbarRender.slotSelected = tt;
+			}
+		}
+
+		//TODO Make it open a ingame version of the main menu
+		if (currentGui == null && currentWorld != null) {
+			if (key == Input.KEY_ESCAPE) {
+				currentGui = new GuiMainMenu();
+			}
+		}
+
+		for (AbstractWindowRender render : Registrations.windowRenders) {
+			if (currentGui == null || render.canRenderWithGui()) render.keyPressed(key, c);
+		}
+
+		if (currentGui != null) {
+			currentGui.keyPressed(key, c);
+		}
+	}
+
+	@Override
+	public void keyReleased( int key, char c ) {
+		for (AbstractWindowRender render : Registrations.windowRenders) {
+			if (currentGui == null || render.canRenderWithGui()) render.keyReleased(key, c);
+		}
+
+		if (currentGui != null) {
+			currentGui.keyReleased(key, c);
+		}
+	}
+
+	public void updateKeys( GameContainer gameContainer, int delta ) {
+		if (MainFile.currentWorld != null) {
+			if (gameContainer.getInput().isKeyPressed(Input.KEY_A) || gameContainer.getInput().isKeyDown(Input.KEY_A)) {
+				if (currentWorld.player.facing == 1) {
+					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x - 0.14F, currentWorld.player.getEntityPostion().y);
+				}
+
+				currentWorld.player.facing = 1;
+
+			} else if (gameContainer.getInput().isKeyPressed(Input.KEY_D) || gameContainer.getInput().isKeyDown(Input.KEY_D)) {
+				if (currentWorld.player.facing == 2) {
+					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x + 0.14F, currentWorld.player.getEntityPostion().y);
+				}
+
+				currentWorld.player.facing = 2;
+			}
+
+
+			if (gameContainer.getInput().isKeyPressed(Input.KEY_W) || gameContainer.getInput().isKeyDown(Input.KEY_W) && (delta & 700) != 0) {
+				if (currentWorld.player.isOnGround) {
+					if (currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x, currentWorld.player.getEntityPostion().y - 1F)) {
+						currentWorld.player.isOnGround = false;
+					}
+				}
+			}
+		}
 	}
 }
 

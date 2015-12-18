@@ -1,11 +1,14 @@
 package WorldFiles;
 
 import Blocks.Util.Block;
-import Blocks.Util.BlockUpdate;
+import Blocks.Util.ILightSource;
+import Blocks.Util.ITickBlock;
 import EntityFiles.Entities.EntityPlayer;
 import EntityFiles.Entity;
+import Main.MainFile;
 import Threads.WorldEntityUpdateThread;
 import Threads.WorldGenerationThread;
+import Threads.WorldLightUpdateThread;
 import Threads.WorldUpdateThread;
 import Utils.ConfigValues;
 import com.sun.javafx.geom.Vec2d;
@@ -17,9 +20,12 @@ public class World {
 
 	public String worldName;
 	public EnumWorldSize worldSize;
+
 	public WorldGenerationThread worldGenerationThread = new WorldGenerationThread();
 	public WorldUpdateThread worldUpdateThread = new WorldUpdateThread();
 	public WorldEntityUpdateThread worldEntityUpdateThread = new WorldEntityUpdateThread();
+	public WorldLightUpdateThread worldLightUpdateThread = new WorldLightUpdateThread();
+
 	public HashMap<String, Object> worldProperties = new HashMap<>();
 	public ArrayList<Entity> Entities = new ArrayList<>();
 	public EntityPlayer player;
@@ -36,6 +42,7 @@ public class World {
 
 		resetValues();
 	}
+
 
 	public EnumWorldTime getNextWorldTime() {
 		boolean t = false;
@@ -73,6 +80,13 @@ public class World {
 	public void generate() {
 		worldGenerationThread.start();
 		worldEntityUpdateThread.start();
+		worldLightUpdateThread.start();
+	}
+
+	public void stop() {
+		MainFile.currentWorld.worldUpdateThread.stop();
+		MainFile.currentWorld.worldEntityUpdateThread.stop();
+		MainFile.currentWorld.worldLightUpdateThread.stop();
 	}
 
 
@@ -93,8 +107,9 @@ public class World {
 				}
 
 				if (block != null) block.world = this;
-
 				Blocks[ x ][ y ] = block;
+
+				updateNearbyBlocks(block);
 			}
 		}
 	}
@@ -106,8 +121,6 @@ public class World {
 			int x = (worldSize.xSize / 2) + 2;
 
 			boolean t1 = getBlock(x, y) == null, t2 = getBlock(x, y - 1) == null, t3 = getBlock(x, y + 1) != null;
-
-//			System.out.println(t1 + " | " + t2 + " | " + t3);
 
 			if (t1 && t2 && t3) {
 				xx = x;
@@ -126,10 +139,10 @@ public class World {
 				Block block = getBlock(x, y);
 
 				if (block != null) {
-					if (block instanceof BlockUpdate) {
+					if (block instanceof ITickBlock) {
 						Vec2d tempB = new Vec2d(x, y);
 						Vec2d tempP = new Vec2d(player.getEntityPostion().x, player.getEntityPostion().y);
-						BlockUpdate up = (BlockUpdate) block;
+						ITickBlock up = (ITickBlock) block;
 
 						if (tempB.distance(tempP) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
 							if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
@@ -138,6 +151,107 @@ public class World {
 								}
 							}
 						}
+					}
+				}
+			}
+		}
+	}
+
+
+	public void updateNearbyBlocks( Block block ) {
+		for (int x = -1; x < 2; x++) {
+			for (int y = -1; y < 2; y++) {
+
+				if (x != 0 && y != 0) continue;
+
+				if (block != null) {
+					Block b = getBlock(block.x + x, block.y + y);
+
+					if (b != null) {
+						if (b.x != block.x || b.y != block.y) {
+							b.updateBlock(this, block.x, block.y);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void updateLightForBlock( Block block ) {
+		if (block instanceof ILightSource) {
+			block.setLightValue(((ILightSource) block).getOutputStrength());
+		}
+
+		boolean hasLight = false;
+
+		for (int x = -1; x < 2; x++) {
+			for (int y = -1; y < 2; y++) {
+				if (x != 0 && y != 0) continue;
+
+				Block b = getBlock(block.x + x, block.y + y);
+
+				if (b != null) {
+					if (b.getLightValue() > 0) {
+						hasLight = true;
+					}
+
+					if (block.getLightValue() < b.getLightValue()) {
+						block.setLightValue(b.getLightValue() - 1);
+						updateNearbyBlocks(block);
+					}
+				}
+			}
+		}
+
+		if (!hasLight && !(block instanceof ILightSource)) {
+			block.setLightValue(0);
+			updateNearbyBlocks(block);
+		}
+	}
+
+	//TODO Maybe try to find a way where it only update blocks nearby?
+	public void updateLightForBlocks() {
+		for (Block[] bb : Blocks) {
+			for (Block block : bb) {
+				if (block != null) {
+
+					block.setLightValue(0);
+					block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
+
+					if (block instanceof ILightSource) {
+						block.setLightValue(((ILightSource) block).getOutputStrength());
+						block.getLightUnit().setLightColor(((ILightSource) block).getLightColor());
+					}
+
+					boolean hasLight = false;
+
+					for (int x = -1; x < 2; x++) {
+						for (int y = -1; y < 2; y++) {
+
+							if (x != 0 && y != 0) continue;
+
+							Block b = getBlock(block.x + x, block.y + y);
+
+							if (b != null) {
+
+								if (b.getLightValue() > 0) {
+									hasLight = true;
+								}
+
+								if (block.getLightValue() < b.getLightValue()) {
+									block.setLightValue(b.getLightValue() - 1);
+
+									if (block.getLightUnit().getLightColor() != b.getLightUnit().getLightColor())
+										block.getLightUnit().setLightColor(b.getLightUnit().getLightColor());
+								}
+
+							}
+						}
+					}
+
+					if (!hasLight && !(block instanceof ILightSource)) {
+						block.setLightValue(0);
+						block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
 					}
 				}
 			}

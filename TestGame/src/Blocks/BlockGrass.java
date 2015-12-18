@@ -3,20 +3,17 @@ package Blocks;
 
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
-import Blocks.Util.BlockUpdate;
+import Blocks.Util.ITickBlock;
 import Main.MainFile;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
 
-public class BlockGrass extends Block implements BlockUpdate {
+public class BlockGrass extends Block implements ITickBlock {
 
-	public static Image texture = RenderUtil.getBlockImage("test");
 	public static Image topTexture = RenderUtil.getBlockImage("grassTop");
 	public static Image sideTexture = RenderUtil.getBlockImage("grassSide");
-	//TODO Improve grass rendering. Instead of one random height try to use smooth noise on grass depth
-	int randHeight = MainFile.random.nextInt(5) + 1;
 
 	public BlockGrass( int x, int y ) {
 		super(x, y);
@@ -40,82 +37,9 @@ public class BlockGrass extends Block implements BlockUpdate {
 		return "Grass Block";
 	}
 
-//	@Override
-//	public void renderBlock( Graphics g2, int renderX, int renderY ) {
-//		if (randHeight != -1) {
-//			Color c = g2.getColor();
-//			Color g = getDefaultBlockColor();
-//
-//			//Render dirt underlay
-//			BlockDirt dirt = new BlockDirt();
-//			if (ConfigValues.renderMod == EnumRenderMode.render2_5D && MainFile.currentWorld != null) {
-//				RenderUtil.renderDefault2_5DBlock(g2, dirt, renderX, renderY, MainFile.currentWorld.getBlock(x, y - 1) == null, MainFile.currentWorld.getBlock(x + 1, y) == null);
-//			}
-//			g2.setColor(dirt.getDefaultBlockColor());
-//			RenderUtil.darkenColorBasedOnTime(g2);
-//
-//			g2.fill(new Rectangle(renderX, renderY, ConfigValues.size, ConfigValues.size));
-//
-//
-//			//Render 2.5D grass
-//			if (MainFile.currentWorld != null) {
-//				boolean right = MainFile.currentWorld.getBlock(x + 1, y) == null, top = MainFile.currentWorld.getBlock(x, y - 1) == null;
-//
-//				if (ConfigValues.renderMod == EnumRenderMode.render2_5D) {
-//					if (right) {
-//						int xStart = renderX + ConfigValues.size, yStart = renderY;
-//
-//						Path path = new Path(xStart, yStart);
-//						int height = 12 - randHeight;
-//
-//						path.lineTo(xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2));
-//						path.lineTo(xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2) - height);
-//						path.lineTo(xStart, yStart + ConfigValues.size - height);
-//
-//						path.close();
-//
-//						g2.setColor(getDefaultBlockColor().darker());
-//						RenderUtil.darkenColorBasedOnTime(g2);
-//
-//						g2.fill(path);
-//					}
-//
-//					if (top) {
-//						int xStart = renderX, yStart = renderY;
-//
-//						Path path = new Path(xStart, yStart);
-//
-//						path.lineTo(xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2));
-//						path.lineTo(xStart + (ConfigValues.size + (ConfigValues.size / 2)), yStart - (ConfigValues.size / 2));
-//						path.lineTo(xStart + ConfigValues.size, yStart);
-//
-//						path.close();
-//
-//						g2.setColor(getDefaultBlockColor().brighter());
-//						RenderUtil.darkenColorBasedOnTime(g2);
-//
-//						g2.fill(path);
-//					}
-//				}
-//
-//			}
-//
-//			g2.setColor(g);
-//			g2.fill(new Rectangle(renderX, renderY, ConfigValues.size, 20 + randHeight));
-//			g2.setColor(c);
-//
-//
-//		}
-//	}
-
 	@Override
 	public Color getDefaultBlockColor() {
 		return new Color(0, 127, 14);
-	}
-
-	@Override
-	public boolean isBlockSolid() {
-		return true;
 	}
 
 	@Override
@@ -156,9 +80,5 @@ public class BlockGrass extends Block implements BlockUpdate {
 				}
 			}
 		}
-	}
-
-	public void addInfo() {
-		blockInfoList.add("Grass depth: " + randHeight);
 	}
 }

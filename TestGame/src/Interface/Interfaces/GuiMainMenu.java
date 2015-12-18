@@ -9,8 +9,7 @@ import Utils.ConfigValues;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Line;
-import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
@@ -30,9 +29,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 
 
 		if (MainFile.currentWorld != null) {
-			MainFile.currentWorld.worldUpdateThread.stop();
-			MainFile.currentWorld.worldEntityUpdateThread.stop();
-
+			MainFile.currentWorld.stop();
 			MainFile.currentWorld = null;
 		}
 	}
@@ -40,33 +37,18 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 	@Override
 	public void render( Graphics g2 ) {
 		Color temp = g2.getColor();
-
-//		Paint p = g2.getPaint();
-		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
-
 		super.render(g2);
-
-//		g2.setPaint(p);
-		g2.setColor(Color.black);
-
-		int pos = renderStart;
-		g2.draw(new Line(pos, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
-		g2.draw(new Line(pos += 190, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
 
 		RenderUtil.resizeFont(g2, 22);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
+		RenderUtil.changeFontName(g2, "Times New Roman");
 
-		int size = RenderUtil.getFontFromSlick(g2.getFont()) != null ? RenderUtil.getFontFromSlick(g2.getFont()).getSize() : 3;
+		g2.setColor(new Color(0.9F, 0.9F, 0.9F, 0.25F));
+		g2.fill(new org.newdawn.slick.geom.Rectangle(renderStart, 70, renderWidth, 50));
 
-		g2.drawString(ConfigValues.gameTitle, renderStart + ((ConfigValues.gameTitle.length() / 2) * (size / 3)) + 10, 80);
+		g2.setColor(Color.black);
+		FontUtils.drawCenter(g2.getFont(), ConfigValues.gameTitle, renderStart, 80, renderWidth - 2, g2.getColor());
 		RenderUtil.resetFont(g2);
-
-
-		g2.setColor(new Color(95, 95, 95, 112));
-		g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
-
-		g2.setColor(new Color(152, 152, 152, 96));
-		g2.fill(rectangle);
 
 		g2.setColor(temp);
 	}
@@ -90,7 +72,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.setCurrentGui(new GuiCreateWorld());
+			MainFile.currentGui = (new GuiCreateWorld());
 		}
 
 	}
@@ -104,7 +86,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.setCurrentGui(new GuiSettingsMainMenu());
+			MainFile.currentGui = (new GuiSettingsMainMenu());
 		}
 
 	}

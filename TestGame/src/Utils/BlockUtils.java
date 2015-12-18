@@ -23,8 +23,10 @@ public class BlockUtils {
 
 	public static boolean canPlaceBlockAt( Block block, int x, int y ) {
 		if (x != -1 && y != -1 && x < MainFile.currentWorld.worldSize.xSize && y < MainFile.currentWorld.worldSize.ySize) {
-			if (!MainFile.currentWorld.player.getPlayerBounds().contains(x, y) || block == null) {
-				return true;
+			boolean t = (int) MainFile.currentWorld.player.getEntityPostion().x != x || (int) MainFile.currentWorld.player.getEntityPostion().y != y;
+
+			if (!MainFile.currentWorld.player.getPlayerBounds().contains(x, y) && t || block == null) {
+				return MainFile.currentWorld.getBlock(x, y) == null;
 			}
 		}
 

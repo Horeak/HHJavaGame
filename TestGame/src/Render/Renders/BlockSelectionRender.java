@@ -3,11 +3,11 @@ package Render.Renders;
 import Blocks.Util.Block;
 import Main.MainFile;
 import Render.AbstractWindowRender;
-import Utils.BlockUtils;
 import Utils.ConfigValues;
 import com.sun.javafx.geom.Vec2d;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
@@ -38,8 +38,8 @@ public class BlockSelectionRender extends AbstractWindowRender {
 						int mouseX = (int) mousePoint.getX() - (BlockRendering.START_X_POS);
 						int mouseY = (int) mousePoint.getY() - (BlockRendering.START_Y_POS + 24);
 
-						int mouseBlockX = mouseX / (ConfigValues.size);
-						int mouseBlockY = mouseY / (ConfigValues.size);
+						float mouseBlockX = mouseX / (ConfigValues.size);
+						float mouseBlockY = mouseY / (ConfigValues.size) + 1;
 
 						float tempX = 0, tempY = 0;
 						int renderX = 0, renderY = 0;
@@ -72,20 +72,30 @@ public class BlockSelectionRender extends AbstractWindowRender {
 						float tY = (float) (plPos.y - (int) plPos.y);
 
 						selectedX = Math.round(tempX + tX);
-						selectedY = Math.round(tempY + tY) + 1;
+						selectedY = Math.round(tempY + tY);
 
 						Block b = MainFile.currentWorld.getBlock(selectedX, selectedY);
 						selectedBlock = b;
 
+						//TODO Find a way to add offset without screwing up block placement...
+//						Block bb = MainFile.currentWorld.player.getBlockBelow();
+//						float offSetX = 0;
+//
+//						if(bb != null){
+//							offSetX = MainFile.currentWorld.player.getEntityPostion().x - bb.x;
+//						}
+//
+//						mouseBlockX += offSetX;
+
 						if (selectedX >= 0 && selectedY >= 0) {
-							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((selectedX) * ConfigValues.size), BlockRendering.START_Y_POS + ((selectedY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
+							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 							g2.setColor(new Color(255, 255, 255, 64));
 							g2.fill(rectangle);
 
 							g2.setColor(Color.white);
 							g2.draw(rectangle);
 						} else {
-							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((selectedX) * ConfigValues.size), BlockRendering.START_Y_POS + ((selectedY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
+							Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 							g2.setColor(new Color(255, 0, 0, 64));
 							g2.fill(rectangle);
 
@@ -116,24 +126,24 @@ public class BlockSelectionRender extends AbstractWindowRender {
 
 	public void mouseClick( int button, int x, int y ) {
 		try {
-
 			int selected = (HotbarRender.slotSelected - 1);
 
-			if (selected < HotbarRender.blocks.length) {
-				if (HotbarRender.blocks[ selected ] instanceof Block) {
-					Block block = (Block) HotbarRender.blocks[ selected ].getClass().newInstance();
+			if (selected < MainFile.currentWorld.player.getInvetorySize()) {
 
-					if (block != null) {
-						if (BlockUtils.canPlaceBlockAt(block, selectedX, selectedY)) {
-							MainFile.currentWorld.setBlock(block, selectedX, selectedY);
+				if(button == Input.MOUSE_LEFT_BUTTON){
+					if(MainFile.currentWorld.getBlock(selectedX, selectedY) != null) {
+						MainFile.currentWorld.player.addItem(MainFile.currentWorld.getBlock(selectedX, selectedY));
+						MainFile.currentWorld.setBlock(null, selectedX, selectedY);
+					}
+
+				}else if(button == Input.MOUSE_RIGHT_BUTTON){
+					if(MainFile.currentWorld.player.getItem(selected) != null){
+						if (MainFile.currentWorld.player.getItem(selected).useItem(MainFile.currentWorld, selectedX, selectedY)) {
+							MainFile.currentWorld.player.getItem(selected).onItemUsed(selected);
 						}
 					}
 				}
-			} else {
-				if (BlockUtils.canPlaceBlockAt(null, selectedX, selectedY)) {
-				MainFile.currentWorld.setBlock(null, selectedX, selectedY);
-				}
-		}
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

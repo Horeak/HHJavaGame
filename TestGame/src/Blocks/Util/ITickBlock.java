@@ -1,7 +1,7 @@
 package Blocks.Util;
 
 
-public interface BlockUpdate {
+public interface ITickBlock {
 
 	int timeSinceUpdate = 1;
 

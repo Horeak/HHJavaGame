@@ -1,13 +1,11 @@
 package Render.Renders;
 
-import Blocks.BlockDirt;
-import Blocks.BlockGrass;
 import Blocks.BlockRender.BlockRenderer;
-import Blocks.BlockStone;
 import Blocks.Util.Block;
 import Interface.Gui;
 import Interface.Objects.GuiButton;
 import Items.Item;
+import Main.MainFile;
 import Render.AbstractWindowRender;
 import Render.EnumRenderMode;
 import Utils.ConfigValues;
@@ -21,47 +19,48 @@ import java.util.ArrayList;
 public class HotbarRender extends AbstractWindowRender {
 
 	public static int slotSelected = 1;
-	public static Item[] blocks = new Item[]{ new BlockGrass(), new BlockDirt(), new BlockStone() };
 
 	public static ArrayList<hotbarButton> hotbarButtons = new ArrayList<>();
-
+	static float alpha = 0.5F;
+	int size = 50;
 	int startX = 10;
-	int startY = BlockRendering.START_Y_POS + (ConfigValues.renderYSize * ConfigValues.size) + (BlockRendering.START_Y_POS / 2);
+	int startY = MainFile.yWindowSize - (size + 10);
 
-	int size = 75;
 
 	public HotbarRender() {
 		for (int i = 0; i < 10; i++) {
-			hotbarButtons.add(new hotbarButton(startX + ((size + 7) * i) + 2, startY + 2, null, i, i < blocks.length ? blocks[ i ] : null));
+			hotbarButtons.add(new hotbarButton(startX + ((size + 7) * i) + 2, startY + 2, null, i));
 		}
 	}
 
 	@Override
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Color temp = g2.getColor();
-		Rectangle c = g2.getClip();
 
-		//TODO Remove debug feature
-		Rectangle rect = new Rectangle(startX, startY, startX + (size * 10) + (size / 1.3F), ConfigValues.hotbarRenderSize + 4);
-		g2.setClip(rect);
+		if (MainFile.currentWorld != null && MainFile.currentWorld.player != null) {
+			for (hotbarButton bt : hotbarButtons) {
+				bt.item = MainFile.currentWorld.player.getItem(bt.num);
+			}
+		}
 
-		g2.setColor(Color.gray);
+		Rectangle rect = new Rectangle(startX, startY, startX + (size * 10) + (57), ConfigValues.hotbarRenderSize);
+
+		g2.setColor(RenderUtil.getColorWithAlpha(Color.gray, alpha));
 		g2.fill(rect);
 
-		g2.setColor(Color.black);
-		g2.draw(new Rectangle(startX + 1, startY + 1, startX + (size * 10) + (size / 1.3F) - 2, ConfigValues.hotbarRenderSize + 2));
+		g2.setColor(RenderUtil.getColorWithAlpha(Color.black, alpha));
+		g2.draw(rect);
 
 		for (hotbarButton bt : hotbarButtons) {
 			bt.renderObject(g2, null);
 		}
 
 		g2.setColor(temp);
-		g2.setClip(c);
 	}
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_HOTBAR;
+		return ConfigValues.RENDER_HOTBAR && MainFile.currentGui == null;
 	}
 	@Override
 	public boolean canRenderWithGui() {
@@ -79,14 +78,13 @@ public class HotbarRender extends AbstractWindowRender {
 
 
 	class hotbarButton extends GuiButton {
+		public Item item;
 		int num;
-		Item item;
 
-		public hotbarButton( int x, int y, Gui gui, int num, Item item ) {
+		public hotbarButton( int x, int y, Gui gui, int num ) {
 			super(x, y, size, size, "", gui);
 
 			this.num = num;
-			this.item = item;
 		}
 
 		@Override
@@ -117,22 +115,29 @@ public class HotbarRender extends AbstractWindowRender {
 			g2.drawString((num + 1) + "", rectt.getX() + 5, rectt.getY() + 4);
 			RenderUtil.resetFont(g2);
 
+			g2.scale(0.5F, 0.5F);
+
+			if (item != null && item.getRender() != null) {
+				if (item instanceof Block) {
+					((BlockRenderer) (item.getRender())).renderBlock(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false);
+				} else {
+					item.getRender().renderItem(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, item);
+				}
+			}
+
+			g2.scale(2, 2);
+
+
 			g2.setColor(Color.white);
-			RenderUtil.resizeFont(g2, 10);
+			RenderUtil.resizeFont(g2, 11);
 
 			if (item != null) {
-				g2.drawString(item.getItemName(), x + 3, y + 60);
+				g2.drawString(Integer.toString(item.getItemStackSize()) + "x", x + 2, y + 25);
 			}
 
 			RenderUtil.resetFont(g2);
 
-			if (item != null && item.getRender() != null) {
-				if (item instanceof Block) {
-					((BlockRenderer) (item.getRender())).renderBlock(g2, x + 15, y + 25, EnumRenderMode.render2_5D, (Block) item, true, true);
-				} else {
-					item.getRender().renderItem(g2, x + 15, y + 25, EnumRenderMode.render2_5D, item);
-				}
-			}
+
 		}
 
 	}

@@ -8,7 +8,7 @@ import WorldFiles.World;
 import org.newdawn.slick.Graphics;
 
 public interface BlockRenderer extends ItemRenderer {
-	void renderBlock( Graphics g, int rX, int rY, EnumRenderMode renderMode, Block block, boolean right, boolean top );
+	void renderBlock( Graphics g, int rX, int rY, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting );
 
 	default void renderItem( Graphics g, int rX, int rY, EnumRenderMode renderMode, Item item ) {
 		if (item instanceof Block) {
@@ -20,7 +20,7 @@ public interface BlockRenderer extends ItemRenderer {
 			boolean top = world.getBlock(block.x, block.y - 1) == null || world.getBlock(block.x, block.y - 1) != null && !world.getBlock(block.x, block.y - 1).isBlockSolid();
 
 
-			renderBlock(g, rX, rY, renderMode, block, right, top);
+			renderBlock(g, rX, rY, renderMode, block, right, top, true);
 		}
 	}
 }

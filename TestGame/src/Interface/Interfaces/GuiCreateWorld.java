@@ -5,14 +5,13 @@ import Interface.Objects.GuiButton;
 import Interface.Objects.MainMenuButton;
 import Main.MainFile;
 import Render.Renders.BlockRendering;
-import Utils.ConfigValues;
 import Utils.RenderUtil;
 import WorldFiles.EnumWorldSize;
 import WorldFiles.World;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
@@ -25,6 +24,8 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 	public boolean textInput = false;
 	public String worldName = "";
 	createWorldButton createWorldButton;
+
+
 	//TODO Add world loading. (Make it its own gui and have load/create buttons in this one?)
 	public GuiCreateWorld() {
 		super();
@@ -34,13 +35,13 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		createWorldButton = new createWorldButton(buttonPos * 7);
 		createWorldButton.enabled = false;
 
-		guiObjects.add(new backButton(buttonPos * 9));
+		guiObjects.add(new backButton((buttonPos * 14) - (buttonSize / 2)));
 		guiObjects.add(new worldNameInput(buttonPos * 2 + 20));
 		guiObjects.add(createWorldButton);
 
-		buttonPos += (buttonSize * 3);
+		buttonPos += (buttonSize * 2);
 		for (EnumWorldSize size : EnumWorldSize.values()) {
-			guiObjects.add(new worldSizeButton(buttonPos += buttonSize, size));
+			guiObjects.add(new worldSizeButton(buttonPos += (int) (buttonSize / 1.2), size));
 		}
 	}
 
@@ -54,30 +55,16 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 
 		org.newdawn.slick.Color temp = g2.getColor();
 
-		//TODO FIx Paint
-		//Paint p = g2.getPaint();
-		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
-
 		super.render(g2);
 
 		//g2.setPaint(p);
 		g2.setColor(org.newdawn.slick.Color.black);
 
-		int pos = 325;
-		g2.draw(new Line(pos, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
-		g2.draw(new Line(pos += 190, BlockRendering.START_Y_POS, pos, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size)));
-
 		RenderUtil.resizeFont(g2, 16);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString("Enter world name:", renderStart + 5, 120);
-		g2.drawString("World size:", renderStart + 5, 220);
+		g2.drawString("Enter world name:", renderStart + 5, 100);
+		g2.drawString("World size:", renderStart + 5, 170);
 		RenderUtil.resetFont(g2);
-
-		g2.setColor(RenderUtil.getColorToSlick(new Color(95, 95, 95, 112)));
-		g2.fill(new Rectangle(325, BlockRendering.START_Y_POS, 190, (ConfigValues.renderYSize * ConfigValues.size)));
-
-		g2.setColor(RenderUtil.getColorToSlick(new Color(152, 152, 152, 96)));
-		g2.fill(rectangle);
 
 		g2.setColor(temp);
 	}
@@ -118,7 +105,7 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.setCurrentGui(new GuiMainMenu());
+			MainFile.currentGui = (new GuiMainMenu());
 		}
 	}
 
@@ -129,11 +116,13 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.currentWorld = new World(worldName, selected);
-			MainFile.currentWorld.generate();
-			MainFile.currentWorld.start();
+			if (createWorldButton.enabled) {
+				MainFile.currentWorld = new World(worldName, selected);
+				MainFile.currentWorld.generate();
+				MainFile.currentWorld.start();
 
-			MainFile.setCurrentGui(null);
+				MainFile.currentGui = (null);
+			}
 		}
 	}
 
@@ -185,7 +174,7 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		public EnumWorldSize size;
 
 		public worldSizeButton( int y, EnumWorldSize size ) {
-			super(renderStart + (53), y, 120, 16, size.name(), guiInst);
+			super(renderStart, y, 120, 32, size.name(), guiInst);
 			this.size = size;
 		}
 
@@ -210,15 +199,13 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 				g2.setColor(RenderUtil.getColorToSlick(new Color(95, 95, 95, 86)));
 			}
 
-			g2.fill(new Rectangle(renderStart, y - 6 - (height), renderWidth, height * 2));
+			g2.fill(new Rectangle(renderStart, y, renderWidth, height));
 
 			g2.setColor(hover ? org.newdawn.slick.Color.white : org.newdawn.slick.Color.lightGray);
 
 			RenderUtil.resizeFont(g2, 22);
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-
-			g2.drawString(text, x, y - height);
-
+			FontUtils.drawCenter(g2.getFont(), text, x, y, renderWidth - 10, g2.getColor());
 			RenderUtil.resetFont(g2);
 
 

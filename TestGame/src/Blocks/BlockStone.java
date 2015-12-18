@@ -21,15 +21,9 @@ public class BlockStone extends Block {
 		return "Stone Block";
 	}
 
-
 	@Override
 	public Color getDefaultBlockColor() {
 		return new Color(151, 152, 151);
-	}
-
-	@Override
-	public boolean isBlockSolid() {
-		return true;
 	}
 
 	public boolean useBlockTexture() {

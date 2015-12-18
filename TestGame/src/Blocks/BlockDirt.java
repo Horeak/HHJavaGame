@@ -27,11 +27,6 @@ public class BlockDirt extends Block {
 		return new Color(107, 62, 33);
 	}
 
-	@Override
-	public boolean isBlockSolid() {
-		return true;
-	}
-
 	public boolean useBlockTexture() {
 		return true;
 	}
