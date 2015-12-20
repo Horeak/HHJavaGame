@@ -2,7 +2,7 @@ package Render.Renders;
 
 import Blocks.BlockRender.BlockRenderer;
 import Blocks.Util.Block;
-import Interface.Gui;
+import Interface.Menu;
 import Interface.Objects.GuiButton;
 import Items.Item;
 import Main.MainFile;
@@ -60,10 +60,10 @@ public class HotbarRender extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_HOTBAR && MainFile.currentGui == null;
+		return ConfigValues.RENDER_HOTBAR && MainFile.currentMenu == null;
 	}
 	@Override
-	public boolean canRenderWithGui() {
+	public boolean canRenderWithWindow() {
 		return true;
 	}
 
@@ -81,19 +81,19 @@ public class HotbarRender extends AbstractWindowRender {
 		public Item item;
 		int num;
 
-		public hotbarButton( int x, int y, Gui gui, int num ) {
-			super(x, y, size, size, "", gui);
+		public hotbarButton( int x, int y, Menu menu, int num ) {
+			super(x, y, size, size, "", menu);
 
 			this.num = num;
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
+		public void onClicked( int button, int x, int y, Menu menu ) {
 			slotSelected = num + 1;
 		}
 
 		@Override
-		public void renderObject( org.newdawn.slick.Graphics g2, Gui gui ) {
+		public void renderObject( org.newdawn.slick.Graphics g2, Menu menu ) {
 			boolean selected = (num + 1) == slotSelected;
 
 			g2.setColor(Color.darkGray);
@@ -119,7 +119,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 			if (item != null && item.getRender() != null) {
 				if (item instanceof Block) {
-					((BlockRenderer) (item.getRender())).renderBlock(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false);
+					((BlockRenderer) (item.getRender())).renderBlock(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false, true);
 				} else {
 					item.getRender().renderItem(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, item);
 				}

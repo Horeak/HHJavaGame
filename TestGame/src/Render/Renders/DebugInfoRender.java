@@ -2,6 +2,7 @@ package Render.Renders;
 
 import Main.MainFile;
 import Render.AbstractWindowRender;
+import Utils.BlockSelection;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
 import WorldFiles.EnumWorldTime;
@@ -65,7 +66,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
 
 			g2.drawString(" - World time: " + MainFile.currentWorld.WorldTime + " / " + MainFile.currentWorld.WorldTimeDayEnd, textStartX, linePos += (lineLength));
-			g2.drawString(" - Time until next day phase (" + MainFile.currentWorld.getNextWorldTime().name + "): " + ((MainFile.currentWorld.getNextWorldTime() == EnumWorldTime.MORNING ? 1800 : MainFile.currentWorld.getNextWorldTime().timeBegin) - MainFile.currentWorld.WorldTime), textStartX, linePos += (lineLength));
+			g2.drawString(" - Time until next day phase (" + MainFile.currentWorld.getNextWorldTime().name + "): " + ((MainFile.currentWorld.getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.currentWorld.getNextWorldTime().timeBegin) - MainFile.currentWorld.WorldTime), textStartX, linePos += (lineLength));
 			g2.drawString(" - Time of day: " + MainFile.currentWorld.worldTimeOfDay.name, textStartX, linePos += (lineLength));
 			g2.drawString(" - Day number: " + MainFile.currentWorld.WorldDay, textStartX, linePos += (lineLength));
 
@@ -82,20 +83,20 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 		if (MainFile.currentWorld != null) {
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			g2.drawString("Currently selected block: " + (BlockSelectionRender.selectedBlock != null ? BlockSelectionRender.selectedBlock.getBlockDisplayName() : "None"), textStartX, linePos += (lineLength * 2));
+			g2.drawString("Currently selected block: " + (BlockSelection.selectedBlock != null ? BlockSelection.selectedBlock.getBlockDisplayName() : "None"), textStartX, linePos += (lineLength * 2));
 
-			if (BlockSelectionRender.selectedBlock != null) {
+			if (BlockSelection.selectedBlock != null) {
 				g2.setColor(Color.black);
-				g2.drawString("Block cords: " + "[" + BlockSelectionRender.selectedBlock.x + ", " + BlockSelectionRender.selectedBlock.y + "]", textStartX, linePos += (lineLength));
-				if (BlockSelectionRender.selectedBlock.blockInfoList.size() > 0) {
+				g2.drawString("Block cords: " + "[" + BlockSelection.selectedBlock.x + ", " + BlockSelection.selectedBlock.y + "]", textStartX, linePos += (lineLength));
+				if (BlockSelection.selectedBlock.blockInfoList.size() > 0) {
 					g2.drawString("Blockinfo: ", textStartX, linePos += (lineLength));
-					for (String t : BlockSelectionRender.selectedBlock.blockInfoList) {
+					for (String t : BlockSelection.selectedBlock.blockInfoList) {
 						g2.drawString(" - " + t, textStartX, linePos += (lineLength));
 					}
 				}
 
-				BlockSelectionRender.selectedBlock.blockInfoList.clear();
-				BlockSelectionRender.selectedBlock.addInfo();
+				BlockSelection.selectedBlock.blockInfoList.clear();
+				BlockSelection.selectedBlock.addInfo();
 			}
 		}
 
@@ -112,7 +113,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 	}
 
 	@Override
-	public boolean canRenderWithGui() {
+	public boolean canRenderWithWindow() {
 		return true;
 	}
 }

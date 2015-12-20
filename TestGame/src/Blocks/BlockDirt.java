@@ -35,4 +35,8 @@ public class BlockDirt extends Block {
 		return texture;
 	}
 
+	public int getMaxBlockDamage() {
+		return 5;
+	}
+
 }

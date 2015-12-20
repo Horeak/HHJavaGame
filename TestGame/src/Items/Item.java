@@ -17,13 +17,15 @@ public interface Item {
 	void setStackSize( int i );
 
 	String getItemID();
-
 	String getItemName();
 
 	ItemRenderer getRender();
 
 	//Return TRUE/FALSE if it was sucsessfull
 	boolean useItem( World world, int x, int y ) throws IllegalAccessException, InstantiationException;
-
 	void onItemUsed( int hotbarSlot );
+
+	default int getBlockDamageValue( World world, int x, int y ) {
+		return 1;
+	}
 }

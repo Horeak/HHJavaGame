@@ -29,7 +29,7 @@ public class BlockGrass extends Block implements ITickBlock {
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side ) {
-		return side == EnumBlockSide.TOP ? topTexture : sideTexture;
+		return side == EnumBlockSide.TOP ? topTexture : BlockGrass.sideTexture;
 	}
 
 	@Override
@@ -80,5 +80,9 @@ public class BlockGrass extends Block implements ITickBlock {
 				}
 			}
 		}
+	}
+
+	public int getMaxBlockDamage() {
+		return 5;
 	}
 }

@@ -1,7 +1,7 @@
 package EntityFiles.Entities;
 
 
-import Blocks.TorchBlock;
+import Blocks.BlockTorch;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
@@ -20,7 +20,6 @@ public class EntityPlayer extends Entity implements Inventory {
 	//TODO Add inventory
 	//TODO Make hotbar connected to player/inventory
 	//TODO Add proper player render
-	//TODO Add entity physics to make player fall and not able to fly.
 	//TODO Make player spawn above ground instead of at a fixed position under ground
 
 	/**
@@ -36,7 +35,7 @@ public class EntityPlayer extends Entity implements Inventory {
 		super(x, y);
 
 		for (int i = 0; i < 10; i++)
-			addItem(new TorchBlock());
+			addItem(new BlockTorch());
 	}
 
 	@Override
@@ -133,7 +132,6 @@ public class EntityPlayer extends Entity implements Inventory {
 		}
 	}
 
-	//TODO Fix bug when adding a item that fills up a stack it also creates a new one before getting the next item
 	public boolean addItem( Item item ) {
 		int stack = item.getItemStackSize();
 

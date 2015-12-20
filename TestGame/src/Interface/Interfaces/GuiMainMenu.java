@@ -1,6 +1,6 @@
 package Interface.Interfaces;
 
-import Interface.Gui;
+import Interface.Menu;
 import Interface.Objects.GuiButton;
 import Interface.Objects.MainMenuButton;
 import Main.MainFile;
@@ -63,7 +63,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 	}
 
 
-	//TODO Replace with proper gui screen where you can both load and create worlds once saving is added
+	//TODO Replace with proper menu screen where you can both load and create worlds once saving is added
 	public class NewGameButton extends MainMenuButton {
 
 		public NewGameButton( int y ) {
@@ -71,8 +71,8 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.currentGui = (new GuiCreateWorld());
+		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
+			MainFile.currentMenu = (new GuiCreateWorld());
 		}
 
 	}
@@ -85,8 +85,8 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.currentGui = (new GuiSettingsMainMenu());
+		public void onClicked( int button, int x, int y, Menu menu ) {
+			MainFile.currentMenu = (new GuiSettingsMainMenu());
 		}
 
 	}
@@ -98,7 +98,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
+		public void onClicked( int button, int x, int y, Menu menu ) {
 			//TODO Add proper exit with saving
 			System.exit(0);
 		}

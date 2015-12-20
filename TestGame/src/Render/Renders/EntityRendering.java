@@ -47,7 +47,7 @@ public class EntityRendering extends AbstractWindowRender {
 	}
 
 	@Override
-	public boolean canRenderWithGui() {
+	public boolean canRenderWithWindow() {
 		return false;
 	}
 }

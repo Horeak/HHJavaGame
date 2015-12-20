@@ -14,11 +14,6 @@ public class BlockRendering extends AbstractWindowRender {
 	public static final int START_X_POS = 0; //23
 	public static final int START_Y_POS = 0; //23
 
-	//TODO Darken rendering depending on time of day/light
-	//TODO Investigate the possibility of complete 3D render like MC
-
-	//TODO Translate block location when inbetween 0.1F and 0.9F? and then use the current system for full numbers
-
 	@Override
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Vec2d plPos = new Vec2d(MainFile.currentWorld.player.getEntityPostion().x, MainFile.currentWorld.player.getEntityPostion().y);
@@ -69,7 +64,7 @@ public class BlockRendering extends AbstractWindowRender {
 	}
 
 	@Override
-	public boolean canRenderWithGui() {
+	public boolean canRenderWithWindow() {
 		return false;
 	}
 }

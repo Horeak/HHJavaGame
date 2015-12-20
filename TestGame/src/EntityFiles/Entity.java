@@ -30,7 +30,6 @@ public abstract class Entity {
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
 
-		//TODO Use this when adding float position
 		x = Float.parseFloat(df.format(x).replace(",", "."));
 		y = Float.parseFloat(df.format(y).replace(",", "."));
 
@@ -59,12 +58,10 @@ public abstract class Entity {
 		return MainFile.currentWorld.getBlock(Math.round((int) getEntityPostion().x), (int) getEntityPostion().y + 1);
 	}
 
-	//TODO Work on collision on left/right to disallow standing halfway inside a block
+
 	public boolean canMoveTo( float x, float y ) {
 		if (x >= 0 && x < MainFile.currentWorld.worldSize.xSize && y >= 0 && y < MainFile.currentWorld.worldSize.ySize) {
-
-			//TODO Fix render issue when going x12 or less
-			return MainFile.currentWorld.getBlock(Math.round(x), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x), Math.round(y) - 1) == null;
+			return MainFile.currentWorld.getBlock(Math.round(x), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x - 0.6F), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x), Math.round(y) - 1) == null;
 		}
 		return false;
 	}
@@ -72,9 +69,8 @@ public abstract class Entity {
 	public boolean moveTo( float x, float y ) {
 		Block targetBlock = MainFile.currentWorld.getBlock(Math.round(x), Math.round(y));
 
-		if ((int) x == MainFile.currentWorld.worldSize.xSize) x = (int) x;
-
-		if ((int) y == MainFile.currentWorld.worldSize.ySize) y = (int) y;
+		if ((int) x == MainFile.currentWorld.worldSize.xSize) x = Float.floatToIntBits(x);
+		if ((int) y == MainFile.currentWorld.worldSize.ySize) y = Float.floatToIntBits(y);
 
 		if (x < MainFile.currentWorld.worldSize.xSize && x >= 0 && y < MainFile.currentWorld.worldSize.ySize && y >= 0)
 			if (targetBlock != null && !targetBlock.blockBounds().contains(x, y, getEntityBounds().getBounds().getWidth(), getEntityBounds().getBounds().getHeight()) && targetBlock != null && !targetBlock.blockBounds().intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {

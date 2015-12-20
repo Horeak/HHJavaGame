@@ -25,11 +25,11 @@ public class RenderUtil {
 	public static HashMap<Graphics, Font> tempFontStore = new HashMap<>();
 	public static HashMap<Font, UnicodeFont> store = new HashMap<>();
 
-	public static org.newdawn.slick.Image getBlockImage( String blockID ) {
+	public static org.newdawn.slick.Image getImage( String folder, String id ) {
 		try {
 
-			InputStream stream = MainFile.class.getResourceAsStream("../textures/blocks/" + blockID + ".png");
-			return new Image(stream, blockID, false);
+			InputStream stream = MainFile.class.getResourceAsStream("../textures/" + folder + "/" + id + ".png");
+			return new Image(stream, id, false);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -38,17 +38,12 @@ public class RenderUtil {
 		return null;
 	}
 
+	public static org.newdawn.slick.Image getBlockImage( String blockID ) {
+		return getImage("blocks", blockID);
+	}
+
 	public static Image getItemImage( String itemID ) {
-		try {
-
-			InputStream stream = MainFile.class.getResourceAsStream("../textures/items/" + itemID + ".png");
-			return new Image(stream, itemID, false);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
+		return getImage("items", itemID);
 	}
 
 

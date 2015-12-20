@@ -5,7 +5,6 @@ import Blocks.Util.ILightSource;
 import Blocks.Util.ITickBlock;
 import EntityFiles.Entities.EntityPlayer;
 import EntityFiles.Entity;
-import Main.MainFile;
 import Threads.WorldEntityUpdateThread;
 import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
@@ -30,9 +29,11 @@ public class World {
 	public ArrayList<Entity> Entities = new ArrayList<>();
 	public EntityPlayer player;
 	public Block[][] Blocks;
-	public int WorldTime = 0, WorldTimeDayEnd = 1800;
+
+	public int WorldTime = 0, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
 	public EnumWorldTime worldTimeOfDay = EnumWorldTime.DAY;
 	public int WorldDay = 1;
+
 	public boolean generating = false;
 	public String generationStatus = "";
 
@@ -42,7 +43,6 @@ public class World {
 
 		resetValues();
 	}
-
 
 	public EnumWorldTime getNextWorldTime() {
 		boolean t = false;
@@ -61,6 +61,11 @@ public class World {
 		}
 
 		return EnumWorldTime.MORNING;
+	}
+
+	public void setTimeOfDay( EnumWorldTime time ) {
+		worldTimeOfDay = time;
+		WorldTime = time.timeBegin;
 	}
 
 	public void start() {
@@ -84,9 +89,9 @@ public class World {
 	}
 
 	public void stop() {
-		MainFile.currentWorld.worldUpdateThread.stop();
-		MainFile.currentWorld.worldEntityUpdateThread.stop();
-		MainFile.currentWorld.worldLightUpdateThread.stop();
+		worldUpdateThread.stop();
+		worldEntityUpdateThread.stop();
+		worldLightUpdateThread.stop();
 	}
 
 

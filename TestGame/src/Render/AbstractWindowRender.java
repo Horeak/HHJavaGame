@@ -14,6 +14,6 @@ public abstract class AbstractWindowRender {
 	public void mouseClick( int button, int x, int y ) {
 	}
 
-	public abstract boolean canRenderWithGui();
+	public abstract boolean canRenderWithWindow();
 
 }

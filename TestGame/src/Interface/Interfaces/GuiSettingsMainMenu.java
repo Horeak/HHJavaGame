@@ -1,6 +1,6 @@
 package Interface.Interfaces;
 
-import Interface.Gui;
+import Interface.Menu;
 import Interface.Objects.GuiButton;
 import Interface.Objects.MainMenuButton;
 import Main.MainFile;
@@ -76,13 +76,13 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
+		public void onClicked( int button, int x, int y, Menu menu ) {
 			option.changeValue();
 		}
 
 
 		@Override
-		public void renderObject( Graphics g2, Gui gui ) {
+		public void renderObject( Graphics g2, Menu menu ) {
 			Color temp = g2.getColor();
 
 			boolean hover = isMouseOver();
@@ -120,8 +120,8 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.currentGui = new GuiMainMenu();
+		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
+			MainFile.currentMenu = new GuiMainMenu();
 		}
 	}
 }

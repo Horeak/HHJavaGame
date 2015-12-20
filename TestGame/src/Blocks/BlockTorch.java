@@ -4,7 +4,7 @@ import Blocks.Util.Block;
 import Blocks.Util.ILightSource;
 import org.newdawn.slick.Color;
 
-public class TorchBlock extends Block implements ILightSource {
+public class BlockTorch extends Block implements ILightSource {
 	@Override
 	public String getBlockDisplayName() {
 		return "Torch";
@@ -18,6 +18,10 @@ public class TorchBlock extends Block implements ILightSource {
 	@Override
 	public int getOutputStrength() {
 		return 16;
+	}
+
+	public int getMaxBlockDamage() {
+		return 2;
 	}
 
 }

@@ -1,6 +1,6 @@
 package Interface.Interfaces;
 
-import Interface.Gui;
+import Interface.Menu;
 import Interface.Objects.GuiButton;
 import Interface.Objects.MainMenuButton;
 import Main.MainFile;
@@ -26,7 +26,7 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 	createWorldButton createWorldButton;
 
 
-	//TODO Add world loading. (Make it its own gui and have load/create buttons in this one?)
+	//TODO Add world loading. (Make it its own menu and have load/create buttons in this one?)
 	public GuiCreateWorld() {
 		super();
 
@@ -104,8 +104,8 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
-			MainFile.currentGui = (new GuiMainMenu());
+		public void onClicked( int button, int x, int y, Menu menu ) {
+			MainFile.currentMenu = (new GuiMainMenu());
 		}
 	}
 
@@ -115,13 +115,13 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
+		public void onClicked( int button, int x, int y, Menu menu ) {
 			if (createWorldButton.enabled) {
 				MainFile.currentWorld = new World(worldName, selected);
 				MainFile.currentWorld.generate();
 				MainFile.currentWorld.start();
 
-				MainFile.currentGui = (null);
+				MainFile.currentMenu = (null);
 			}
 		}
 	}
@@ -133,12 +133,12 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
+		public void onClicked( int button, int x, int y, Menu menu ) {
 			textInput ^= true;
 		}
 
 		@Override
-		public void renderObject( Graphics g2, Gui gui ) {
+		public void renderObject( Graphics g2, Menu menu ) {
 			org.newdawn.slick.Color temp = g2.getColor();
 			if (textInput) {
 				g2.setColor(RenderUtil.getColorToSlick(new Color(91, 91, 91, 185)));
@@ -179,13 +179,13 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Gui gui ) {
+		public void onClicked( int button, int x, int y, Menu menu ) {
 			selected = size;
 			textInput = false;
 		}
 
 		@Override
-		public void renderObject( Graphics g2, Gui gui ) {
+		public void renderObject( Graphics g2, Interface.Menu menu ) {
 			org.newdawn.slick.Color temp = g2.getColor();
 
 			boolean hover = isMouseOver();

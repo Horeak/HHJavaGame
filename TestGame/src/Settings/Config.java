@@ -1,6 +1,9 @@
 package Settings;
 
-import Settings.Values.*;
+import Settings.Values.ConfigOption;
+import Settings.Values.DebugModeOption;
+import Settings.Values.RenderModeOption;
+import Settings.Values.SimpleRenderOption;
 
 import java.util.ArrayList;
 
@@ -17,8 +20,6 @@ public class Config {
 		options.add(new DebugModeOption());
 		options.add(new SimpleRenderOption());
 		options.add(new RenderModeOption());
-
-		options.add(new ResiableConfigOption());
 	}
 
 }

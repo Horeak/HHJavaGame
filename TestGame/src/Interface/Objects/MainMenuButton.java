@@ -1,6 +1,6 @@
 package Interface.Objects;
 
-import Interface.Gui;
+import Interface.Menu;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -12,13 +12,12 @@ import java.awt.*;
 
 public abstract class MainMenuButton extends GuiButton {
 
-	//TODO Remove the hardcoded 325-x position when adding window resizing
-	public MainMenuButton( int x, int y, int width, int height, String name, Gui gui ) {
-		super(x, y, width, height, name, gui);
+	public MainMenuButton( int x, int y, int width, int height, String name, Interface.Menu menu ) {
+		super(x, y, width, height, name, menu);
 	}
 
 	@Override
-	public void renderObject( Graphics g2, Gui gui ) {
+	public void renderObject( Graphics g2, Menu menu ) {
 		Color temp = g2.getColor();
 
 		boolean hover = isMouseOver();

@@ -5,6 +5,7 @@ import Blocks.Util.ILightSource;
 import Render.EnumRenderMode;
 import Utils.BlockUtils;
 import Utils.ConfigValues;
+import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -15,6 +16,8 @@ public class DefaultBlockRendering implements BlockRenderer {
 
 	//To make it possible to access without making a new instance for example for the grass block which will use both this and a custom one
 	public static DefaultBlockRendering staticReference = new DefaultBlockRendering();
+
+	public static Image[] breakImages = new Image[]{ RenderUtil.getImage("textures/breakBlock", "break1"), RenderUtil.getImage("textures/breakBlock", "break2"), RenderUtil.getImage("textures/breakBlock", "break3"), RenderUtil.getImage("textures/breakBlock", "break4"), RenderUtil.getImage("textures/breakBlock", "break5") };
 
 	private static void drawFront( Graphics g, int xStart, int yStart, Color c) {
 		g.setColor(c);
@@ -110,9 +113,8 @@ public class DefaultBlockRendering implements BlockRenderer {
 
 	}
 
-	//TODO Fix Right render with texutre
 	@Override
-	public void renderBlock( Graphics g, int rX, int rY, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting ) {
+	public void renderBlock( Graphics g, int rX, int rY, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem ) {
 		if (ConfigValues.simpleBlockRender) {
 			BlockUtils.renderDefaultBlockDebug(g, block, rX, rY);
 			return;
@@ -120,12 +122,22 @@ public class DefaultBlockRendering implements BlockRenderer {
 
 		if (!block.useBlockTexture()) {
 			if (renderMode == EnumRenderMode.render2_5D) {
+
 				if (right) {
 					int xStart = rX, yStart = rY;
 					drawSide(g, xStart, yStart, block.getDefaultBlockColor().darker());
 
-					if(renderLighting)
+					if (!isItem) {
+						if (getBreakImageForBlock(block) != null) {
+							getBreakImageForBlock(block).drawWarped(xStart, yStart, xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart, yStart + ConfigValues.size);
+						}
+					}
+
+					if (renderLighting) {
 						drawShadowSide(g, xStart, yStart, block);
+					} else {
+						drawSide(g, xStart, yStart, block.getDefaultBlockColor().darker());
+					}
 				}
 
 				if (top) {
@@ -133,8 +145,17 @@ public class DefaultBlockRendering implements BlockRenderer {
 
 					drawTop(g, xStart, yStart, block.getDefaultBlockColor().brighter());
 
-					if(renderLighting)
+					if (!isItem) {
+						if (getBreakImageForBlock(block) != null) {
+							getBreakImageForBlock(block).drawWarped(rX, rY, rX + (ConfigValues.size / 2), rY - (ConfigValues.size / 2), rX + ((ConfigValues.size) * 1.5F), rY - (ConfigValues.size / 2), rX + ConfigValues.size, rY);
+						}
+					}
+
+					if (renderLighting) {
 						drawShadowTop(g, xStart, yStart, block);
+					} else {
+						drawTop(g, xStart, yStart, block.getDefaultBlockColor().brighter());
+					}
 				}
 
 				drawFront(g, rX, rY, block.getDefaultBlockColor());
@@ -142,31 +163,53 @@ public class DefaultBlockRendering implements BlockRenderer {
 				if(renderLighting)
 					drawShadowFront(g, rX, rY, block);
 
+				if (!isItem) {
+					if (getBreakImageForBlock(block) != null) {
+						getBreakImageForBlock(block).draw(rX, rY, ConfigValues.size, ConfigValues.size);
+					}
+				}
+
 			} else {
 				drawFront(g, rX, rY, block.getDefaultBlockColor());
 
 				if(renderLighting)
 					drawShadowFront(g, rX, rY, block);
+
+				if (!isItem) {
+					if (getBreakImageForBlock(block) != null) {
+						getBreakImageForBlock(block).draw(rX, rY, ConfigValues.size, ConfigValues.size);
+					}
+				}
 			}
 		} else {
 			int xStart = rX, yStart = rY;
-
 			if (renderMode == EnumRenderMode.render2_5D) {
+
 				if (right) {
 					if (block.getBlockTextureFromSide(EnumBlockSide.SIDE) != null) {
-						int xx = xStart + (int) (ConfigValues.size * 1.5F);
-						int yy = yStart - (ConfigValues.size / 2);
+						g.pushTransform();
+
+						g.rotate(xStart + (ConfigValues.size / 2), yStart + ConfigValues.size / 2, 90);
+						g.translate(0, -ConfigValues.size);
 
 						Image image = block.getBlockTextureFromSide(EnumBlockSide.SIDE).getFlippedCopy(true, false);
-						image.setRotation(90);
-						image.drawWarped(xx - (ConfigValues.size / 2), yy, xx + (ConfigValues.size / 2), yy, xx + (ConfigValues.size), yy + (ConfigValues.size / 2), xx, yy + (ConfigValues.size / 2));
+						image.drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
 
-						image.setRotation(0);
 
-						if(renderLighting)
+						if (!isItem) {
+							if (getBreakImageForBlock(block) != null) {
+								getBreakImageForBlock(block).getFlippedCopy(true, false).drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
+							}
+						}
+
+						g.popTransform();
+
+						if (renderLighting) {
 							drawShadowSide(g, xStart, yStart, block);
+						} else {
+							drawSide(g, xStart, yStart, new Color(0, 0, 0, 0.26F));
+						}
 
-						drawFront(g, xStart, yStart, new Color(0.3F,0.3F,0.3F, 0.02F));
 					} else {
 						drawSide(g, xStart, yStart, block.getDefaultBlockColor().darker());
 					}
@@ -174,15 +217,31 @@ public class DefaultBlockRendering implements BlockRenderer {
 
 				if (top) {
 					if (block.getBlockTextureFromSide(EnumBlockSide.TOP) != null) {
-						Image image = block.getBlockTextureFromSide(EnumBlockSide.TOP);
+						Image image = block.getBlockTextureFromSide(EnumBlockSide.TOP).getFlippedCopy(true, false);
+
+						g.pushTransform();
+
+						g.rotate(rX + (ConfigValues.size / 2), rY + ConfigValues.size / 2, 180);
+						g.translate(-(ConfigValues.size / 2), ConfigValues.size * 1.5F);
+
 						image.drawWarped(rX, rY, rX + (ConfigValues.size / 2), rY - (ConfigValues.size / 2), rX + ((ConfigValues.size) * 1.5F), rY - (ConfigValues.size / 2), rX + ConfigValues.size, rY);
+
+
+						if (!isItem) {
+							if (getBreakImageForBlock(block) != null) {
+								getBreakImageForBlock(block).getFlippedCopy(true, false).drawWarped(rX, rY, rX + (ConfigValues.size / 2), rY - (ConfigValues.size / 2), rX + ((ConfigValues.size) * 1.5F), rY - (ConfigValues.size / 2), rX + ConfigValues.size, rY);
+							}
+						}
+
+						g.popTransform();
 
 						if(renderLighting) {
 							drawShadowTop(g, xStart, yStart, block);
+							drawTop(g, xStart, yStart, new Color(1, 1, 1, 0.05F));
 						}else {
-
-							drawFront(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.02F));
+							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.3F));
 						}
+
 					} else {
 						drawTop(g, xStart, yStart, block.getDefaultBlockColor().brighter());
 					}
@@ -192,9 +251,14 @@ public class DefaultBlockRendering implements BlockRenderer {
 					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT);
 					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
+					if (!isItem) {
+						if (getBreakImageForBlock(block) != null) {
+							getBreakImageForBlock(block).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						}
+					}
+
 					if(renderLighting) {
 						drawShadowFront(g, xStart, yStart, block);
-
 						drawFront(g, xStart, yStart, new Color(1,1,1, 0.02F));
 					}
 				} else {
@@ -206,8 +270,16 @@ public class DefaultBlockRendering implements BlockRenderer {
 					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT);
 					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
-					if(renderLighting)
+					if (!isItem) {
+						if (getBreakImageForBlock(block) != null) {
+							getBreakImageForBlock(block).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						}
+					}
+
+
+					if (renderLighting) {
 						drawShadowFront(g, xStart, yStart, block);
+					}
 
 					drawFront(g, xStart, yStart, new Color(1,1,1, 0.02F));
 
@@ -216,5 +288,17 @@ public class DefaultBlockRendering implements BlockRenderer {
 				}
 			}
 		}
+
+
+	}
+
+	public Image getBreakImageForBlock( Block block ) {
+		float tt = ((float) block.getBlockDamage() / (float) block.getMaxBlockDamage()) * 5;
+
+		if ((int) tt != 0 && ((int) tt) >= 0 && ((int) tt - 1) < 5) {
+			return breakImages[ (int) tt - 1 ];
+		}
+
+		return null;
 	}
 }

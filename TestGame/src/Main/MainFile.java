@@ -1,16 +1,12 @@
-package Main;/*
-* Project: Random Java Creations
-* Package: PACKAGE_NAME
-* Created: 18.07.2015
-*/
+package Main;
 
-import Interface.Gui;
 import Interface.Interfaces.GuiMainMenu;
+import Interface.Menu;
 import Render.AbstractWindowRender;
 import Render.Renders.BlockRendering;
-import Render.Renders.BlockSelectionRender;
 import Render.Renders.HotbarRender;
 import Settings.Config;
+import Utils.BlockAction;
 import Utils.ConfigValues;
 import Utils.Registrations;
 import Utils.RenderUtil;
@@ -28,31 +24,28 @@ import java.util.logging.Logger;
 
 public class MainFile extends BasicGame implements InputListener {
 
-	//TODO Recreate game with Slick2D as the base to allow easier physics
-	//TODO Add physics to both blocks and player
-
-	//TODO Create an util to make it easier to add random noise to blocks
 	//TODO Add main menu and world saving/creation
-	//TODO Fix y-max being at the bottom line of the world
-	//TODO Start a gui system to allow main menu and player inventory
+	//TODO Start a menu system to allow main menu and player inventory
 
-	//TODO Add float position for entities and block render to allow adding motion based movement for smoother player control and to allow jump/fall.
 	//TODO Add ingame version of settings screen
-	//TODO Change AbstractWindowRender system to allow window renders in guis (ingame guis like inventories and ingame options)
-
 
 	public static MainFile file = new MainFile("Test Game");
 	public static Random random = new Random();
 
 	public static World currentWorld;
+	public static Menu currentMenu;
+
 	public static Rectangle blockRenderBounds = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size) - ConfigValues.renderXSize, (ConfigValues.renderYSize * ConfigValues.size));
-	public static boolean hasScrolled = false;
+
 	public static AppGameContainer gameContainer;
+
 	public static int xWindowSize = (ConfigValues.renderXSize * ConfigValues.size) - 25;
 	public static int yWindowSize = (ConfigValues.renderYSize * ConfigValues.size);
-	public static Gui currentGui;
-	boolean hasDebugSize = false;
-	int debugSize = 265;
+
+	public static boolean hasDebugSize = false;
+	public static boolean hasScrolled = false;
+	public static int debugSize = 265;
+
 
 	public MainFile( String title ) {
 		super(title);
@@ -68,6 +61,7 @@ public class MainFile extends BasicGame implements InputListener {
 
 			gameContainer.setShowFPS(false);
 			gameContainer.setVSync(true);
+			gameContainer.setUpdateOnlyWhenVisible(false);
 
 
 			gameContainer.start();
@@ -85,7 +79,7 @@ public class MainFile extends BasicGame implements InputListener {
 		Config.addOptionsToList();
 		container.getInput().addKeyListener(this);
 
-		currentGui = new GuiMainMenu();
+		currentMenu = new GuiMainMenu();
 
 		container.getInput().addMouseListener(new MouseListener() {
 			//TODO Registery for mouse wheel (or add it to the keybind system i have to make)
@@ -104,13 +98,15 @@ public class MainFile extends BasicGame implements InputListener {
 
 			public void mouseClicked( int button, int x, int y, int clickCount ) {
 			}
+
+
 			public void mousePressed( int button, int x, int y ) {
 					for (AbstractWindowRender render : Registrations.windowRenders) {
-						if (currentGui == null || render.canRenderWithGui()) render.mouseClick(button, x, y);
+						if (currentMenu == null || render.canRenderWithWindow()) render.mouseClick(button, x, y);
 					}
 
-					if (currentGui != null) {
-						currentGui.mouseClick(button, x, y);
+				if (currentMenu != null) {
+					currentMenu.mouseClick(button, x, y);
 					}
 			}
 
@@ -140,21 +136,11 @@ public class MainFile extends BasicGame implements InputListener {
 
 	}
 
+
 	@Override
 	public void update( GameContainer container, int delta ) throws SlickException {
 		updateKeys(container, delta);
-
-//		//TODO Fix resizable
-//		if (ConfigValues.resizeable) {
-//			ConfigValues.renderXSize = Math.round((container.getWidth() - (BlockRendering.START_X_POS * 2)) / ConfigValues.size);
-//			ConfigValues.renderYSize = Math.round((container.getHeight() - (BlockRendering.START_Y_POS * 2)) / ConfigValues.size);
-//
-//		} else {
-//			ConfigValues.renderXSize = 25;
-//			ConfigValues.renderYSize = 25;
-//
-//			ConfigValues.renderRange = ((ConfigValues.renderXSize + ConfigValues.renderYSize) / 2) / 2;
-//		}
+		BlockAction.update(container);
 
 		if (ConfigValues.debug && !hasDebugSize) {
 			gameContainer.setDisplayMode(container.getWidth() + debugSize, container.getHeight(), false);
@@ -163,12 +149,7 @@ public class MainFile extends BasicGame implements InputListener {
 		} else if (!ConfigValues.debug && hasDebugSize) {
 			gameContainer.setDisplayMode(container.getWidth() - debugSize, container.getHeight(), false);
 			hasDebugSize = false;
-
-			BlockSelectionRender.selectedX = -1;
-			BlockSelectionRender.selectedY = -1;
 		}
-
-
 	}
 
 	@Override
@@ -182,29 +163,27 @@ public class MainFile extends BasicGame implements InputListener {
 		g2.setBackground(Color.lightGray);
 		g2.setClip(blockRenderBounds);
 
-		if (currentGui != null) {
-			if (currentGui.canRender()) {
-				currentGui.render(g2);
-				currentGui.renderObject(g2);
+		if (currentMenu != null) {
+			if (currentMenu.canRender()) {
+				currentMenu.render(g2);
+				currentMenu.renderObject(g2);
 			}
 		}
 
 		for (AbstractWindowRender render : Registrations.windowRenders) {
 			Color tempC = g2.getColor();
 
-			if (currentGui == null || render.canRenderWithGui()) if (render.canRender()) {
+			if (currentMenu == null || render.canRenderWithWindow()) if (render.canRender()) {
 				render.render(g2);
 			}
 			g2.setColor(tempC);
 		}
 
 
-		g2.setClip(blockRenderBounds);
 		g2.setClip(c);
 	}
 
 	//TODO Add keyregister
-	//TODO Add proper move controls with motion instead of block moving
 	@Override
 	public void keyPressed( int key, char c ) {
 		if (Character.isDigit(c)) {
@@ -215,29 +194,29 @@ public class MainFile extends BasicGame implements InputListener {
 		}
 
 		//TODO Make it open a ingame version of the main menu
-		if (currentGui == null && currentWorld != null) {
+		if (currentMenu == null && currentWorld != null) {
 			if (key == Input.KEY_ESCAPE) {
-				currentGui = new GuiMainMenu();
+				currentMenu = new GuiMainMenu();
 			}
 		}
 
 		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if (currentGui == null || render.canRenderWithGui()) render.keyPressed(key, c);
+			if (currentMenu == null || render.canRenderWithWindow()) render.keyPressed(key, c);
 		}
 
-		if (currentGui != null) {
-			currentGui.keyPressed(key, c);
+		if (currentMenu != null) {
+			currentMenu.keyPressed(key, c);
 		}
 	}
 
 	@Override
 	public void keyReleased( int key, char c ) {
 		for (AbstractWindowRender render : Registrations.windowRenders) {
-			if (currentGui == null || render.canRenderWithGui()) render.keyReleased(key, c);
+			if (currentMenu == null || render.canRenderWithWindow()) render.keyReleased(key, c);
 		}
 
-		if (currentGui != null) {
-			currentGui.keyReleased(key, c);
+		if (currentMenu != null) {
+			currentMenu.keyReleased(key, c);
 		}
 	}
 

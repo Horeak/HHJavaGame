@@ -9,9 +9,9 @@ public abstract class GuiObject extends MouseOverArea {
 	public int x, y;
 	public int width, height;
 	public boolean enabled = true;
-	public Gui gui;
+	public Menu menu;
 
-	public GuiObject( int x, int y, int width, int height, Gui gui ) {
+	public GuiObject( int x, int y, int width, int height, Menu menu ) {
 		super(MainFile.gameContainer, null, x, y, width, height);
 
 		this.x = x;
@@ -20,10 +20,10 @@ public abstract class GuiObject extends MouseOverArea {
 		this.width = width;
 		this.height = height;
 
-		this.gui = gui;
+		this.menu = menu;
 	}
 
-	public abstract void onClicked( int button, int x, int y, Gui gui );
+	public abstract void onClicked( int button, int x, int y, Menu menu );
 
-	public abstract void renderObject( Graphics g2, Gui gui );
+	public abstract void renderObject( Graphics g2, Menu menu );
 }

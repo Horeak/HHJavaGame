@@ -5,7 +5,7 @@ import org.newdawn.slick.Graphics;
 
 import java.util.ArrayList;
 
-public abstract class Gui {
+public abstract class Menu {
 
 	public ArrayList<GuiObject> guiObjects = new ArrayList<>();
 

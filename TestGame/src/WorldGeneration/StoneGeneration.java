@@ -5,11 +5,14 @@ package WorldGeneration;
 * Created: 26.07.2015
 */
 
+import Blocks.BlockCrackedStone;
 import Blocks.BlockStone;
 import Main.MainFile;
 import Render.SimplexNoise;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
+
+import java.util.Random;
 
 public class StoneGeneration extends StructureGeneration {
 	int frequency = 30;
@@ -33,7 +36,8 @@ public class StoneGeneration extends StructureGeneration {
 						int ySize = (MainFile.currentWorld.worldSize.ySize) / 4;
 
 						float current = (float) (ySize - y) / ySize;
-						if (current < h) MainFile.currentWorld.setBlock(new BlockStone(), x, y);
+						if (current < h)
+							MainFile.currentWorld.setBlock(new Random().nextInt(10) == 0 ? new BlockCrackedStone() : new BlockStone(), x, y);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

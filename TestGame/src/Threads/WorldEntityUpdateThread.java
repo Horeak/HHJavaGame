@@ -17,7 +17,7 @@ public class WorldEntityUpdateThread extends Thread {
 				}
 
 				try {
-					sleep(100);
+					sleep(200);
 				} catch (Exception e) {
 
 				}

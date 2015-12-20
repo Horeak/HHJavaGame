@@ -21,12 +21,18 @@ import java.util.ArrayList;
 public abstract class Block implements Item {
 
 	public static int DEFAULT_MAX_STACK_SIZE = 64;
+
 	public int x, y;
 	public World world;
+
 	public ArrayList<String> blockInfoList = new ArrayList<>();
+
 	private int stackDamage = 0;
 	private int stackSize = 1;
 	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
+
+	private int blockDamage = 0;
+
 	private LightUnit unit = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
 
 	public Block( int x, int y ) {
@@ -55,6 +61,7 @@ public abstract class Block implements Item {
 	}
 
 	public void addInfo() {
+		blockInfoList.add("Block damage: " + getBlockDamage() + " / " + getMaxBlockDamage());
 		blockInfoList.add("Light level: " + getLightValue());
 		blockInfoList.add("Light color: " + getLightUnit().getLightColor());
 		blockInfoList.add("Can block see sky: " + canBlockSeeSky());
@@ -92,6 +99,29 @@ public abstract class Block implements Item {
 	}
 
 
+	public Image getBlockTextureFromSide( EnumBlockSide side ) {
+		return null;
+	}
+
+	public boolean useBlockTexture() {
+		return true;
+	}
+
+	public int getMaxBlockDamage() {
+		return 10;
+	}
+
+	public int getBlockDamage() {
+		return blockDamage;
+	}
+
+	public void setBlockDamage( int blockDamage ) {
+		this.blockDamage = blockDamage;
+	}
+
+
+
+
 	public String getItemName() {
 		return getBlockDisplayName();
 	}
@@ -99,12 +129,6 @@ public abstract class Block implements Item {
 		return DefaultBlockRendering.staticReference;
 	}
 
-	public Image getBlockTextureFromSide( EnumBlockSide side ) {
-		return null;
-	}
-	public boolean useBlockTexture() {
-		return true;
-	}
 
 	@Override
 	public int getItemDamage() {
@@ -123,7 +147,7 @@ public abstract class Block implements Item {
 
 	@Override
 	public String getItemID() {
-		return "block." + getBlockDisplayName().toLowerCase().replace(" ", "_");
+		return "block." + getBlockDisplayName().toLowerCase().replace(" ", "_") + "." + getItemDamage();
 	}
 
 
@@ -142,7 +166,6 @@ public abstract class Block implements Item {
 	public void decreaseStackSize( int i ) {
 		stackSize -= i;
 
-		//TODO Need to find a better solution where the item gets removed from the correct slot. (perhpahs storing inventory slot info in the item?)
 		if (stackSize <= 0) MainFile.currentWorld.player.consumeItem(this);
 	}
 

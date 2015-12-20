@@ -49,7 +49,7 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 	}
 
 	@Override
-	public boolean canRenderWithGui() {
+	public boolean canRenderWithWindow() {
 		return false;
 	}
 }

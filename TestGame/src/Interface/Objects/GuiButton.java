@@ -1,7 +1,7 @@
 package Interface.Objects;
 
-import Interface.Gui;
 import Interface.GuiObject;
+import Interface.Menu;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -12,18 +12,18 @@ public class GuiButton extends GuiObject {
 
 	public String text;
 
-	public GuiButton( int x, int y, int width, int height, String text, Gui gui ) {
-		super(x, y, width, height, gui);
+	public GuiButton( int x, int y, int width, int height, String text, Menu menu ) {
+		super(x, y, width, height, menu);
 		this.text = text;
 	}
 
 	@Override
-	public void onClicked( int button, int x, int y, Gui gui ) {
-		gui.buttonPressed(this);
+	public void onClicked( int button, int x, int y, Interface.Menu menu ) {
+		menu.buttonPressed(this);
 	}
 
 	@Override
-	public void renderObject( Graphics g2, Gui gui ) {
+	public void renderObject( Graphics g2, Menu menu ) {
 		Color temp = g2.getColor();
 
 		int tempY = y - 15;

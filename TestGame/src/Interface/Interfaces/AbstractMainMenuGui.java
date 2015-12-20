@@ -4,8 +4,9 @@ import Blocks.BlockDirt;
 import Blocks.BlockGrass;
 import Blocks.BlockStone;
 import Blocks.Util.Block;
-import Interface.Gui;
+import Interface.Menu;
 import Main.MainFile;
+import Render.Renders.BackgroundRender;
 import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
 import WorldFiles.EnumWorldSize;
@@ -13,15 +14,15 @@ import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.fills.GradientFill;
 import org.newdawn.slick.geom.Rectangle;
 
 
-public class AbstractMainMenuGui extends Gui {
+public class AbstractMainMenuGui extends Menu {
 
 	public static int renderStart = 305;
 	public static int renderWidth = 190;
 	public static World world;
+	BackgroundRender render = new BackgroundRender();
 
 	public AbstractMainMenuGui() {
 		initWorld();
@@ -30,6 +31,8 @@ public class AbstractMainMenuGui extends Gui {
 	public static void initWorld() {
 		if (world == null) {
 			world = new World("BackgroundWorld", EnumWorldSize.SMALL);
+			world.setTimeOfDay(EnumWorldTime.DAY);
+			world.WorldTime /= 2;
 
 			for (int x = 0; x < ConfigValues.renderXSize; x++) {
 				world.setBlock(new BlockGrass(x, (ConfigValues.renderYSize - 6)), x, (ConfigValues.renderYSize - 6));
@@ -55,12 +58,8 @@ public class AbstractMainMenuGui extends Gui {
 	public void render( Graphics g2 ) {
 		initWorld();
 
-		Color c = EnumWorldTime.DAY.SkyColor;
-
+		render.render(g2, world);
 		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
-		GradientFill fill = new GradientFill(rectangle.getX(), rectangle.getY(), c, (rectangle.getX() + rectangle.getWidth()), (rectangle.getY() + rectangle.getHeight()), c.brighter());
-
-		g2.fill(rectangle, fill);
 
 		if (world != null && world.Blocks != null) {
 			for (Block[] bb : world.Blocks) {
