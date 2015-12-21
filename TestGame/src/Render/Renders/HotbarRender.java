@@ -1,10 +1,10 @@
 package Render.Renders;
 
-import Blocks.BlockRender.BlockRenderer;
+import Blocks.BlockRender.IBlockRenderer;
 import Blocks.Util.Block;
 import Interface.Menu;
 import Interface.Objects.GuiButton;
-import Items.Item;
+import Items.IItem;
 import Main.MainFile;
 import Render.AbstractWindowRender;
 import Render.EnumRenderMode;
@@ -78,7 +78,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 
 	class hotbarButton extends GuiButton {
-		public Item item;
+		public IItem item;
 		int num;
 
 		public hotbarButton( int x, int y, Menu menu, int num ) {
@@ -119,7 +119,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 			if (item != null && item.getRender() != null) {
 				if (item instanceof Block) {
-					((BlockRenderer) (item.getRender())).renderBlock(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false, true);
+					((IBlockRenderer) (item.getRender())).renderBlock(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false, true);
 				} else {
 					item.getRender().renderItem(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, item);
 				}

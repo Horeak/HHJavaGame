@@ -11,7 +11,6 @@ public class ConfigValues {
 	public static boolean RENDER_BLOCKS = true;
 	public static boolean RENDER_ENTITIES = true;
 	public static boolean RENDER_BACKGROUND = true;
-
 	public static boolean RENDER_HOTBAR = true;
 
 	public static int renderXSize = 25;
@@ -21,7 +20,7 @@ public class ConfigValues {
 	public static int renderRange = ((renderXSize + renderYSize) / 2) / 2;
 	public static int hotbarRenderSize = 54;
 
-	public static boolean resizeable = false;
+	public static int lightUpdateRenderRange = 64;
 
 	public static int size = 32;
 

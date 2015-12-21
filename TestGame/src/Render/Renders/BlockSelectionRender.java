@@ -19,27 +19,26 @@ public class BlockSelectionRender extends AbstractWindowRender {
 		float mouseBlockX = (float) (BlockSelection.selectedX - plPos.x) + ConfigValues.renderRange;
 		float mouseBlockY = (float) (BlockSelection.selectedY - plPos.y) + ConfigValues.renderRange;
 
-		if (plPos.x < 12 && plPos.x > 1) mouseBlockX -= 1;
+		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 
-		if (BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0) {
-			Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
+		boolean valid = BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0 && BlockSelection.selectedX < MainFile.currentWorld.worldSize.xSize && BlockSelection.selectedY < MainFile.currentWorld.worldSize.ySize;
+
+		if (valid) {
 			g2.setColor(new Color(255, 255, 255, 64));
-			g2.fill(rectangle);
-
-			g2.setColor(Color.white);
-			g2.draw(rectangle);
 		} else {
-			Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS + ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 			g2.setColor(new Color(255, 0, 0, 64));
-			g2.fill(rectangle);
-
-			g2.setColor(Color.red);
-			g2.draw(rectangle);
-
 			g2.draw(new Line(rectangle.getX(), rectangle.getY(), rectangle.getX() + rectangle.getWidth(), rectangle.getY() + rectangle.getHeight()));
 			g2.draw(new Line(rectangle.getX() + rectangle.getWidth(), rectangle.getY(), rectangle.getX(), rectangle.getY() + rectangle.getHeight()));
-
 		}
+		g2.fill(rectangle);
+
+		if (valid) {
+			g2.setColor(Color.white);
+		} else {
+			g2.setColor(Color.red);
+		}
+
+		g2.draw(rectangle);
 
 		g2.setColor(temp);
 	}

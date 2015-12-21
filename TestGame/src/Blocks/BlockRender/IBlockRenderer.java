@@ -1,16 +1,16 @@
 package Blocks.BlockRender;
 
 import Blocks.Util.Block;
-import Items.Item;
-import Items.Rendering.ItemRenderer;
+import Items.IItem;
+import Items.Rendering.IItemRenderer;
 import Render.EnumRenderMode;
 import WorldFiles.World;
 import org.newdawn.slick.Graphics;
 
-public interface BlockRenderer extends ItemRenderer {
+public interface IBlockRenderer extends IItemRenderer {
 	void renderBlock( Graphics g, int rX, int rY, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem );
 
-	default void renderItem( Graphics g, int rX, int rY, EnumRenderMode renderMode, Item item ) {
+	default void renderItem( Graphics g, int rX, int rY, EnumRenderMode renderMode, IItem item ) {
 		if (item instanceof Block) {
 			Block block = (Block) item;
 

@@ -29,7 +29,7 @@ public class BlockGrass extends Block implements ITickBlock {
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side ) {
-		return side == EnumBlockSide.TOP ? topTexture : BlockGrass.sideTexture;
+		return side == EnumBlockSide.TOP ? topTexture : sideTexture;
 	}
 
 	@Override

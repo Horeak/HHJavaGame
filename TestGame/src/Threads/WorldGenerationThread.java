@@ -1,5 +1,6 @@
 package Threads;
 
+import Blocks.BlockAir;
 import Main.MainFile;
 import Utils.Registrations;
 import WorldGeneration.Util.GenerationBase;
@@ -41,6 +42,16 @@ public class WorldGenerationThread extends Thread {
 				}
 			}
 		}
+
+		for (int x = 0; x < MainFile.currentWorld.worldSize.xSize; x++) {
+			for (int y = 0; y < MainFile.currentWorld.worldSize.ySize; y++) {
+				if (MainFile.currentWorld.getBlock(x, y) == null) {
+					MainFile.currentWorld.setBlock(new BlockAir(), x, y);
+				}
+			}
+		}
+
+		MainFile.currentWorld.doneGenerating();
 
 		MainFile.currentWorld.generating = false;
 	}

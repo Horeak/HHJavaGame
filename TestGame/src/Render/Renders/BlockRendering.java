@@ -6,8 +6,6 @@ import Render.AbstractWindowRender;
 import Utils.ConfigValues;
 import com.sun.javafx.geom.Vec2d;
 
-import java.text.DecimalFormat;
-
 
 public class BlockRendering extends AbstractWindowRender {
 
@@ -21,38 +19,21 @@ public class BlockRendering extends AbstractWindowRender {
 		org.newdawn.slick.geom.Rectangle c = g2.getClip();
 		g2.setClip(MainFile.blockRenderBounds);
 
-		int renderDistance = ConfigValues.renderDistance + 2;
+		for (int x = -(ConfigValues.renderRange + 2); x < (ConfigValues.renderRange + 2); x++) {
+			for (int y = -(ConfigValues.renderRange + 2); y < (ConfigValues.renderRange + 2); y++) {
 
-		float xStart = (int) (plPos.x - ConfigValues.renderRange), xEnd = (int) (plPos.x + ConfigValues.renderRange + 1) + 1;
-		float yStart = (int) (plPos.y - ConfigValues.renderRange), yEnd = (int) (plPos.y + ConfigValues.renderRange + 1) + 2;
+				int xx = (int) (x + plPos.x);
+				int yy = (int) (y + plPos.y);
 
-		int renderX = 0, renderY = 0;
-		for (float x = xStart; x < xEnd; x++) {
-			for (float y = yStart; y < yEnd; y++) {
+				float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
+				float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
 
-				Vec2d blPos = new Vec2d(x, y);
-				double distance = plPos.distance(blPos);
-
-				DecimalFormat df = new DecimalFormat();
-				df.setMaximumFractionDigits(0);
-
-				int xx = Integer.parseInt(df.format(x).replace(",", "."));
-				int yy = Integer.parseInt(df.format(y).replace(",", "."));
-
-				if ((int) distance <= renderDistance) {
-					if (renderX < (ConfigValues.renderXSize + 1) && renderY < (ConfigValues.renderYSize + 2)) {
-						if (MainFile.currentWorld.getBlock(xx, yy) != null) {
-							Block block = MainFile.currentWorld.getBlock(xx, yy);
-
-							block.getRender().renderItem(g2, START_X_POS + (int) ((renderX - (plPos.x - (int) plPos.x)) * ConfigValues.size), START_Y_POS + (int) ((renderY - (plPos.y - (int) plPos.y)) * ConfigValues.size), ConfigValues.renderMod, block);
-						}
-					}
+				if (MainFile.currentWorld.getBlock(xx, yy) != null) {
+					Block block = MainFile.currentWorld.getBlock(xx, yy);
+					block.getRender().renderItem(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), ConfigValues.renderMod, block);
 				}
 
-				renderY += 1;
 			}
-			renderY = 0;
-			renderX += 1;
 		}
 
 		g2.setClip(c);

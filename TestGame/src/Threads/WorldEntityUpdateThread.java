@@ -12,12 +12,14 @@ public class WorldEntityUpdateThread extends Thread {
 	public void run() {
 		while (true) {
 			try {
+
+				if (!MainFile.gameContainer.isPaused())
 				for (Entity ent : MainFile.currentWorld.Entities) {
 					ent.updateEntity();
 				}
 
 				try {
-					sleep(200);
+					sleep(100);
 				} catch (Exception e) {
 
 				}

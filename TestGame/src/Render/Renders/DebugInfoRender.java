@@ -17,7 +17,6 @@ public class DebugInfoRender extends AbstractWindowRender {
 	@Override
 	public void render( Graphics g2 ) {
 		Color temp = g2.getColor();
-		Rectangle c = g2.getClip();
 
 		int xCord = (ConfigValues.renderXSize * ConfigValues.size) - 25;
 		int ySize = (ConfigValues.renderYSize * ConfigValues.size);
@@ -66,7 +65,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
 
 			g2.drawString(" - World time: " + MainFile.currentWorld.WorldTime + " / " + MainFile.currentWorld.WorldTimeDayEnd, textStartX, linePos += (lineLength));
-			g2.drawString(" - Time until next day phase (" + MainFile.currentWorld.getNextWorldTime().name + "): " + ((MainFile.currentWorld.getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.currentWorld.getNextWorldTime().timeBegin) - MainFile.currentWorld.WorldTime), textStartX, linePos += (lineLength));
+			g2.drawString(" - Time to next phase (" + MainFile.currentWorld.getNextWorldTime().name + "): " + ((MainFile.currentWorld.getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.currentWorld.getNextWorldTime().timeBegin) - MainFile.currentWorld.WorldTime), textStartX, linePos += (lineLength));
 			g2.drawString(" - Time of day: " + MainFile.currentWorld.worldTimeOfDay.name, textStartX, linePos += (lineLength));
 			g2.drawString(" - Day number: " + MainFile.currentWorld.WorldDay, textStartX, linePos += (lineLength));
 
@@ -83,7 +82,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 		if (MainFile.currentWorld != null) {
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			g2.drawString("Currently selected block: " + (BlockSelection.selectedBlock != null ? BlockSelection.selectedBlock.getBlockDisplayName() : "None"), textStartX, linePos += (lineLength * 2));
+			g2.drawString("Currently selected block: " + (BlockSelection.selectedBlock != null ? BlockSelection.selectedBlock.getItemName() : "None"), textStartX, linePos += (lineLength * 2));
 
 			if (BlockSelection.selectedBlock != null) {
 				g2.setColor(Color.black);
@@ -103,7 +102,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 		RenderUtil.resetFont(g2);
 
 		g2.setColor(temp);
-		g2.setClip(c);
+		g2.setClip(MainFile.blockRenderBounds);
 	}
 
 

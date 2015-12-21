@@ -1,5 +1,6 @@
 package WorldFiles;
 
+import Blocks.BlockAir;
 import Blocks.Util.Block;
 import Blocks.Util.ILightSource;
 import Blocks.Util.ITickBlock;
@@ -14,6 +15,7 @@ import com.sun.javafx.geom.Vec2d;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class World {
 
@@ -88,16 +90,38 @@ public class World {
 		worldLightUpdateThread.start();
 	}
 
+	public void doneGenerating() {
+		spawnPlayer();
+	}
+
 	public void stop() {
 		worldUpdateThread.stop();
 		worldEntityUpdateThread.stop();
 		worldLightUpdateThread.stop();
 	}
 
+	public boolean isAirBlock( int x, int y ) {
+		if (getBlock(x, y, true) instanceof BlockAir) {
+			return true;
+		}
+
+		return false;
+	}
+
 
 	public Block getBlock( int x, int y ) {
+		return getBlock(x, y, false);
+	}
+
+	public Block getBlock( int x, int y, boolean allowAir ) {
 		if (Blocks != null) {
-			if (x >= 0 && y >= 0 && x < worldSize.xSize && y < worldSize.ySize) return Blocks[ x ][ y ];
+			if (x >= 0 && y >= 0 && x < worldSize.xSize && y < worldSize.ySize) {
+				if (!allowAir && Blocks[ x ][ y ] instanceof BlockAir) {
+					return null;
+				}
+
+				return Blocks[ x ][ y ];
+			}
 		}
 		return null;
 	}
@@ -112,9 +136,17 @@ public class World {
 				}
 
 				if (block != null) block.world = this;
-				Blocks[ x ][ y ] = block;
 
-				updateNearbyBlocks(block);
+				if (block != null) {
+					Blocks[ x ][ y ] = block;
+				} else {
+					Blocks[ x ][ y ] = new BlockAir();
+					Blocks[ x ][ y ].x = x;
+					Blocks[ x ][ y ].y = y;
+				}
+
+				getBlock(x, y, true).updateBlock(this, x, y);
+				updateNearbyBlocks(getBlock(x, y));
 			}
 		}
 	}
@@ -123,19 +155,20 @@ public class World {
 	public void spawnPlayer() {
 		int xx = 0, yy = 0;
 		for (int y = 0; y < worldSize.ySize; y++) {
-			int x = (worldSize.xSize / 2) + 2;
+			int x = new Random().nextInt(worldSize.xSize);
 
-			boolean t1 = getBlock(x, y) == null, t2 = getBlock(x, y - 1) == null, t3 = getBlock(x, y + 1) != null;
-
-			if (t1 && t2 && t3) {
+			if (getBlock(x, y) != null && getBlock(x, y).canBlockSeeSky()) {
 				xx = x;
-				yy = y;
+				yy = y - 1;
 				break;
 			}
 		}
 
-		player = new EntityPlayer(xx, yy);
-		Entities.add(player);
+		if (player == null) {
+			player = new EntityPlayer(xx, yy);
+			Entities.add(player);
+		}
+		player.setEntityPosition(xx, yy);
 	}
 
 	public void updateBlocks() {
@@ -164,99 +197,102 @@ public class World {
 
 
 	public void updateNearbyBlocks( Block block ) {
+		for (Block bl : getNearbyBlocks(block)) {
+
+			if (bl != null) {
+				bl.updateBlock(block.world, block.x, block.y);
+			}
+		}
+	}
+
+	public Block[] getNearbyBlocks( Block block ) {
+		Block[] bl = new Block[ 4 ];
+
 		for (int x = -1; x < 2; x++) {
 			for (int y = -1; y < 2; y++) {
 
 				if (x != 0 && y != 0) continue;
 
 				if (block != null) {
-					Block b = getBlock(block.x + x, block.y + y);
+					Block b = getBlock(block.x + x, block.y + y, true);
 
 					if (b != null) {
 						if (b.x != block.x || b.y != block.y) {
-							b.updateBlock(this, block.x, block.y);
+							bl[ (x + 1) + (y + 1) ] = b;
 						}
 					}
 				}
 			}
 		}
+
+		return bl;
 	}
 
 	public void updateLightForBlock( Block block ) {
-		if (block instanceof ILightSource) {
-			block.setLightValue(((ILightSource) block).getOutputStrength());
-		}
+		if (block != null) {
+			block.setLightValue(0);
+			block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
 
-		boolean hasLight = false;
+			if (block instanceof ILightSource) {
+				block.setLightValue(((ILightSource) block).getOutputStrength());
+				block.getLightUnit().setLightColor(((ILightSource) block).getLightColor());
+			}
 
-		for (int x = -1; x < 2; x++) {
-			for (int y = -1; y < 2; y++) {
-				if (x != 0 && y != 0) continue;
+			boolean hasLight = false;
 
-				Block b = getBlock(block.x + x, block.y + y);
-
-				if (b != null) {
-					if (b.getLightValue() > 0) {
-						hasLight = true;
+			for (int x = -1; x < 2; x++) {
+				for (int y = -1; y < 2; y++) {
+					if (x != 0 && y != 0) {
+						continue;
 					}
 
-					if (block.getLightValue() < b.getLightValue()) {
-						block.setLightValue(b.getLightValue() - 1);
-						updateNearbyBlocks(block);
+					Block b = getBlock(block.x + x, block.y + y, true);
+					if (b != null) {
+
+						if (b.getLightValue() > 0) {
+							hasLight = true;
+						}
+
+						if (block.getLightValue() < b.getLightValue()) {
+							block.setLightValue(b.getLightValue() - 1);
+							if (block.getLightUnit().getLightColor() != b.getLightUnit().getLightColor()) {
+								block.getLightUnit().setLightColor(b.getLightUnit().getLightColor());
+							}
+
+						}
 					}
 				}
 			}
-		}
 
-		if (!hasLight && !(block instanceof ILightSource)) {
-			block.setLightValue(0);
-			updateNearbyBlocks(block);
+			if (!hasLight && !(block instanceof ILightSource)) {
+				block.setLightValue(0);
+				block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
+			}
+
 		}
 	}
 
+
+	//TODO Make it where light can travel through air
 	//TODO Maybe try to find a way where it only update blocks nearby?
 	public void updateLightForBlocks() {
-		for (Block[] bb : Blocks) {
-			for (Block block : bb) {
-				if (block != null) {
+		if (player != null) {
+			for (int x = -(ConfigValues.lightUpdateRenderRange / 2); x < (ConfigValues.lightUpdateRenderRange / 2); x++) {
+				for (int y = -(ConfigValues.lightUpdateRenderRange / 2); y < (ConfigValues.lightUpdateRenderRange / 2); y++) {
+					Block b = getBlock((int) player.getEntityPostion().x + x, (int) player.getEntityPostion().y + y, true);
 
-					block.setLightValue(0);
-					block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
-
-					if (block instanceof ILightSource) {
-						block.setLightValue(((ILightSource) block).getOutputStrength());
-						block.getLightUnit().setLightColor(((ILightSource) block).getLightColor());
+					if (b != null) {
+						updateLightForBlock(b);
+						b.updateBlock(this, b.x, b.y);
 					}
+				}
+			}
 
-					boolean hasLight = false;
-
-					for (int x = -1; x < 2; x++) {
-						for (int y = -1; y < 2; y++) {
-
-							if (x != 0 && y != 0) continue;
-
-							Block b = getBlock(block.x + x, block.y + y);
-
-							if (b != null) {
-
-								if (b.getLightValue() > 0) {
-									hasLight = true;
-								}
-
-								if (block.getLightValue() < b.getLightValue()) {
-									block.setLightValue(b.getLightValue() - 1);
-
-									if (block.getLightUnit().getLightColor() != b.getLightUnit().getLightColor())
-										block.getLightUnit().setLightColor(b.getLightUnit().getLightColor());
-								}
-
-							}
-						}
-					}
-
-					if (!hasLight && !(block instanceof ILightSource)) {
-						block.setLightValue(0);
-						block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
+		} else {
+			for (Block[] bb : Blocks) {
+				for (Block block : bb) {
+					if (block != null) {
+						updateLightForBlock(block);
 					}
 				}
 			}

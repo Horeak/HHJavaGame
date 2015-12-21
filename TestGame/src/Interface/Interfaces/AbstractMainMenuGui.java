@@ -19,7 +19,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class AbstractMainMenuGui extends Menu {
 
-	public static int renderStart = 305;
+	public static int renderStart = 290;
 	public static int renderWidth = 190;
 	public static World world;
 	BackgroundRender render = new BackgroundRender();

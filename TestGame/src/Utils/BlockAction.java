@@ -1,7 +1,7 @@
 package Utils;
 
 import Blocks.Util.Block;
-import Items.Item;
+import Items.IItem;
 import Main.MainFile;
 import Render.Renders.HotbarRender;
 import org.newdawn.slick.GameContainer;
@@ -16,7 +16,7 @@ public class BlockAction {
 			int selected = (HotbarRender.slotSelected - 1);
 
 			if (selected < MainFile.currentWorld.player.getInvetorySize()) {
-				Item item = MainFile.currentWorld.player.getItem(selected);
+				IItem item = MainFile.currentWorld.player.getItem(selected);
 
 				if (button == Input.MOUSE_LEFT_BUTTON) {
 					if (MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY) != null) {

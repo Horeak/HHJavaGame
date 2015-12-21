@@ -14,23 +14,28 @@ public class WorldUpdateThread extends Thread {
 	//TODO Time updating too fast?
 	public void run() {
 		while (true) {
+
 			try {
-				for (EnumWorldTime en : EnumWorldTime.values()) {
-					if (MainFile.currentWorld.WorldTime > en.timeBegin && MainFile.currentWorld.WorldTime < en.timeEnd) {
-						MainFile.currentWorld.worldTimeOfDay = en;
+
+				if (!MainFile.gameContainer.isPaused()) {
+
+					for (EnumWorldTime en : EnumWorldTime.values()) {
+						if (MainFile.currentWorld.WorldTime > en.timeBegin && MainFile.currentWorld.WorldTime < en.timeEnd) {
+							MainFile.currentWorld.worldTimeOfDay = en;
+						}
 					}
-				}
-				MainFile.currentWorld.WorldTime += 1;
+					MainFile.currentWorld.WorldTime += 1;
 
-				if (MainFile.currentWorld.WorldTime > MainFile.currentWorld.WorldTimeDayEnd) {
-					MainFile.currentWorld.WorldTime = 0;
-					MainFile.currentWorld.WorldDay += 1;
-				}
+					if (MainFile.currentWorld.WorldTime > MainFile.currentWorld.WorldTimeDayEnd) {
+						MainFile.currentWorld.WorldTime = 0;
+						MainFile.currentWorld.WorldDay += 1;
+					}
 
-				MainFile.currentWorld.updateBlocks();
+					MainFile.currentWorld.updateBlocks();
 
-				for (Entity ent : MainFile.currentWorld.Entities) {
-					ent.updateEntity();
+					for (Entity ent : MainFile.currentWorld.Entities) {
+						ent.updateEntity();
+					}
 				}
 
 				try {
@@ -38,6 +43,7 @@ public class WorldUpdateThread extends Thread {
 				} catch (Exception e) {
 
 				}
+
 
 
 			} catch (Exception e) {

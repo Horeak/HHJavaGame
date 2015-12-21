@@ -1,9 +1,9 @@
 package Items;
 
-import Items.Rendering.ItemRenderer;
+import Items.Rendering.IItemRenderer;
 import WorldFiles.World;
 
-public interface Item {
+public interface IItem extends Cloneable {
 	int getItemDamage();
 
 	int getItemStackSize();
@@ -19,7 +19,7 @@ public interface Item {
 	String getItemID();
 	String getItemName();
 
-	ItemRenderer getRender();
+	IItemRenderer getRender();
 
 	//Return TRUE/FALSE if it was sucsessfull
 	boolean useItem( World world, int x, int y ) throws IllegalAccessException, InstantiationException;
@@ -28,4 +28,6 @@ public interface Item {
 	default int getBlockDamageValue( World world, int x, int y ) {
 		return 1;
 	}
+
+	IItem clone() throws CloneNotSupportedException;
 }

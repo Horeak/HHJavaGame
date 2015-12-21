@@ -12,10 +12,11 @@ public class WorldLightUpdateThread extends Thread {
 		while (true) {
 			try {
 
+				if (!MainFile.gameContainer.isPaused())
 				MainFile.currentWorld.updateLightForBlocks();
 
 				try {
-					sleep(100);
+					sleep(10);
 				} catch (Exception e) {
 
 				}

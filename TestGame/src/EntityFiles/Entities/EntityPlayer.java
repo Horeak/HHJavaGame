@@ -5,8 +5,8 @@ import Blocks.BlockTorch;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
-import Items.Inventory;
-import Items.Item;
+import Items.IInventory;
+import Items.IItem;
 import Utils.RenderUtil;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 
-public class EntityPlayer extends Entity implements Inventory {
+public class EntityPlayer extends Entity implements IInventory {
 
 	//TODO Add inventory
 	//TODO Make hotbar connected to player/inventory
@@ -29,7 +29,7 @@ public class EntityPlayer extends Entity implements Inventory {
 	public int facing = 0;
 	private int playerHealth = 100, playerMaxHealth = 100;
 	//TODO Change items size when adding proper inventory
-	private Item[] inventoryItems = new Item[ 10 ];
+	private IItem[] inventoryItems = new IItem[ 50 ];
 
 	public EntityPlayer( float x, float y ) {
 		super(x, y);
@@ -57,7 +57,6 @@ public class EntityPlayer extends Entity implements Inventory {
 	public void damageEntity( DamageSource source, DamageBase damage ) {
 		//TODO Take armor/defence into consideration when it is added.
 		playerHealth -= damage.getDamageAmount();
-
 	}
 
 	@Override
@@ -86,17 +85,17 @@ public class EntityPlayer extends Entity implements Inventory {
 	}
 
 	@Override
-	public Item[] getItems() {
+	public IItem[] getItems() {
 		return inventoryItems;
 	}
 
 	@Override
-	public Item getItem( int i ) {
+	public IItem getItem( int i ) {
 		return i < inventoryItems.length ? inventoryItems[ i ] : null;
 	}
 
 	@Override
-	public void setItem( int i, Item item ) {
+	public void setItem( int i, IItem item ) {
 		if (i < inventoryItems.length) {
 			inventoryItems[ i ] = item;
 		}
@@ -114,9 +113,9 @@ public class EntityPlayer extends Entity implements Inventory {
 
 
 	//TODO Improve both the consumeItem and the addItem as these are only rough temp versions
-	public void consumeItem( Item item ) {
+	public void consumeItem( IItem item ) {
 		for (int i = 0; i < getInvetorySize(); i++) {
-			Item it = getItem(i);
+			IItem it = getItem(i);
 
 			if (it != null) {
 				if (it.getItemID().equals(item.getItemID())) {
@@ -132,7 +131,7 @@ public class EntityPlayer extends Entity implements Inventory {
 		}
 	}
 
-	public boolean addItem( Item item ) {
+	public boolean addItem( IItem item ) {
 		int stack = item.getItemStackSize();
 
 		boolean checkedCurrent = false;
@@ -140,7 +139,7 @@ public class EntityPlayer extends Entity implements Inventory {
 		start:
 		for (int g = 0; g < 2; g++)
 			for (int i = 0; i < getInvetorySize(); i++) {
-				Item it = getItem(i);
+				IItem it = getItem(i);
 
 				if (checkedCurrent) {
 					if (it == null && item != null) {
@@ -158,6 +157,10 @@ public class EntityPlayer extends Entity implements Inventory {
 						} else {
 							it.setStackSize(it.getItemMaxStackSize() - tt);
 							stack = -(it.getItemMaxStackSize() - tt);
+
+							if (stack < 0) {
+								return true;
+							}
 
 							continue;
 						}

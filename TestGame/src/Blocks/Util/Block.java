@@ -7,8 +7,8 @@ package Blocks.Util;
 
 import Blocks.BlockRender.DefaultBlockRendering;
 import Blocks.BlockRender.EnumBlockSide;
-import Items.Item;
-import Items.Rendering.ItemRenderer;
+import Items.IItem;
+import Items.Rendering.IItemRenderer;
 import Main.MainFile;
 import Utils.BlockUtils;
 import WorldFiles.World;
@@ -18,7 +18,7 @@ import org.newdawn.slick.Image;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class Block implements Item {
+public abstract class Block implements IItem {
 
 	public static int DEFAULT_MAX_STACK_SIZE = 64;
 
@@ -26,20 +26,18 @@ public abstract class Block implements Item {
 	public World world;
 
 	public ArrayList<String> blockInfoList = new ArrayList<>();
-
+	int blockBreakDelay = 0, blockBreakReach = 200;
 	private int stackDamage = 0;
 	private int stackSize = 1;
 	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
-
 	private int blockDamage = 0;
-
 	private LightUnit unit = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
-
 	public Block( int x, int y ) {
 		this.x = x;
 		this.y = y;
 		this.world = MainFile.currentWorld;
 	}
+
 	public Block() {
 		this(0, 0);
 	}
@@ -75,14 +73,11 @@ public abstract class Block implements Item {
 	public int getLightValue() {
 		int tt = unit.getLightValue();
 		int g = (canBlockSeeSky() ? (int) ((float) ILightSource.MAX_LIGHT_STRENGTH * world.worldTimeOfDay.lightMultiplier) : 0);
-
 		if (tt < g) {
 			tt += g;
 		}
 
-
 		if (tt > ILightSource.MAX_LIGHT_STRENGTH) tt = ILightSource.MAX_LIGHT_STRENGTH;
-
 		return tt;
 	}
 
@@ -94,15 +89,16 @@ public abstract class Block implements Item {
 		return unit;
 	}
 
-
 	public void updateBlock( World world, int fromX, int fromY ) {
+		if (blockBreakDelay >= blockBreakReach) {
+			blockDamage = 0;
+		} else if (getBlockDamage() > 0 && blockBreakDelay < blockBreakReach) {
+			blockBreakDelay += 1;
+		}
 	}
 
 
-	public Image getBlockTextureFromSide( EnumBlockSide side ) {
-		return null;
-	}
-
+	public abstract Image getBlockTextureFromSide( EnumBlockSide side );
 	public boolean useBlockTexture() {
 		return true;
 	}
@@ -114,9 +110,9 @@ public abstract class Block implements Item {
 	public int getBlockDamage() {
 		return blockDamage;
 	}
-
 	public void setBlockDamage( int blockDamage ) {
 		this.blockDamage = blockDamage;
+		blockBreakDelay = 0;
 	}
 
 
@@ -125,7 +121,8 @@ public abstract class Block implements Item {
 	public String getItemName() {
 		return getBlockDisplayName();
 	}
-	public ItemRenderer getRender() {
+
+	public IItemRenderer getRender() {
 		return DefaultBlockRendering.staticReference;
 	}
 
@@ -192,13 +189,35 @@ public abstract class Block implements Item {
 
 	public boolean canBlockSeeSky() {
 		for (int g = y - 1; g > 0; g -= 1) {
-
 			if (world.getBlock(x, g) != null) {
 				return false;
 			}
 		}
 
-
 		return true;
+	}
+
+
+	@Override
+	public IItem clone() throws CloneNotSupportedException {
+		try {
+			Block block = this.getClass().newInstance();
+
+			block.x = x;
+			block.y = y;
+
+			block.world = world;
+
+			block.blockDamage = blockDamage;
+			block.stackSize = stackSize;
+			block.stackDamage = stackDamage;
+
+			return block;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }
