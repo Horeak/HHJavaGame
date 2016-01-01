@@ -24,7 +24,10 @@ public class BlockAction {
 						Block b = MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
 						if (b.getBlockDamage() >= b.getMaxBlockDamage()) {
-							MainFile.currentWorld.player.addItem(MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY));
+							if (MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped() != null) {
+								MainFile.currentWorld.player.addItem(MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped());
+							}
+
 							MainFile.currentWorld.setBlock(null, BlockSelection.selectedX, BlockSelection.selectedY);
 						} else {
 							b.setBlockDamage(b.getBlockDamage() + (item != null ? item.getBlockDamageValue(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY) : 1));

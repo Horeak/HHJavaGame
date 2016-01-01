@@ -1,8 +1,11 @@
 package WorldGeneration.Util;
-public abstract class GenerationBase {
-	public abstract boolean canGenerate( int x, int y );
 
-	public abstract void generate( int x, int y );
+import WorldFiles.World;
+
+public abstract class GenerationBase {
+	public abstract boolean canGenerate( World world, int x, int y );
+
+	public abstract void generate( World world, int x, int y );
 
 	public abstract String getGenerationName();
 

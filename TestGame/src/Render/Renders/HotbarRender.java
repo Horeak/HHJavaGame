@@ -12,6 +12,7 @@ import Utils.ConfigValues;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -119,7 +120,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 			if (item != null && item.getRender() != null) {
 				if (item instanceof Block) {
-					((IBlockRenderer) (item.getRender())).renderBlock(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false, true);
+					((IBlockRenderer) (item.getRender())).renderBlock(g2, (x + 14) * 2, (y + 23) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false, true);
 				} else {
 					item.getRender().renderItem(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, item);
 				}
@@ -127,16 +128,14 @@ public class HotbarRender extends AbstractWindowRender {
 
 			g2.scale(2, 2);
 
-
-			g2.setColor(Color.white);
-			RenderUtil.resizeFont(g2, 11);
+			g2.setColor(Color.black);
+			RenderUtil.resizeFont(g2, 12);
 
 			if (item != null) {
-				g2.drawString(Integer.toString(item.getItemStackSize()) + "x", x + 2, y + 25);
+				FontUtils.drawRight(g2.getFont(), item.getItemStackSize() + "x", x, y + 32, 45, g2.getColor());
 			}
 
 			RenderUtil.resetFont(g2);
-
 
 		}
 

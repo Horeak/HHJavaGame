@@ -14,11 +14,11 @@ import org.newdawn.slick.util.FontUtils;
 import java.awt.*;
 
 
-public class GuiMainMenu extends AbstractMainMenuGui {
+public class MainMenu extends AbstractMainMenu {
 
-	public GuiMainMenu guiInst = this;
+	public MainMenu guiInst = this;
 
-	public GuiMainMenu() {
+	public MainMenu() {
 		super();
 
 		int buttonSize = 50, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2) + 20;
@@ -72,7 +72,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = (new GuiCreateWorld());
+			MainFile.currentMenu = (new CreateWorldMenu());
 		}
 
 	}
@@ -86,7 +86,7 @@ public class GuiMainMenu extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Menu menu ) {
-			MainFile.currentMenu = (new GuiSettingsMainMenu());
+			MainFile.currentMenu = (new SettingsMenu());
 		}
 
 	}

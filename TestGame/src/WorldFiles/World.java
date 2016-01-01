@@ -37,7 +37,6 @@ public class World {
 	public int WorldDay = 1;
 
 	public boolean generating = false;
-	public String generationStatus = "";
 
 	public World( String name, EnumWorldSize size ) {
 		this.worldName = name;
@@ -115,11 +114,11 @@ public class World {
 
 	public Block getBlock( int x, int y, boolean allowAir ) {
 		if (Blocks != null) {
+
 			if (x >= 0 && y >= 0 && x < worldSize.xSize && y < worldSize.ySize) {
 				if (!allowAir && Blocks[ x ][ y ] instanceof BlockAir) {
 					return null;
 				}
-
 				return Blocks[ x ][ y ];
 			}
 		}
@@ -128,25 +127,31 @@ public class World {
 
 	public void setBlock( Block block, int x, int y ) {
 		if (Blocks != null) {
-
 			if (x >= 0 && y >= 0) {
-				if (block != null) {
-					block.x = x;
-					block.y = y;
+				if (x < worldSize.xSize && y < worldSize.ySize) {
+
+					if (x >= 0 && y >= 0) {
+						if (block != null) {
+							block.x = x;
+							block.y = y;
+						}
+
+						if (block != null) {
+							block.world = this;
+						}
+
+						if (block != null) {
+							Blocks[ x ][ y ] = block;
+						} else {
+							Blocks[ x ][ y ] = new BlockAir();
+							Blocks[ x ][ y ].x = x;
+							Blocks[ x ][ y ].y = y;
+						}
+
+						getBlock(x, y, true).updateBlock(this, x, y);
+						updateNearbyBlocks(getBlock(x, y));
+					}
 				}
-
-				if (block != null) block.world = this;
-
-				if (block != null) {
-					Blocks[ x ][ y ] = block;
-				} else {
-					Blocks[ x ][ y ] = new BlockAir();
-					Blocks[ x ][ y ].x = x;
-					Blocks[ x ][ y ].y = y;
-				}
-
-				getBlock(x, y, true).updateBlock(this, x, y);
-				updateNearbyBlocks(getBlock(x, y));
 			}
 		}
 	}
@@ -157,7 +162,7 @@ public class World {
 		for (int y = 0; y < worldSize.ySize; y++) {
 			int x = new Random().nextInt(worldSize.xSize);
 
-			if (getBlock(x, y) != null && getBlock(x, y).canBlockSeeSky()) {
+			if (getBlock(x, y) != null && getBlock(x, y).canBlockSeeSky() && !getBlock(x, y).canPassThrough()) {
 				xx = x;
 				yy = y - 1;
 				break;
@@ -173,7 +178,7 @@ public class World {
 
 	public void updateBlocks() {
 		for (int x = 0; x < worldSize.xSize; x++) {
-			for (int y = worldSize.ySize - 1; y > 0; y--) {
+			for (int y = 0; y < worldSize.ySize; y++) {
 				Block block = getBlock(x, y);
 
 				if (block != null) {
@@ -290,13 +295,74 @@ public class World {
 
 		} else {
 			for (Block[] bb : Blocks) {
-				for (Block block : bb) {
-					if (block != null) {
-						updateLightForBlock(block);
+				for (Block b : bb) {
+					if (b != null) {
+						updateLightForBlock(b);
 					}
 				}
 			}
 		}
 	}
 
+
+	@Override
+	public boolean equals( Object o ) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof World)) {
+			return false;
+		}
+
+		World world = (World) o;
+
+		if (WorldTime != world.WorldTime) {
+			return false;
+		}
+		if (WorldTimeDayEnd != world.WorldTimeDayEnd) {
+			return false;
+		}
+		if (WorldDay != world.WorldDay) {
+			return false;
+		}
+		if (generating != world.generating) {
+			return false;
+		}
+		if (!worldName.equals(world.worldName)) {
+			return false;
+		}
+		if (worldSize != world.worldSize) {
+			return false;
+		}
+		if (worldProperties != null ? !worldProperties.equals(world.worldProperties) : world.worldProperties != null) {
+			return false;
+		}
+		if (Entities != null ? !Entities.equals(world.Entities) : world.Entities != null) {
+			return false;
+		}
+		if (!player.equals(world.player)) {
+			return false;
+		}
+		if (!Blocks.equals(world.Blocks)) {
+			return false;
+		}
+		return worldTimeOfDay == world.worldTimeOfDay;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = worldName.hashCode();
+		result = 31 * result + worldSize.hashCode();
+		result = 31 * result + (worldProperties != null ? worldProperties.hashCode() : 0);
+		result = 31 * result + (Entities != null ? Entities.hashCode() : 0);
+		result = 31 * result + player.hashCode();
+		result = 31 * result + Blocks.hashCode();
+		result = 31 * result + WorldTime;
+		result = 31 * result + WorldTimeDayEnd;
+		result = 31 * result + (worldTimeOfDay != null ? worldTimeOfDay.hashCode() : 0);
+		result = 31 * result + WorldDay;
+		result = 31 * result + (generating ? 1 : 0);
+		return result;
+	}
 }

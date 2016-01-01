@@ -1,8 +1,9 @@
 package Main;
 
 import Guis.Gui;
+import Guis.GuiIngameMenu;
 import Guis.GuiInventory;
-import Interface.Interfaces.GuiMainMenu;
+import Interface.Interfaces.MainMenu;
 import Interface.Menu;
 import Render.AbstractWindowRender;
 import Render.Renders.BlockRendering;
@@ -36,7 +37,6 @@ public class MainFile extends BasicGame implements InputListener {
 
 	public static World currentWorld;
 	public static Menu currentMenu;
-	public static Gui currentGui;
 
 	public static Rectangle blockRenderBounds = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size) - ConfigValues.renderXSize, (ConfigValues.renderYSize * ConfigValues.size));
 
@@ -82,7 +82,7 @@ public class MainFile extends BasicGame implements InputListener {
 		Config.addOptionsToList();
 		container.getInput().addKeyListener(this);
 
-		currentMenu = new GuiMainMenu();
+		currentMenu = new MainMenu();
 
 		container.getInput().addMouseListener(new MouseListener() {
 			//TODO Registery for mouse wheel (or add it to the keybind system i have to make)
@@ -110,10 +110,6 @@ public class MainFile extends BasicGame implements InputListener {
 
 				if (currentMenu != null) {
 					currentMenu.mouseClick(button, x, y);
-				}
-
-				if (currentGui != null) {
-					currentGui.mouseClick(button, x, y);
 				}
 			}
 
@@ -146,14 +142,9 @@ public class MainFile extends BasicGame implements InputListener {
 
 	@Override
 	public void update( GameContainer container, int delta ) throws SlickException {
-		if (currentGui == null) {
+		if (!(currentMenu instanceof Gui)) {
 			updateKeys(container, delta);
 			BlockAction.update(container);
-		}
-
-		//TODO Used to fix bug
-		if (currentGui == null && container.isPaused()) {
-			container.setPaused(false);
 		}
 
 		if (ConfigValues.debug && !hasDebugSize) {
@@ -163,6 +154,10 @@ public class MainFile extends BasicGame implements InputListener {
 		} else if (!ConfigValues.debug && hasDebugSize) {
 			gameContainer.setDisplayMode(container.getWidth() - debugSize, container.getHeight(), false);
 			hasDebugSize = false;
+		}
+
+		if (container.isPaused() && !(currentMenu instanceof Gui)) {
+			container.setPaused(false);
 		}
 	}
 
@@ -180,9 +175,12 @@ public class MainFile extends BasicGame implements InputListener {
 		for (AbstractWindowRender render : Registrations.windowRenders) {
 			Color tempC = g2.getColor();
 
-			if (currentMenu == null || render.canRenderWithWindow()) if (render.canRender()) {
-				render.render(g2);
+			if ((currentMenu instanceof Gui) || currentMenu == null || render.canRenderWithWindow()) {
+				if (render.canRender()) {
+					render.render(g2);
+				}
 			}
+
 			g2.setColor(tempC);
 		}
 
@@ -190,94 +188,82 @@ public class MainFile extends BasicGame implements InputListener {
 		g2.setClip(blockRenderBounds);
 
 		Color tempC = g2.getColor();
-		if (currentMenu != null && currentGui == null) {
+
+		if (currentMenu != null) {
 			if (currentMenu.canRender()) {
 				currentMenu.render(g2);
 				currentMenu.renderObject(g2);
+
+				if (currentMenu instanceof Gui) {
+					((Gui) currentMenu).renderPost(g2);
+				}
 			}
 		}
 
-		if (currentMenu == null && currentGui != null) {
-			if (currentGui.canRender()) {
-				currentGui.render(g2);
-				currentGui.renderObject(g2);
-				currentGui.renderPost(g2);
-			}
-		}
 		g2.setColor(tempC);
-
 		g2.setClip(c);
 	}
 
 	//TODO Add keyregister
 	@Override
 	public void keyPressed( int key, char c ) {
-
-		if (currentGui != null) {
-			currentGui.keyPressed(key, c);
-
-		} else {
-			//TODO
-			if (currentWorld != null && currentWorld.player != null) {
-				if (key == Input.KEY_E) {
-					currentGui = new GuiInventory();
-				}
+		//TODO add seperate handle class
+		if (currentWorld != null && currentWorld.player != null && currentMenu == null) {
+			if (key == Config.getKeybindFromID("inventory").getKey()) {
+				currentMenu = new GuiInventory();
+				return;
 			}
+		}
 
-			if (Character.isDigit(c)) {
-				Integer tt = Integer.parseInt(c + "");
-				if (tt > 0 && tt < 10) {
-					HotbarRender.slotSelected = tt;
-				}
+		if (Character.isDigit(c)) {
+			Integer tt = Integer.parseInt(c + "");
+			if (tt > 0 && tt < 10) {
+				HotbarRender.slotSelected = tt;
 			}
+		}
 
-			//TODO Make it open a ingame version of the main menu
-			if (currentMenu == null && currentWorld != null && currentGui == null) {
-				if (key == Input.KEY_ESCAPE) {
-					currentMenu = new GuiMainMenu();
-				}
-			}
 
-			for (AbstractWindowRender render : Registrations.windowRenders) {
-				if (currentMenu == null || render.canRenderWithWindow()) {
-					render.keyPressed(key, c);
-				}
+		if (currentMenu == null && currentWorld != null) {
+			if (key == Config.getKeybindFromID("exit").getKey()) {
+				currentMenu = new GuiIngameMenu();
+				return;
 			}
+		}
 
-			if (currentMenu != null) {
-				currentMenu.keyPressed(key, c);
+		for (AbstractWindowRender render : Registrations.windowRenders) {
+			if ((currentMenu instanceof Gui) || currentMenu == null || render.canRenderWithWindow()) {
+				render.keyPressed(key, c);
 			}
+		}
+
+		if (currentMenu != null) {
+			currentMenu.keyPressed(key, c);
 		}
 	}
 
 	@Override
 	public void keyReleased( int key, char c ) {
-		if (currentGui != null) {
-			currentGui.keyReleased(key, c);
-		} else {
-
-			for (AbstractWindowRender render : Registrations.windowRenders) {
-				if (currentMenu == null || render.canRenderWithWindow()) {
-					render.keyReleased(key, c);
-				}
+		for (AbstractWindowRender render : Registrations.windowRenders) {
+			if ((currentMenu instanceof Gui) || currentMenu == null || render.canRenderWithWindow()) {
+				render.keyReleased(key, c);
 			}
+		}
 
-			if (currentMenu != null) {
-				currentMenu.keyReleased(key, c);
-			}
+		if (currentMenu != null) {
+			currentMenu.keyReleased(key, c);
 		}
 	}
 
 	public void updateKeys( GameContainer gameContainer, int delta ) {
 		if (MainFile.currentWorld != null) {
-			if (gameContainer.getInput().isKeyPressed(Input.KEY_A) || gameContainer.getInput().isKeyDown(Input.KEY_A)) {
+			if (gameContainer.getInput().isKeyPressed(Config.getKeybindFromID("left.walk").getKey()) || gameContainer.getInput().isKeyDown(Config.getKeybindFromID("left.walk").getKey())) {
 				if (currentWorld.player.facing == 1) {
 					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x - 0.14F, currentWorld.player.getEntityPostion().y);
 				}
 
 				currentWorld.player.facing = 1;
 
-			} else if (gameContainer.getInput().isKeyPressed(Input.KEY_D) || gameContainer.getInput().isKeyDown(Input.KEY_D)) {
+			} else if (gameContainer.getInput().isKeyPressed(Config.getKeybindFromID("right.walk").getKey()) || gameContainer.getInput().isKeyDown(Config.getKeybindFromID("right.walk").getKey())) {
 				if (currentWorld.player.facing == 2) {
 					currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x + 0.14F, currentWorld.player.getEntityPostion().y);
 				}
@@ -286,7 +272,7 @@ public class MainFile extends BasicGame implements InputListener {
 			}
 
 
-			if (gameContainer.getInput().isKeyPressed(Input.KEY_W) || gameContainer.getInput().isKeyDown(Input.KEY_W) && (delta & 700) != 0) {
+			if (gameContainer.getInput().isKeyPressed(Config.getKeybindFromID("jump.walk").getKey()) || gameContainer.getInput().isKeyDown(Config.getKeybindFromID("jump.walk").getKey()) && (delta & 700) != 0) {
 				if (currentWorld.player.isOnGround) {
 					if (currentWorld.player.moveTo(currentWorld.player.getEntityPostion().x, currentWorld.player.getEntityPostion().y - 1F)) {
 						currentWorld.player.isOnGround = false;

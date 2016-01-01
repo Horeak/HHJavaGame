@@ -18,12 +18,12 @@ import org.newdawn.slick.util.FontUtils;
 import java.awt.*;
 
 
-public class GuiSettingsMainMenu extends AbstractMainMenuGui {
+public class SettingsMenu extends AbstractMainMenu {
 
 
-	public GuiSettingsMainMenu guiInst = this;
+	public SettingsMenu guiInst = this;
 
-	public GuiSettingsMainMenu() {
+	public SettingsMenu() {
 		super();
 	}
 
@@ -34,11 +34,13 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 		guiObjects.clear();
 		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
 
+
+		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (Config.options.size() + 2))));
+		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
+
 		for (ConfigOption option : Config.options) {
 			guiObjects.add(new configButton(buttonPos += buttonSize, option));
 		}
-
-		guiObjects.add(new backButton(buttonPos += (buttonSize * (11))));
 
 		super.render(g2);
 		g2.setColor(Color.black);
@@ -46,7 +48,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 		RenderUtil.resizeFont(g2, 22);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString("Settings: ", 328, 80);
+		FontUtils.drawCenter(g2.getFont(), "Settings", renderStart, 80, renderWidth, g2.getColor());
 		RenderUtil.resetFont(g2);
 
 		g2.setColor(temp);
@@ -113,6 +115,18 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 		}
 	}
 
+	class keyBinds extends MainMenuButton {
+
+		public keyBinds( int y ) {
+			super(renderStart, y, 190, 32, "Keybindings", guiInst);
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
+			MainFile.currentMenu = new KeybindsMenu();
+		}
+	}
+
 	class backButton extends MainMenuButton {
 
 		public backButton( int y ) {
@@ -121,7 +135,7 @@ public class GuiSettingsMainMenu extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new GuiMainMenu();
+			MainFile.currentMenu = new MainMenu();
 		}
 	}
 }

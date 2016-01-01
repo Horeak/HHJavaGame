@@ -22,6 +22,10 @@ public class BlockTorch extends Block implements ILightSource {
 		return null;
 	}
 
+	public boolean useBlockTexture() {
+		return false;
+	}
+
 	@Override
 	public int getOutputStrength() {
 		return 16;

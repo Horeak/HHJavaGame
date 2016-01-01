@@ -116,6 +116,10 @@ public abstract class Block implements IItem {
 	}
 
 
+	public IItem getItemDropped() {
+		return this;
+	}
+
 
 
 	public String getItemName() {
@@ -162,8 +166,6 @@ public abstract class Block implements IItem {
 	@Override
 	public void decreaseStackSize( int i ) {
 		stackSize -= i;
-
-		if (stackSize <= 0) MainFile.currentWorld.player.consumeItem(this);
 	}
 
 	@Override
@@ -219,5 +221,54 @@ public abstract class Block implements IItem {
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Block)) {
+			return false;
+		}
+
+		Block block = (Block) o;
+
+		if (x != block.x) {
+			return false;
+		}
+		if (y != block.y) {
+			return false;
+		}
+		if (stackDamage != block.stackDamage) {
+			return false;
+		}
+		if (stackSize != block.stackSize) {
+			return false;
+		}
+		if (maxStackSize != block.maxStackSize) {
+			return false;
+		}
+		if (getBlockDamage() != block.getBlockDamage()) {
+			return false;
+		}
+		if (!world.equals(block.world)) {
+			return false;
+		}
+		return unit.equals(block.unit);
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = x;
+		result = 31 * result + y;
+		result = 31 * result + world.hashCode();
+		result = 31 * result + stackDamage;
+		result = 31 * result + stackSize;
+		result = 31 * result + maxStackSize;
+		result = 31 * result + getBlockDamage();
+		result = 31 * result + unit.hashCode();
+		return result;
 	}
 }

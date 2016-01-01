@@ -4,6 +4,7 @@ import Render.AbstractWindowRender;
 import Render.Renders.*;
 import WorldGeneration.GrassGeneration;
 import WorldGeneration.StoneGeneration;
+import WorldGeneration.TreeGeneration;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
 
@@ -32,5 +33,7 @@ public class Registrations {
 	public static void registerGenerations() {
 		structureGenerations.add(new GrassGeneration());
 		structureGenerations.add(new StoneGeneration());
+
+		generationBases.add(new TreeGeneration());
 	}
 }

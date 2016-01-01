@@ -34,8 +34,9 @@ public class EntityPlayer extends Entity implements IInventory {
 	public EntityPlayer( float x, float y ) {
 		super(x, y);
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++) {
 			addItem(new BlockTorch());
+		}
 	}
 
 	@Override

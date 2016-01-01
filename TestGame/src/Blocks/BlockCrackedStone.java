@@ -7,7 +7,6 @@ import org.newdawn.slick.Image;
 
 public class BlockCrackedStone extends BlockStone {
 
-
 	public static Image texture;
 
 	public Image getBlockTextureFromSide( EnumBlockSide side ) {

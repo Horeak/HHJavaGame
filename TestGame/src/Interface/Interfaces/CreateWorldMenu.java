@@ -16,9 +16,9 @@ import org.newdawn.slick.util.FontUtils;
 import java.awt.*;
 
 
-public class GuiCreateWorld extends AbstractMainMenuGui {
+public class CreateWorldMenu extends AbstractMainMenu {
 
-	public GuiCreateWorld guiInst = this;
+	public CreateWorldMenu guiInst = this;
 
 	public EnumWorldSize selected;
 	public boolean textInput = false;
@@ -27,7 +27,7 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 
 
 	//TODO Add world loading. (Make it its own menu and have load/create buttons in this one?)
-	public GuiCreateWorld() {
+	public CreateWorldMenu() {
 		super();
 
 		int buttonSize = 50, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize);
@@ -105,7 +105,7 @@ public class GuiCreateWorld extends AbstractMainMenuGui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Menu menu ) {
-			MainFile.currentMenu = (new GuiMainMenu());
+			MainFile.currentMenu = (new MainMenu());
 		}
 	}
 

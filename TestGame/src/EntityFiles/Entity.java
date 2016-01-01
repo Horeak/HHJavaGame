@@ -31,8 +31,19 @@ public abstract class Entity {
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
 
-		x = Float.parseFloat(df.format(x).replace(",", "."));
-		y = Float.parseFloat(df.format(y).replace(",", "."));
+		int xL = Integer.toString((int) x).length() + 2;
+		int yL = Integer.toString((int) y).length() + 2;
+
+		if (Float.toString(x).length() > xL) {
+			xL += 1;
+		}
+
+		if (Float.toString(y).length() > yL) {
+			yL += 1;
+		}
+
+		x = Float.parseFloat(Float.toString(x).substring(0, xL));
+		y = Float.parseFloat(Float.toString(y).substring(0, yL));
 
 		pos.setLocation(x, y);
 	}
@@ -60,7 +71,7 @@ public abstract class Entity {
 	}
 
 	public boolean canMoveTo( float x, float y ) {
-		if (x >= 0 && x < MainFile.currentWorld.worldSize.xSize && y >= 0 && y < MainFile.currentWorld.worldSize.ySize) {
+		if (x >= 0 && x < MainFile.currentWorld.worldSize.xSize && y < MainFile.currentWorld.worldSize.ySize) {
 			return MainFile.currentWorld.getBlock(Math.round(x), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x - 0.6F), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x), Math.round(y) - 1) == null;
 		}
 		return false;
@@ -72,7 +83,7 @@ public abstract class Entity {
 		if ((int) x == MainFile.currentWorld.worldSize.xSize) x = Float.floatToIntBits(x);
 		if ((int) y == MainFile.currentWorld.worldSize.ySize) y = Float.floatToIntBits(y);
 
-		if (x < MainFile.currentWorld.worldSize.xSize && x >= 0 && y < MainFile.currentWorld.worldSize.ySize && y >= 0)
+		if (x < MainFile.currentWorld.worldSize.xSize && x >= 0 && y < MainFile.currentWorld.worldSize.ySize)
 			if (targetBlock != null && !targetBlock.blockBounds().contains(x, y, getEntityBounds().getBounds().getWidth(), getEntityBounds().getBounds().getHeight()) && targetBlock != null && !targetBlock.blockBounds().intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
 				if (canMoveTo(x, y)) {
 					setEntityPosition(x, y);

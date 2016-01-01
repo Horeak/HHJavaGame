@@ -1,14 +1,11 @@
 package WorldGeneration;
-/*
-* Project: Random Java Creations
-* Package: WorldGeneration.Util
-* Created: 26.07.2015
-*/
+
 
 import Blocks.BlockCrackedStone;
 import Blocks.BlockStone;
 import Main.MainFile;
 import Render.SimplexNoise;
+import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
 
@@ -18,12 +15,12 @@ public class StoneGeneration extends StructureGeneration {
 	int frequency = 30;
 
 	@Override
-	public boolean canGenerate() {
+	public boolean canGenerate( World world ) {
 		return true;
 	}
 
 	@Override
-	public void generate() {
+	public void generate( World world ) {
 		SimplexNoise noise = new SimplexNoise();
 
 		for (int x = 0; x < MainFile.currentWorld.worldSize.xSize; x++) {

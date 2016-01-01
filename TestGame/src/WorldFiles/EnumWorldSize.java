@@ -1,14 +1,17 @@
 package WorldFiles;
 
 public enum EnumWorldSize {
-	SMALL(128, 64),
-	MEDIUM(512, 256),
-	LARGE(2048, 1024);
+	SMALL(256, 128, 2),
+	MEDIUM(1024, 512, 2),
+	LARGE(4096, 2048, 2);
 
 	public int xSize, ySize;
+	public int div;
 
-	EnumWorldSize( int xSize, int ySize ) {
+	EnumWorldSize( int xSize, int ySize, int div ) {
 		this.xSize = xSize;
 		this.ySize = ySize;
+
+		this.div = div;
 	}
 }

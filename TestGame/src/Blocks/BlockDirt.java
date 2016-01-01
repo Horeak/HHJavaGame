@@ -19,7 +19,7 @@ public class BlockDirt extends Block {
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Dirt Block";
+		return "Dirt";
 	}
 
 	@Override

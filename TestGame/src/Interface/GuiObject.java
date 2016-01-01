@@ -1,5 +1,6 @@
 package Interface;
 
+import Guis.Gui;
 import Main.MainFile;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.MouseOverArea;
@@ -26,4 +27,12 @@ public abstract class GuiObject extends MouseOverArea {
 	public abstract void onClicked( int button, int x, int y, Menu menu );
 
 	public abstract void renderObject( Graphics g2, Menu menu );
+
+	public boolean isMouseOver() {
+		if (!(MainFile.currentMenu instanceof Gui) && menu != null && (menu instanceof Gui)) {
+			return false;
+		}
+
+		return super.isMouseOver();
+	}
 }

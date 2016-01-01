@@ -4,6 +4,7 @@ package Blocks;
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
 import Blocks.Util.ITickBlock;
+import Items.IItem;
 import Main.MainFile;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
@@ -34,7 +35,7 @@ public class BlockGrass extends Block implements ITickBlock {
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Grass Block";
+		return "Grass";
 	}
 
 	@Override
@@ -80,6 +81,11 @@ public class BlockGrass extends Block implements ITickBlock {
 				}
 			}
 		}
+	}
+
+
+	public IItem getItemDropped() {
+		return new BlockDirt();
 	}
 
 	public int getMaxBlockDamage() {

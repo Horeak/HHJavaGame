@@ -12,19 +12,20 @@ import Utils.ConfigValues;
 import WorldFiles.EnumWorldSize;
 import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
+import WorldGeneration.TreeGeneration;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
 
-public class AbstractMainMenuGui extends Menu {
+public class AbstractMainMenu extends Menu {
 
 	public static int renderStart = 290;
 	public static int renderWidth = 190;
 	public static World world;
 	BackgroundRender render = new BackgroundRender();
 
-	public AbstractMainMenuGui() {
+	public AbstractMainMenu() {
 		initWorld();
 	}
 
@@ -35,22 +36,24 @@ public class AbstractMainMenuGui extends Menu {
 			world.WorldTime /= 2;
 
 			for (int x = 0; x < ConfigValues.renderXSize; x++) {
-				world.setBlock(new BlockGrass(x, (ConfigValues.renderYSize - 6)), x, (ConfigValues.renderYSize - 6));
+				world.setBlock(new BlockGrass(), x, (ConfigValues.renderYSize - 6));
 			}
 			for (int y = (ConfigValues.renderYSize - 5); y < ConfigValues.renderYSize; y++) {
 				for (int x = 0; x < ConfigValues.renderXSize; x++) {
-					world.setBlock(new BlockDirt(x, y), x, y);
+					world.setBlock(new BlockDirt(), x, y);
 				}
 			}
 			for (int x = 0; x < ConfigValues.renderXSize; x++) {
-				if (MainFile.random.nextInt(3) == 1)
-					world.setBlock(new BlockStone(x, (ConfigValues.renderYSize - 2)), x, (ConfigValues.renderYSize - 2));
+				if (MainFile.random.nextInt(3) == 1) {
+					world.setBlock(new BlockStone(), x, (ConfigValues.renderYSize - 2));
+				}
 			}
 			for (int x = 0; x < ConfigValues.renderXSize; x++) {
-				world.setBlock(new BlockStone(x, (ConfigValues.renderYSize - 1)), x, ConfigValues.renderYSize - 1);
+				world.setBlock(new BlockStone(), x, ConfigValues.renderYSize - 1);
 			}
-		}
 
+			new TreeGeneration().generate(world, 4, ConfigValues.renderYSize - 6);
+		}
 		world.updateLightForBlocks();
 	}
 
@@ -62,13 +65,17 @@ public class AbstractMainMenuGui extends Menu {
 		Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
 
 		if (world != null && world.Blocks != null) {
+
 			for (Block[] bb : world.Blocks) {
-			for (Block b : bb) {
-				if (b != null && b.getRender() != null) {
-					b.getRender().renderItem(g2, (BlockRendering.START_X_POS) + (b.x * ConfigValues.size), (BlockRendering.START_Y_POS) + (b.y * ConfigValues.size), ConfigValues.renderMod, b);
+				for (Block b : bb) {
+					if (b != null) {
+						if (b != null && b.getRender() != null) {
+							b.getRender().renderItem(g2, (BlockRendering.START_X_POS) + (b.x * ConfigValues.size), (BlockRendering.START_Y_POS) + (b.y * ConfigValues.size), ConfigValues.renderMod, b);
+						}
+					}
 				}
 			}
-		}
+
 		}
 
 		g2.setColor(org.newdawn.slick.Color.black);
