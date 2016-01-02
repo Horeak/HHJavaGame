@@ -2,8 +2,9 @@ package Utils;
 
 import Render.AbstractWindowRender;
 import Render.Renders.*;
-import WorldGeneration.GrassGeneration;
-import WorldGeneration.StoneGeneration;
+import WorldGeneration.CrackedStoneGeneration;
+import WorldGeneration.Structures.GrassGeneration;
+import WorldGeneration.Structures.StoneGeneration;
 import WorldGeneration.TreeGeneration;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
@@ -35,5 +36,6 @@ public class Registrations {
 		structureGenerations.add(new StoneGeneration());
 
 		generationBases.add(new TreeGeneration());
+		generationBases.add(new CrackedStoneGeneration());
 	}
 }

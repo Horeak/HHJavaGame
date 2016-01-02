@@ -1,7 +1,6 @@
 package EntityFiles.Entities;
 
 
-import Blocks.BlockTorch;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
@@ -9,34 +8,25 @@ import Items.IInventory;
 import Items.IItem;
 import Utils.RenderUtil;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Rectangle;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 
 public class EntityPlayer extends Entity implements IInventory {
 
-	//TODO Add inventory
-	//TODO Make hotbar connected to player/inventory
 	//TODO Add proper player render
-	//TODO Make player spawn above ground instead of at a fixed position under ground
 
+	static org.newdawn.slick.Image playerRight = RenderUtil.getImage("textures", "player");
 	/**
 	 * 1 = left
 	 * 2 = right
 	 */
 	public int facing = 0;
+	public IItem[] inventoryItems = new IItem[ 50 ];
 	private int playerHealth = 100, playerMaxHealth = 100;
-	//TODO Change items size when adding proper inventory
-	private IItem[] inventoryItems = new IItem[ 50 ];
 
 	public EntityPlayer( float x, float y ) {
 		super(x, y);
-
-		for (int i = 0; i < 10; i++) {
-			addItem(new BlockTorch());
-		}
 	}
 
 	@Override
@@ -62,22 +52,17 @@ public class EntityPlayer extends Entity implements IInventory {
 
 	@Override
 	public void renderEntity( Graphics g2, int renderX, int renderY ) {
-		g2.setColor(RenderUtil.getColorToSlick(new Color(141, 141, 141)));
-
-		g2.draw(new Rectangle(renderX - 4, renderY - 58, 21, 21));
-		g2.draw(new Rectangle(renderX + 2, renderY - 37, 10, 26));
-		g2.draw(new Rectangle(renderX - 6, renderY - 11, 25, 11));
-
 		if (facing == 1) {
-			g2.draw(new Rectangle(renderX - 10, renderY - 50, 6, 6));
+			playerRight.getFlippedCopy(true, false).draw(renderX, renderY - 64, 32, 64);
 
-		} else if (facing == 2) {
-			g2.draw(new Rectangle(renderX + 17, renderY - 50, 6, 6));
+		} else {
+			playerRight.draw(renderX, renderY - 64, 32, 64);
 		}
+
 	}
 
 	public Rectangle2D getPlayerBounds() {
-		return new Rectangle2D.Double(getEntityPostion().x, getEntityPostion().y - 1, 1, 2);
+		return new Rectangle2D.Double((int) getEntityPostion().x, (int) getEntityPostion().y - 1, 1, 2);
 	}
 
 	@Override
@@ -113,20 +98,24 @@ public class EntityPlayer extends Entity implements IInventory {
 	}
 
 
-	//TODO Improve both the consumeItem and the addItem as these are only rough temp versions
 	public void consumeItem( IItem item ) {
+		int size = item.getItemStackSize();
+
 		for (int i = 0; i < getInvetorySize(); i++) {
 			IItem it = getItem(i);
+			if (it != null && item != null) {
 
-			if (it != null) {
-				if (it.getItemID().equals(item.getItemID())) {
-					if (it.getItemStackSize() <= 1) {
+				if (it.equals(item) && it.getItemStackSize() >= size) {
+					getItem(i).decreaseStackSize(item.getItemStackSize());
+
+					if (getItem(i).getItemStackSize() <= 0)
 						setItem(i, null);
-						return;
-					} else {
-						it.decreaseStackSize(1);
-						return;
-					}
+
+					return;
+
+				} else if (it.equals(item) && it.getItemStackSize() < size) {
+					size -= it.getItemStackSize();
+					setItem(i, null);
 				}
 			}
 		}

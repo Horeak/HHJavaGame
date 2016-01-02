@@ -115,6 +115,35 @@ public abstract class Entity {
 		}
 	}
 
+
+	@Override
+	public boolean equals( Object o ) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Entity)) {
+			return false;
+		}
+
+		Entity entity = (Entity) o;
+
+		if (isOnGround != entity.isOnGround) {
+			return false;
+		}
+		if (!pos.equals(entity.pos)) {
+			return false;
+		}
+		return !(entityData != null ? !entityData.equals(entity.entityData) : entity.entityData != null);
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = (isOnGround ? 1 : 0);
+		result = 31 * result + pos.hashCode();
+		result = 31 * result + (entityData != null ? entityData.hashCode() : 0);
+		return result;
+	}
 }
 
 

@@ -12,7 +12,7 @@ public class Config {
 
 			new Keybinding("Jump", "jump.walk", Input.KEY_W, "Movement"), new Keybinding("Walk right", "right.walk", Input.KEY_D, "Movement"), new Keybinding("Walk left", "left.walk", Input.KEY_A, "Movement"),
 
-			new Keybinding("Open inventory", "inventory", Input.KEY_E, "Inventory") };
+			new Keybinding("Open inventory", "inventory", Input.KEY_E, "Inventory"), new Keybinding("Crafting Inventory", "crafting", Input.KEY_C, "Inventory") };
 
 	//TODO add saving for options. (Look at old game project like GameLogic)
 	@Deprecated

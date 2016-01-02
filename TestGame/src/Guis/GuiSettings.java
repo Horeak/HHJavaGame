@@ -65,7 +65,7 @@ public class GuiSettings extends Gui {
 	}
 
 	public void keyPressed( int key, char c ) {
-		if (key == Config.getKeybindFromID("inventory").getKey() || key == Config.getKeybindFromID("exit").getKey()) {
+		if (key == Config.getKeybindFromID("exit").getKey()) {
 			MainFile.currentMenu = new GuiIngameMenu();
 		}
 	}

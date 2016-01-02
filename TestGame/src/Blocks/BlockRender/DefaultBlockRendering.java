@@ -137,11 +137,17 @@ public class DefaultBlockRendering implements IBlockRenderer {
 				if (right) {
 					drawSide(g, xStart, yStart, block.getDefaultBlockColor().darker());
 
+					g.pushTransform();
+					g.rotate(xStart + (ConfigValues.size / 2), yStart + ConfigValues.size / 2, 90);
+					g.translate(0, -ConfigValues.size);
+
 					if (!isItem) {
 						if (getBreakImageForBlock(block) != null) {
-							getBreakImageForBlock(block).drawWarped(xStart, yStart, xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart, yStart + ConfigValues.size);
+							getBreakImageForBlock(block).getFlippedCopy(true, false).drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
 						}
 					}
+
+					g.popTransform();
 
 					if (renderLighting) {
 						drawShadowSide(g, xStart, yStart, block);

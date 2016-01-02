@@ -1,7 +1,6 @@
-package WorldGeneration;
+package WorldGeneration.Structures;
 
 
-import Blocks.BlockCrackedStone;
 import Blocks.BlockStone;
 import Main.MainFile;
 import Render.SimplexNoise;
@@ -9,10 +8,8 @@ import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
 
-import java.util.Random;
-
 public class StoneGeneration extends StructureGeneration {
-	int frequency = 30;
+	int frequency = 10;
 
 	@Override
 	public boolean canGenerate( World world ) {
@@ -33,8 +30,9 @@ public class StoneGeneration extends StructureGeneration {
 						int ySize = (MainFile.currentWorld.worldSize.ySize) / 4;
 
 						float current = (float) (ySize - y) / ySize;
-						if (current < h)
-							MainFile.currentWorld.setBlock(new Random().nextInt(10) == 0 ? new BlockCrackedStone() : new BlockStone(), x, y);
+						if (current < h) {
+							MainFile.currentWorld.setBlock(new BlockStone(), x, y);
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

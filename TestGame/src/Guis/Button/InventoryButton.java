@@ -1,7 +1,5 @@
 package Guis.Button;
 
-import Blocks.BlockRender.IBlockRenderer;
-import Blocks.Util.Block;
 import EntityFiles.Entities.EntityPlayer;
 import Guis.Gui;
 import Interface.GuiObject;
@@ -24,8 +22,8 @@ public class InventoryButton extends GuiObject {
 	public boolean renderNum;
 	public Gui gui;
 
-	public InventoryButton( Gui gui, int x, int y, Menu menu, boolean renderNumber, int number ) {
-		super(x, y, 48, 48, menu);
+	public InventoryButton( Gui gui, int x, int y, boolean renderNumber, int number ) {
+		super(x, y, 48, 48, gui);
 
 		this.num = number;
 		this.renderNum = renderNumber;
@@ -72,10 +70,8 @@ public class InventoryButton extends GuiObject {
 
 		try {
 
-			//TODO Improve system with .clone() to prevent item duplication glitch where items thinks it is the same instance as another and changes to stacksize happens to both
 			//TODO Create a inventoryhandler util so that i dont have to make this code for every inventory
 			if (button == Input.MOUSE_LEFT_BUTTON) {
-				//TODO Add case if it needs to increase the stack size
 				try {
 					int tt = addItem(gui, num, MainFile.currentWorld.player);
 
@@ -160,13 +156,7 @@ public class InventoryButton extends GuiObject {
 			g2.scale(0.5F, 0.5F);
 			g2.translate(tangle.getX() + 20, tangle.getY() + 40);
 
-			if (item != null && item.getRender() != null) {
-				if (item instanceof Block) {
-					((IBlockRenderer) (item.getRender())).renderBlock(g2, (int) tangle.getX(), (int) tangle.getY(), EnumRenderMode.render2_5D, (Block) item, true, true, false, true);
-				} else {
-					item.getRender().renderItem(g2, (int) tangle.getX(), (int) tangle.getY(), EnumRenderMode.render2_5D, item);
-				}
-			}
+			RenderUtil.renderItem(g2, item, (int) tangle.getX(), (int) tangle.getY(), EnumRenderMode.render2_5D);
 
 			g2.scale(2, 2);
 			g2.popTransform();

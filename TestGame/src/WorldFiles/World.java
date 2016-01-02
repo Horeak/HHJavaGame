@@ -32,8 +32,8 @@ public class World {
 	public EntityPlayer player;
 	public Block[][] Blocks;
 
-	public int WorldTime = 0, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
 	public EnumWorldTime worldTimeOfDay = EnumWorldTime.DAY;
+	public int WorldTime = worldTimeOfDay.timeBegin, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
 	public int WorldDay = 1;
 
 	public boolean generating = false;
@@ -78,8 +78,8 @@ public class World {
 	public void resetValues() {
 		Blocks = new Block[ worldSize.xSize ][ worldSize.ySize ];
 
-		WorldTime = 0;
 		worldTimeOfDay = EnumWorldTime.MORNING;
+		WorldTime = worldTimeOfDay.timeBegin;
 		WorldDay = 1;
 	}
 
@@ -156,7 +156,6 @@ public class World {
 		}
 	}
 
-	//TODO why doesnt this work set the players position?
 	public void spawnPlayer() {
 		int xx = 0, yy = 0;
 		for (int y = 0; y < worldSize.ySize; y++) {
@@ -277,9 +276,6 @@ public class World {
 		}
 	}
 
-
-	//TODO Make it where light can travel through air
-	//TODO Maybe try to find a way where it only update blocks nearby?
 	public void updateLightForBlocks() {
 		if (player != null) {
 			for (int x = -(ConfigValues.lightUpdateRenderRange / 2); x < (ConfigValues.lightUpdateRenderRange / 2); x++) {
@@ -325,9 +321,6 @@ public class World {
 		if (WorldDay != world.WorldDay) {
 			return false;
 		}
-		if (generating != world.generating) {
-			return false;
-		}
 		if (!worldName.equals(world.worldName)) {
 			return false;
 		}
@@ -335,12 +328,6 @@ public class World {
 			return false;
 		}
 		if (worldProperties != null ? !worldProperties.equals(world.worldProperties) : world.worldProperties != null) {
-			return false;
-		}
-		if (Entities != null ? !Entities.equals(world.Entities) : world.Entities != null) {
-			return false;
-		}
-		if (!player.equals(world.player)) {
 			return false;
 		}
 		if (!Blocks.equals(world.Blocks)) {

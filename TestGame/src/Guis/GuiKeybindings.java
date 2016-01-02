@@ -55,7 +55,6 @@ public class GuiKeybindings extends Gui {
 			}
 		}
 	}
-
 	public void keyPressed( int key, char c ) {
 		if (selecting) {
 			for (GuiObject object : guiObjects) {
@@ -69,6 +68,10 @@ public class GuiKeybindings extends Gui {
 						break;
 					}
 				}
+			}
+		} else {
+			if (key == Config.getKeybindFromID("exit").getKey()) {
+				MainFile.currentMenu = new GuiSettings();
 			}
 		}
 	}
@@ -114,6 +117,7 @@ public class GuiKeybindings extends Gui {
 		RenderUtil.resetFont(g2);
 
 	}
+
 
 	@Override
 	public boolean canRender() {

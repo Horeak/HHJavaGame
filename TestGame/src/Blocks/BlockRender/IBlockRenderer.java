@@ -15,9 +15,12 @@ public interface IBlockRenderer extends IItemRenderer {
 			Block block = (Block) item;
 
 			World world = block.world;
+			boolean top = false, right = false;
 
-			boolean right = world.getBlock(block.x + 1, block.y) == null || world.getBlock(block.x + 1, block.y) != null && !world.getBlock(block.x + 1, block.y).isBlockSolid() && block.isBlockSolid();
-			boolean top = world.getBlock(block.x, block.y - 1) == null || world.getBlock(block.x, block.y - 1) != null && !world.getBlock(block.x, block.y - 1).isBlockSolid() && block.isBlockSolid();
+			if (world != null) {
+				right = world.getBlock(block.x + 1, block.y) == null || world.getBlock(block.x + 1, block.y) != null && !world.getBlock(block.x + 1, block.y).isBlockSolid() && block.isBlockSolid();
+				top = world.getBlock(block.x, block.y - 1) == null || world.getBlock(block.x, block.y - 1) != null && !world.getBlock(block.x, block.y - 1).isBlockSolid() && block.isBlockSolid();
+			}
 
 			renderBlock(g, rX, rY, renderMode, block, right, top, true, false);
 		}

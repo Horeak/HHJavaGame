@@ -1,6 +1,8 @@
 package Main;
 
+import Crafting.CraftingRegister;
 import Guis.Gui;
+import Guis.GuiCrafting;
 import Guis.GuiIngameMenu;
 import Guis.GuiInventory;
 import Interface.Interfaces.MainMenu;
@@ -27,10 +29,7 @@ import java.util.logging.Logger;
 
 public class MainFile extends BasicGame implements InputListener {
 
-	//TODO Add main menu and world saving/creation
-	//TODO Start a menu system to allow main menu and player inventory
-
-	//TODO Add ingame version of settings screen
+	//TODO Add world saving
 
 	public static MainFile file = new MainFile("Test Game");
 	public static Random random = new Random();
@@ -78,6 +77,7 @@ public class MainFile extends BasicGame implements InputListener {
 	public void init( GameContainer container ) throws SlickException {
 		Registrations.registerGenerations();
 		Registrations.registerWindowRenders();
+		CraftingRegister.registerRecipes();
 
 		Config.addOptionsToList();
 		container.getInput().addKeyListener(this);
@@ -85,18 +85,28 @@ public class MainFile extends BasicGame implements InputListener {
 		currentMenu = new MainMenu();
 
 		container.getInput().addMouseListener(new MouseListener() {
-			//TODO Registery for mouse wheel (or add it to the keybind system i have to make)
 			public void mouseWheelMoved( int change ) {
-				if (!hasScrolled) {
-					HotbarRender.slotSelected += (change / -120);
+				if (currentMenu == null) {
+					if (!hasScrolled) {
+						HotbarRender.slotSelected += (change / -120);
 
-					if (HotbarRender.slotSelected > 10) HotbarRender.slotSelected = 1;
-					if (HotbarRender.slotSelected <= 0) HotbarRender.slotSelected = 10;
+						if (HotbarRender.slotSelected > 10) {
+							HotbarRender.slotSelected = 1;
+						}
+						if (HotbarRender.slotSelected <= 0) {
+							HotbarRender.slotSelected = 10;
+						}
 
-					hasScrolled = true;
-				} else {
-					hasScrolled = false;
+						hasScrolled = true;
+					} else {
+						hasScrolled = false;
+					}
 				}
+
+				if (currentMenu != null) {
+					currentMenu.onMouseWheelMoved(change);
+				}
+
 			}
 
 			public void mouseClicked( int button, int x, int y, int clickCount ) {
@@ -192,11 +202,15 @@ public class MainFile extends BasicGame implements InputListener {
 		if (currentMenu != null) {
 			if (currentMenu.canRender()) {
 				currentMenu.render(g2);
+				g2.setClip(null);
+
 				currentMenu.renderObject(g2);
+				g2.setClip(null);
 
 				if (currentMenu instanceof Gui) {
 					((Gui) currentMenu).renderPost(g2);
 				}
+				g2.setClip(null);
 			}
 		}
 
@@ -204,13 +218,16 @@ public class MainFile extends BasicGame implements InputListener {
 		g2.setClip(c);
 	}
 
-	//TODO Add keyregister
 	@Override
 	public void keyPressed( int key, char c ) {
 		//TODO add seperate handle class
 		if (currentWorld != null && currentWorld.player != null && currentMenu == null) {
 			if (key == Config.getKeybindFromID("inventory").getKey()) {
 				currentMenu = new GuiInventory();
+				return;
+
+			} else if (key == Config.getKeybindFromID("crafting").getKey()) {
+				currentMenu = new GuiCrafting();
 				return;
 			}
 		}

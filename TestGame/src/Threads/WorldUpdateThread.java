@@ -10,8 +10,6 @@ public class WorldUpdateThread extends Thread {
 	public WorldUpdateThread() {
 		setName("WorldUpdateThread");
 	}
-
-	//TODO Time updating too fast?
 	public void run() {
 		while (true) {
 

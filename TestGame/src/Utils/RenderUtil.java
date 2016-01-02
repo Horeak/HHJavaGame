@@ -6,7 +6,11 @@ package Utils;
 */
 
 
+import Blocks.BlockRender.IBlockRenderer;
+import Blocks.Util.Block;
+import Items.IItem;
 import Main.MainFile;
+import Render.EnumRenderMode;
 import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
 import org.newdawn.slick.Graphics;
@@ -159,6 +163,16 @@ public class RenderUtil {
 
 	public static org.newdawn.slick.Color getColorWithAlpha( org.newdawn.slick.Color c, float alpha ) {
 		return new org.newdawn.slick.Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+	}
+
+	public static void renderItem( Graphics g2, IItem item, int x, int y, EnumRenderMode mode ) {
+		if (item != null && item.getRender() != null) {
+			if (item instanceof Block) {
+				((IBlockRenderer) (item.getRender())).renderBlock(g2, x, y, mode, (Block) item, true, true, false, true);
+			} else {
+				item.getRender().renderItem(g2, x, y, mode, item);
+			}
+		}
 	}
 
 }

@@ -1,7 +1,5 @@
 package Render.Renders;
 
-import Blocks.BlockRender.IBlockRenderer;
-import Blocks.Util.Block;
 import Interface.Menu;
 import Interface.Objects.GuiButton;
 import Items.IItem;
@@ -118,13 +116,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 			g2.scale(0.5F, 0.5F);
 
-			if (item != null && item.getRender() != null) {
-				if (item instanceof Block) {
-					((IBlockRenderer) (item.getRender())).renderBlock(g2, (x + 14) * 2, (y + 23) * 2, EnumRenderMode.render2_5D, (Block) item, true, true, false, true);
-				} else {
-					item.getRender().renderItem(g2, (x + 20) * 2, (y + 25) * 2, EnumRenderMode.render2_5D, item);
-				}
-			}
+			RenderUtil.renderItem(g2, item, (x + 14) * 2, (y + 23) * 2, EnumRenderMode.render2_5D);
 
 			g2.scale(2, 2);
 

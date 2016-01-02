@@ -6,6 +6,8 @@ import WorldFiles.World;
 public interface IItem extends Cloneable {
 	int getItemDamage();
 
+	void setItemDamage( int damage );
+
 	int getItemStackSize();
 
 	int getItemMaxStackSize();
@@ -30,4 +32,8 @@ public interface IItem extends Cloneable {
 	}
 
 	IItem clone() throws CloneNotSupportedException;
+
+	default boolean equals( IItem item ) {
+		return item != null && item.getItemID().equals(getItemID()) && item.getItemName().equals(getItemName()) && item.getItemDamage() == getItemDamage();
+	}
 }

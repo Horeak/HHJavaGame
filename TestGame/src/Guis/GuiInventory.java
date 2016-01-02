@@ -30,12 +30,12 @@ public class GuiInventory extends Gui {
 
 	public void init() {
 		for (int i = 0; i < 10; i++) {
-			guiObjects.add(new InventoryButton(this, startX + 10 + (i * (50)), startY + 30, this, true, i));
+			guiObjects.add(new InventoryButton(this, startX + 10 + (i * (50)), startY + 30, true, i));
 		}
 
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 4; y++) {
-				guiObjects.add(new InventoryButton(this, startX + 10 + ((x) * (50)), startY + 40 + ((y + 1) * (50)), this, false, 10 + (x + (y * 10))));
+				guiObjects.add(new InventoryButton(this, startX + 10 + ((x) * (50)), startY + 40 + ((y + 1) * (50)), false, 10 + (x + (y * 10))));
 			}
 		}
 	}

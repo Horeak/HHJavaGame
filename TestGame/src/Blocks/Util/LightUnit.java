@@ -28,4 +28,28 @@ public class LightUnit {
 		this.lightValue = lightValue;
 	}
 
+	@Override
+	public boolean equals( Object o ) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof LightUnit)) {
+			return false;
+		}
+
+		LightUnit lightUnit = (LightUnit) o;
+
+		if (getLightValue() != lightUnit.getLightValue()) {
+			return false;
+		}
+		return getLightColor().equals(lightUnit.getLightColor());
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = getLightColor().hashCode();
+		result = 31 * result + getLightValue();
+		return result;
+	}
 }

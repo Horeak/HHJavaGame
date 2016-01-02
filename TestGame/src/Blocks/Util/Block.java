@@ -72,7 +72,11 @@ public abstract class Block implements IItem {
 
 	public int getLightValue() {
 		int tt = unit.getLightValue();
-		int g = (canBlockSeeSky() ? (int) ((float) ILightSource.MAX_LIGHT_STRENGTH * world.worldTimeOfDay.lightMultiplier) : 0);
+
+		//TODO Find a way to achieve smooth transition between the light multipliers of to time periods
+
+		int g = (int) ((canBlockSeeSky() ? (ILightSource.MAX_LIGHT_STRENGTH * (world.worldTimeOfDay.lightMultiplier)) : 0));
+
 		if (tt < g) {
 			tt += g;
 		}
@@ -134,6 +138,11 @@ public abstract class Block implements IItem {
 	@Override
 	public int getItemDamage() {
 		return stackDamage;
+	}
+
+	@Override
+	public void setItemDamage( int damage ) {
+		stackDamage = damage;
 	}
 
 	@Override
@@ -243,16 +252,10 @@ public abstract class Block implements IItem {
 		if (stackDamage != block.stackDamage) {
 			return false;
 		}
-		if (stackSize != block.stackSize) {
-			return false;
-		}
-		if (maxStackSize != block.maxStackSize) {
-			return false;
-		}
 		if (getBlockDamage() != block.getBlockDamage()) {
 			return false;
 		}
-		if (!world.equals(block.world)) {
+		if (world != null ? !world.equals(block.world) : block.world != null) {
 			return false;
 		}
 		return unit.equals(block.unit);
@@ -263,10 +266,8 @@ public abstract class Block implements IItem {
 	public int hashCode() {
 		int result = x;
 		result = 31 * result + y;
-		result = 31 * result + world.hashCode();
+		result = 31 * result + (world != null ? world.hashCode() : 0);
 		result = 31 * result + stackDamage;
-		result = 31 * result + stackSize;
-		result = 31 * result + maxStackSize;
 		result = 31 * result + getBlockDamage();
 		result = 31 * result + unit.hashCode();
 		return result;

@@ -1,4 +1,4 @@
-package WorldGeneration;
+package WorldGeneration.Structures;
 import Blocks.BlockDirt;
 import Blocks.BlockGrass;
 import Blocks.Util.Block;

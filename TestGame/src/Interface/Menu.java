@@ -23,6 +23,14 @@ public abstract class Menu {
 	public void keyReleased( int key, char c ) {
 	}
 
+	public void onMouseWheelMoved( int change ) {
+		for (GuiObject ob : guiObjects) {
+			if (ob.isMouseOver()) {
+				ob.onMouseWheelMoved(change);
+			}
+		}
+	}
+
 	public void renderObject( Graphics g2 ) {
 		for (GuiObject object : guiObjects) {
 			object.renderObject(g2, this);

@@ -26,6 +26,9 @@ public abstract class GuiObject extends MouseOverArea {
 
 	public abstract void onClicked( int button, int x, int y, Menu menu );
 
+	public void onMouseWheelMoved( int change ) {
+	}
+
 	public abstract void renderObject( Graphics g2, Menu menu );
 
 	public boolean isMouseOver() {
