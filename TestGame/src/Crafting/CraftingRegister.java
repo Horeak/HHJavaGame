@@ -4,6 +4,7 @@ import Blocks.BlockStone;
 import Blocks.BlockTorch;
 import Blocks.BlockWood;
 import Items.ItemAxe;
+import Items.ItemPickaxe;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 
@@ -91,6 +92,7 @@ public class CraftingRegister {
 		addRecipe(new ItemStack[]{ new ItemStack(new BlockWood(), 2)}, new ItemStack(new BlockTorch(), 5));
 
 		addRecipe(new ItemStack[]{new ItemStack(new BlockWood(), 1), new ItemStack(new BlockStone(), 2)}, new ItemStack(new ItemAxe()));
+		addRecipe(new ItemStack[]{new ItemStack(new BlockWood(), 1), new ItemStack(new BlockStone(), 3)}, new ItemStack(new ItemPickaxe()));
 	}
 
 }

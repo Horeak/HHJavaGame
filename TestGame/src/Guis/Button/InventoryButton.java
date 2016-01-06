@@ -35,6 +35,7 @@ public class InventoryButton extends GuiObject {
 			player.setItem(slot, null);
 
 		} else if (gui.heldItem != null && player.getItem(slot) == null) {
+
 			player.setItem(slot, gui.heldItem);
 			return 0;
 
@@ -59,6 +60,10 @@ public class InventoryButton extends GuiObject {
 				}
 			}
 
+		}else if(gui.heldItem != null && player.getItem(slot) != null && !gui.heldItem.equals(player.getItem(slot))){
+			ItemStack stack = player.getItem(slot);
+			player.setItem(slot, gui.heldItem);
+			gui.heldItem = new ItemStack(stack);
 		}
 
 		return gui.heldItem != null ? gui.heldItem.getStackSize() : 0;

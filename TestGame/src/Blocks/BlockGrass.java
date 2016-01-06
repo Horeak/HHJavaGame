@@ -98,7 +98,7 @@ public class BlockGrass extends Block implements ITickBlock {
 	}
 
 
-	public ItemStack getItemDropped() {
+	public ItemStack getItemDropped(World world, int x, int y) {
 		return new ItemStack(new BlockDirt());
 	}
 

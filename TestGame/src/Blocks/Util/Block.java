@@ -171,9 +171,7 @@ public abstract class Block implements IItem {
 	@Override
 	public IItem clone() throws CloneNotSupportedException {
 		try {
-			Block block = this.getClass().newInstance();
-			return block;
-
+			return this.getClass().newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

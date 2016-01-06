@@ -18,6 +18,9 @@ public class WorldEntityUpdateThread extends Thread {
 					ent.updateEntity();
 				}
 
+				MainFile.currentWorld.Entities.removeAll(MainFile.currentWorld.RemoveEntities);
+				MainFile.currentWorld.RemoveEntities.clear();
+
 				try {
 					sleep(120);
 				} catch (Exception e) {

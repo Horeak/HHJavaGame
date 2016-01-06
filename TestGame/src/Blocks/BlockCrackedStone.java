@@ -27,4 +27,8 @@ public class BlockCrackedStone extends BlockStone {
 	public Color getDefaultBlockColor() {
 		return Color.darkGray;
 	}
+
+	public int getMaxBlockDamage() {
+		return 15;
+	}
 }

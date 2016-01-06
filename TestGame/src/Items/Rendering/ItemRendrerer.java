@@ -1,6 +1,6 @@
 package Items.Rendering;
 
-import Items.Item;
+import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Render.EnumRenderMode;
 import Utils.ConfigValues;

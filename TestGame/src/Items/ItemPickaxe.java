@@ -1,15 +1,16 @@
 package Items;
 
-import Blocks.BlockWood;
+import Blocks.BlockStone;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Utils.RenderUtil;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
-public class ItemAxe extends Item {
+public class ItemPickaxe extends Item {
 
-	public static Image texture = RenderUtil.getItemImage("axe");
+
+	public static Image texture;
 
 	@Override
 	public int getMaxItemDamage() {
@@ -18,6 +19,8 @@ public class ItemAxe extends Item {
 
 	@Override
 	public Image getTexture() {
+		if(texture == null) texture = RenderUtil.getItemImage("pickaxe");
+
 		return texture;
 	}
 
@@ -28,7 +31,7 @@ public class ItemAxe extends Item {
 
 	@Override
 	public String getItemName() {
-		return "Axe";
+		return "Pickaxe";
 	}
 
 	@Override
@@ -36,9 +39,10 @@ public class ItemAxe extends Item {
 		return false;
 	}
 
+	//Make it work on ores aswell when implemented
 	public int getBlockDamageValue( World world, int x, int y, ItemStack stack ) {
 		if(stack.getStackDamage() < getMaxItemDamage()) {
-			if(world.getBlock(x, y) instanceof BlockWood){
+			if(world.getBlock(x, y) instanceof BlockStone){
 				return 4;
 			}
 		}

@@ -1,9 +1,7 @@
-package Items;
+package Items.Utils;
 
 import Items.Rendering.IItemRenderer;
 import Items.Rendering.ItemRendrerer;
-import Items.Utils.IItem;
-import Items.Utils.ItemStack;
 import Main.MainFile;
 import org.newdawn.slick.Image;
 
@@ -49,9 +47,7 @@ public abstract class Item implements IItem {
 	@Override
 	public IItem clone() throws CloneNotSupportedException {
 		try {
-			Item Item = this.getClass().newInstance();
-			return Item;
-
+			return this.getClass().newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

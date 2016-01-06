@@ -17,6 +17,8 @@ public abstract class Entity {
 	public int blocksFallen = 0;
 	private HashMap<String, Object> entityData = new HashMap<>();
 
+	public int timeAlive = 0;
+
 	public Entity( float x, float y ) {
 		pos = new Point2D(x, y);
 	}
@@ -101,6 +103,8 @@ public abstract class Entity {
 	}
 
 	public void updateEntity() {
+		timeAlive += 1;
+
 		Block bl = getBlockBelow();
 		isOnGround = bl != null && !bl.canPassThrough();
 

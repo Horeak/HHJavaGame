@@ -6,6 +6,8 @@ import Blocks.Util.ILightSource;
 import Blocks.Util.ITickBlock;
 import EntityFiles.Entities.EntityPlayer;
 import EntityFiles.Entity;
+import EntityFiles.EntityItem;
+import Items.Utils.ItemStack;
 import Threads.WorldEntityUpdateThread;
 import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
@@ -30,6 +32,7 @@ public class World {
 
 	public HashMap<String, Object> worldProperties = new HashMap<>();
 	public ArrayList<Entity> Entities = new ArrayList<>();
+	public ArrayList<Entity> RemoveEntities = new ArrayList<>();
 	public EntityPlayer player;
 	public Block[][] Blocks;
 
@@ -154,6 +157,19 @@ public class World {
 					}
 				}
 			}
+		}
+	}
+
+	public void breakBlock(int x, int y){
+		if(getBlock(x, y) != null){
+			ItemStack stack = getBlock(x, y).getItemDropped(this, x, y);
+
+			if(stack != null){
+				EntityItem item = new EntityItem(x + 0.25F, y + 0.25F, stack);
+				Entities.add(item);
+			}
+
+			setBlock(null, x, y);
 		}
 	}
 

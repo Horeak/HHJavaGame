@@ -1,7 +1,7 @@
 package Utils;
 
 import Blocks.Util.Block;
-import Items.Item;
+import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.Renders.HotbarRender;
@@ -25,11 +25,7 @@ public class BlockAction {
 						Block b = MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
 						if (b.getBlockDamage() >= b.getMaxBlockDamage()) {
-							if (MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY) != null) {
-								MainFile.currentWorld.player.addItem(MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY));
-							}
-
-							MainFile.currentWorld.setBlock(null, BlockSelection.selectedX, BlockSelection.selectedY);
+							MainFile.currentWorld.breakBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
 							if(item != null)
 							if(item.getItem() instanceof Item){

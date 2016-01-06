@@ -4,8 +4,11 @@ package EntityFiles.Entities;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
+import EntityFiles.EntityItem;
 import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
+import Main.MainFile;
+import Render.Renders.HotbarRender;
 import Utils.RenderUtil;
 import org.newdawn.slick.Graphics;
 
@@ -68,6 +71,24 @@ public class EntityPlayer extends Entity implements IInventory {
 	@Override
 	public Rectangle2D getEntityBounds() {
 		return getPlayerBounds();
+	}
+
+
+	public void dropItem(){
+		float distance = 1.5F;
+
+		if(getItem(HotbarRender.slotSelected - 1) != null){
+			ItemStack stack = getItem(HotbarRender.slotSelected - 1);
+			EntityItem entityItem = new EntityItem(getEntityPostion().x + (facing == 1 ? -distance : distance), getEntityPostion().y - (distance / 4), stack);
+
+			if(entityItem.canMoveTo(entityItem.getEntityPostion().x, entityItem.getEntityPostion().y)) {
+				entityItem.delay = 0;
+				if (entityItem != null) {
+					setItem(HotbarRender.slotSelected - 1, null);
+					MainFile.currentWorld.Entities.add(entityItem);
+				}
+			}
+		}
 	}
 
 	@Override

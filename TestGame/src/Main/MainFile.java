@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 public class MainFile extends BasicGame implements InputListener {
 
 	//TODO Add world saving
-	//TODO Add item entities
 
 	public static MainFile file = new MainFile("Test Game");
 	public static Random random = new Random();
@@ -230,6 +229,10 @@ public class MainFile extends BasicGame implements InputListener {
 			} else if (key == Config.getKeybindFromID("crafting").getKey()) {
 				currentMenu = new GuiCrafting();
 				return;
+			}else if(key == Config.getKeybindFromID("drop").getKey()){
+				if(currentWorld != null && currentWorld.player != null){
+					currentWorld.player.dropItem();
+				}
 			}
 		}
 

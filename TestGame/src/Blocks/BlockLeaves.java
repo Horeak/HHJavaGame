@@ -71,13 +71,7 @@ public class BlockLeaves extends Block {
 		super.updateBlock(world, fromX, fromY, curX, curY);
 
 		if (!canStay(world, curX, curY)) {
-			if(world.player != null){
-				ItemStack stack = getItemDropped(world, curX, curY);
-
-				if(stack != null)
-				world.player.addItem(stack);
-			}
-			world.setBlock(null, curX, curY);
+			world.breakBlock(curX, curY);
 		}
 	}
 }
