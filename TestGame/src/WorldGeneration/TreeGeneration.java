@@ -12,6 +12,9 @@ import java.awt.*;
 import java.util.Random;
 
 public class TreeGeneration extends GenerationBase {
+
+	public boolean useRandom = true;
+
 	@Override
 	public boolean canGenerate( World world, int x, int y ) {
 		if (world.getBlock(x, y) instanceof BlockGrass) {
@@ -20,13 +23,14 @@ public class TreeGeneration extends GenerationBase {
 			if (b.canBlockSeeSky()) {
 				for (int xx = -1; xx < 2; xx++) {
 					for (int yy = -6; yy < 0; yy++) {
-						if (world.getBlock(x + xx, y + yy) != null) {
+						Block bg = world.getBlock(x + xx, y + yy);
+						if (bg != null && bg.isBlockSolid() || bg != null && !bg.canPassThrough()) {
 							return false;
 						}
 					}
 				}
 
-				return new Random().nextInt(10) == 1;
+				return useRandom ? new Random().nextInt(10) == 1 : true;
 			}
 		}
 

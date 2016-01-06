@@ -20,10 +20,6 @@ public class GuiSettings extends Gui {
 	public GuiSettings guiInst = this;
 	Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
 
-	public GuiSettings() {
-		super(true);
-	}
-
 	@Override
 	public void render( Graphics g2 ) {
 		g2.setColor(org.newdawn.slick.Color.black);

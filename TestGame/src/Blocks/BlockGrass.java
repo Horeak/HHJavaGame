@@ -26,7 +26,11 @@ public class BlockGrass extends Block implements ITickBlock {
 
 	public static boolean canGrassGrow( Block block ) {
 		Block temp = MainFile.currentWorld.getBlock(block.x, block.y - 1);
-		return temp == null || block != null && !temp.isBlockSolid();
+
+		boolean light = block.getLightValue() >= (3 * block.world.worldTimeOfDay.lightMultiplier);
+		boolean above = temp == null || temp != null && !temp.isBlockSolid();
+
+		return light && above;
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side ) {
@@ -46,6 +50,18 @@ public class BlockGrass extends Block implements ITickBlock {
 	@Override
 	public boolean shouldupdate() {
 		return true;
+	}
+
+
+	int time = 0;
+	@Override
+	public int getTimeSinceUpdate() {
+		return time;
+	}
+
+	@Override
+	public void setTimeSinceUpdate( int i ) {
+		time = i;
 	}
 
 	@Override
@@ -81,6 +97,10 @@ public class BlockGrass extends Block implements ITickBlock {
 				}
 			}
 		}
+	}
+
+	public int blockupdateDelay() {
+		return 5;
 	}
 
 

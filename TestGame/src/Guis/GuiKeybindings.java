@@ -30,8 +30,6 @@ public class GuiKeybindings extends Gui {
 
 
 	public GuiKeybindings() {
-		super(true);
-
 		for (Keybinding key : Config.keybindings) {
 			if (keyGroupss.get(key.getGroup()) != null) {
 				keyGroupss.get(key.getGroup()).add(key);

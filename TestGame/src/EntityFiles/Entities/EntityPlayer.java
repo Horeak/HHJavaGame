@@ -121,7 +121,12 @@ public class EntityPlayer extends Entity implements IInventory {
 		}
 	}
 
+
+	//TODO Make sure fix worked. (Items were added twice when adding an item would make a full stack)
 	public boolean addItem( IItem item ) {
+		if(item == null)
+			return false;
+
 		int stack = item.getItemStackSize();
 
 		boolean checkedCurrent = false;
@@ -148,7 +153,7 @@ public class EntityPlayer extends Entity implements IInventory {
 							it.setStackSize(it.getItemMaxStackSize() - tt);
 							stack = -(it.getItemMaxStackSize() - tt);
 
-							if (stack < 0) {
+							if (stack <= 0) {
 								return true;
 							}
 

@@ -6,7 +6,6 @@ import Interface.GuiObject;
 import Interface.Menu;
 import Items.IItem;
 import Main.MainFile;
-import Render.EnumRenderMode;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -156,7 +155,7 @@ public class InventoryButton extends GuiObject {
 			g2.scale(0.5F, 0.5F);
 			g2.translate(tangle.getX() + 20, tangle.getY() + 40);
 
-			RenderUtil.renderItem(g2, item, (int) tangle.getX(), (int) tangle.getY(), EnumRenderMode.render2_5D);
+			RenderUtil.renderItem(g2, item, (int) tangle.getX(), (int) tangle.getY(), item.getRenderMode());
 
 			g2.scale(2, 2);
 			g2.popTransform();

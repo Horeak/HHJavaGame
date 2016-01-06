@@ -1,12 +1,9 @@
 package Guis;
 
-import Blocks.BlockRender.IBlockRenderer;
-import Blocks.Util.Block;
 import Guis.Button.InventoryButton;
 import Interface.GuiObject;
 import Items.IItem;
 import Main.MainFile;
-import Render.EnumRenderMode;
 import Settings.Config;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
@@ -23,10 +20,6 @@ public class GuiInventory extends Gui {
 	public int Swidth = 520, Sheight = 297;
 
 	boolean init = false;
-
-	public GuiInventory() {
-		super(true);
-	}
 
 	public void init() {
 		for (int i = 0; i < 10; i++) {
@@ -110,13 +103,8 @@ public class GuiInventory extends Gui {
 		g2.scale(0.5F, 0.5F);
 		g2.translate(mouseX - 16, mouseY - 16);
 
-		if (heldItem != null && heldItem.getRender() != null) {
-			if (heldItem instanceof Block) {
-				((IBlockRenderer) (heldItem.getRender())).renderBlock(g2, mouseX, mouseY, EnumRenderMode.render2_5D, (Block) heldItem, true, true, false, true);
-			} else {
-				heldItem.getRender().renderItem(g2, mouseX, mouseY, EnumRenderMode.render2_5D, heldItem);
-			}
-		}
+		if(heldItem != null)
+		RenderUtil.renderItem(g2, heldItem, mouseX, mouseY, heldItem.getRenderMode());
 
 		g2.scale(2, 2);
 		g2.popTransform();

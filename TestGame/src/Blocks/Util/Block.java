@@ -43,7 +43,6 @@ public abstract class Block implements IItem {
 	}
 
 	public abstract String getBlockDisplayName();
-
 	public abstract Color getDefaultBlockColor();
 
 	public float getMovementFriction() {
@@ -59,6 +58,14 @@ public abstract class Block implements IItem {
 	}
 
 	public void addInfo() {
+		if(this instanceof ITickBlock){
+			blockInfoList.add("Block is Tickable");
+			blockInfoList.add("Should tick: " + ((ITickBlock)this).shouldupdate());
+			blockInfoList.add("Block ticks every: " + ((ITickBlock)this).blockupdateDelay() + "s");
+			blockInfoList.add("Time until update: " + (((ITickBlock)this).blockupdateDelay() - ((ITickBlock)this).getTimeSinceUpdate()) + "s");
+			blockInfoList.add("");
+		}
+
 		blockInfoList.add("Block damage: " + getBlockDamage() + " / " + getMaxBlockDamage());
 		blockInfoList.add("Light level: " + getLightValue());
 		blockInfoList.add("Light color: " + getLightUnit().getLightColor());
@@ -200,9 +207,9 @@ public abstract class Block implements IItem {
 
 	public boolean canBlockSeeSky() {
 		for (int g = y - 1; g > 0; g -= 1) {
-			if (world.getBlock(x, g) != null) {
-				return false;
-			}
+			Block cc = world.getBlock(x, g);
+			if(cc != null && cc.isBlockSolid()) return false;
+			if(cc != null && !cc.canPassThrough()) return false;
 		}
 
 		return true;

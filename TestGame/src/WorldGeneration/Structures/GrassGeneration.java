@@ -25,7 +25,7 @@ public class GrassGeneration extends StructureGeneration {
 			float h = (noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
 			for (int y = 0; y < (world.worldSize.ySize); y++) {
 
-				int ySize = (world.worldSize.ySize) / 8;
+				int ySize = (world.worldSize.ySize) / 4;
 				float current = (float) (ySize - y) / ySize;
 
 				Block b = null;

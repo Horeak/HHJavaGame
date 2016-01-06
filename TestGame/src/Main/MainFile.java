@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 public class MainFile extends BasicGame implements InputListener {
 
 	//TODO Add world saving
+	//TODO Add item entities
 
 	public static MainFile file = new MainFile("Test Game");
 	public static Random random = new Random();

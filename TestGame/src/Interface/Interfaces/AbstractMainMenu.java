@@ -17,6 +17,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
+import java.util.ArrayList;
+
 
 public class AbstractMainMenu extends Menu {
 
@@ -66,13 +68,23 @@ public class AbstractMainMenu extends Menu {
 
 		if (world != null && world.Blocks != null) {
 
+			ArrayList<Block> bbb = new ArrayList<>();
+
 			for (Block[] bb : world.Blocks) {
 				for (Block b : bb) {
-					if (b != null) {
-						if (b != null && b.getRender() != null) {
+					if (b != null && b.getRender() != null) {
+						if (b.isBlockSolid()) {
 							b.getRender().renderItem(g2, (BlockRendering.START_X_POS) + (b.x * ConfigValues.size), (BlockRendering.START_Y_POS) + (b.y * ConfigValues.size), ConfigValues.renderMod, b);
+						} else {
+							bbb.add(b);
 						}
 					}
+				}
+			}
+
+			for(Block b : bbb){
+				if (b != null && b.getRender() != null) {
+					b.getRender().renderItem(g2, (BlockRendering.START_X_POS) + (b.x * ConfigValues.size), (BlockRendering.START_Y_POS) + (b.y * ConfigValues.size), ConfigValues.renderMod, b);
 				}
 			}
 

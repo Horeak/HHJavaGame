@@ -14,7 +14,7 @@ public abstract class Entity {
 
 	public boolean isOnGround = true;
 	Point2D pos;
-	int blocksFallen = 0;
+	public int blocksFallen = 0;
 	private HashMap<String, Object> entityData = new HashMap<>();
 
 	public Entity( float x, float y ) {
@@ -72,7 +72,13 @@ public abstract class Entity {
 
 	public boolean canMoveTo( float x, float y ) {
 		if (x >= 0 && x < MainFile.currentWorld.worldSize.xSize && y < MainFile.currentWorld.worldSize.ySize) {
-			return MainFile.currentWorld.getBlock(Math.round(x), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x - 0.6F), Math.round(y)) == null && MainFile.currentWorld.getBlock(Math.round(x), Math.round(y) - 1) == null;
+			Block b1 = MainFile.currentWorld.getBlock(Math.round(x), Math.round(y)), b2 = MainFile.currentWorld.getBlock(Math.round(x - 0.6F), Math.round(y)), b3 = MainFile.currentWorld.getBlock(Math.round(x), Math.round(y) - 1);
+
+			boolean t1 = b1 == null || b1 != null && b1.canPassThrough();
+			boolean t2 = b2 == null || b2 != null && b2.canPassThrough();
+			boolean t3 = b3 == null || b3 != null && b3.canPassThrough();
+
+			return t1 && t2 && t3;
 		}
 		return false;
 	}

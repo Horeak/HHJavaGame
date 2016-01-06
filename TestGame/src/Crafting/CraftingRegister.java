@@ -20,7 +20,6 @@ public class CraftingRegister {
 			}
 		}
 
-
 		return null;
 	}
 
@@ -36,8 +35,26 @@ public class CraftingRegister {
 		}
 	}
 
+	public static int getAmount(IItem item){
+		boolean hasItem = false;
+		int hasSize = 0;
+
+		for (IItem tem : MainFile.currentWorld.player.inventoryItems) {
+			if(tem != null && item != null) {
+				if (tem.equals(item)) {
+					hasSize += tem.getItemStackSize();
+				}
+			}
+		}
+
+		return hasSize;
+	}
+
 	public static boolean hasMaterialFor( CraftingRecipe recipe ) {
+
+		if(recipe != null)
 		for (IItem item : recipe.input) {
+			if(item != null)
 			if (!hasMaterial(item)) {
 				return false;
 			}
@@ -70,7 +87,7 @@ public class CraftingRegister {
 	}
 
 	public static void registerRecipes() {
-		addRecipe(new IItem[]{ ItemUtil.getItem(new BlockWood(), 2) }, ItemUtil.getItem(new BlockTorch(), 5));
+		addRecipe(new IItem[]{ ItemUtil.getItem(new BlockWood(), 2)}, ItemUtil.getItem(new BlockTorch(), 5));
 	}
 
 }

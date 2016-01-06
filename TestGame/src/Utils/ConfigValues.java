@@ -13,6 +13,8 @@ public class ConfigValues {
 	public static boolean RENDER_BACKGROUND = true;
 	public static boolean RENDER_HOTBAR = true;
 
+	public static boolean PAUSE_GAME_IN_GUI = true;
+
 	public static int renderXSize = 25;
 	public static int renderYSize = 25;
 

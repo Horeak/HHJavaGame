@@ -37,7 +37,7 @@ public class BlockRendering extends AbstractWindowRender {
 					Block block = MainFile.currentWorld.getBlock(xx, yy);
 
 					if (block.isBlockSolid()) {
-						block.getRender().renderItem(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), ConfigValues.renderMod, block);
+						block.getRender().renderItem(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), block);
 					} else {
 						b.add(block);
 					}
@@ -52,7 +52,7 @@ public class BlockRendering extends AbstractWindowRender {
 			float blockX = (float) (((block.x) - plPos.x) + ConfigValues.renderRange);
 			float blockY = (float) (((block.y) - plPos.y) + ConfigValues.renderRange);
 
-			block.getRender().renderItem(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), ConfigValues.renderMod, block);
+			block.getRender().renderItem(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), block);
 		}
 
 		g2.setClip(c);

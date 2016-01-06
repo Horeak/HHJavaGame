@@ -5,7 +5,6 @@ import Interface.Objects.GuiButton;
 import Items.IItem;
 import Main.MainFile;
 import Render.AbstractWindowRender;
-import Render.EnumRenderMode;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
@@ -116,7 +115,8 @@ public class HotbarRender extends AbstractWindowRender {
 
 			g2.scale(0.5F, 0.5F);
 
-			RenderUtil.renderItem(g2, item, (x + 14) * 2, (y + 23) * 2, EnumRenderMode.render2_5D);
+			if(item != null)
+			RenderUtil.renderItem(g2, item, (x + 14) * 2, (y + 23) * 2, item.getRenderMode());
 
 			g2.scale(2, 2);
 

@@ -1,6 +1,8 @@
 package Items;
 
 import Items.Rendering.IItemRenderer;
+import Render.EnumRenderMode;
+import Utils.ConfigValues;
 import WorldFiles.World;
 
 public interface IItem extends Cloneable {
@@ -36,4 +38,6 @@ public interface IItem extends Cloneable {
 	default boolean equals( IItem item ) {
 		return item != null && item.getItemID().equals(getItemID()) && item.getItemName().equals(getItemName()) && item.getItemDamage() == getItemDamage();
 	}
+
+	default EnumRenderMode getRenderMode(){return ConfigValues.renderMod;}
 }

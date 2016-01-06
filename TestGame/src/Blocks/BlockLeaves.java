@@ -8,8 +8,11 @@ import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
+import java.util.Random;
+
 public class BlockLeaves extends Block {
 	public static Image texture;
+	private static Random rand = new Random();
 
 	@Override
 	public String getBlockDisplayName() {
@@ -33,7 +36,7 @@ public class BlockLeaves extends Block {
 	//TODO Add saplings
 	@Override
 	public IItem getItemDropped() {
-		return null;
+		return rand.nextInt(3) == 1 ? new BlockSapling() : null;
 	}
 
 	public boolean isBlockSolid() {

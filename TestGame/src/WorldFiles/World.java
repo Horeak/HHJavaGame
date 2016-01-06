@@ -11,7 +11,6 @@ import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
 import Threads.WorldUpdateThread;
 import Utils.ConfigValues;
-import com.sun.javafx.geom.Vec2d;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +30,8 @@ public class World {
 	public ArrayList<Entity> Entities = new ArrayList<>();
 	public EntityPlayer player;
 	public Block[][] Blocks;
+
+	public ArrayList<Block> tickableBlocks = new ArrayList<>();
 
 	public EnumWorldTime worldTimeOfDay = EnumWorldTime.DAY;
 	public int WorldTime = worldTimeOfDay.timeBegin, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
@@ -114,7 +115,6 @@ public class World {
 
 	public Block getBlock( int x, int y, boolean allowAir ) {
 		if (Blocks != null) {
-
 			if (x >= 0 && y >= 0 && x < worldSize.xSize && y < worldSize.ySize) {
 				if (!allowAir && Blocks[ x ][ y ] instanceof BlockAir) {
 					return null;
@@ -125,7 +125,14 @@ public class World {
 		return null;
 	}
 
+	public void removeTickBlock(int x, int y){
+		tickableBlocks.removeIf(e -> (e.x == x && e.y == y));
+	}
+
+	//TODO Add all TickableBlocks to a seperate list and remove them when block is removed. Used for ticking blocks without checking all blocks in the world!
 	public void setBlock( Block block, int x, int y ) {
+		removeTickBlock(x, y);
+
 		if (Blocks != null) {
 			if (x >= 0 && y >= 0) {
 				if (x < worldSize.xSize && y < worldSize.ySize) {
@@ -142,6 +149,10 @@ public class World {
 
 						if (block != null) {
 							Blocks[ x ][ y ] = block;
+
+							if(block instanceof ITickBlock){
+								tickableBlocks.add(block);
+							}
 						} else {
 							Blocks[ x ][ y ] = new BlockAir();
 							Blocks[ x ][ y ].x = x;
@@ -176,26 +187,25 @@ public class World {
 	}
 
 	public void updateBlocks() {
-		for (int x = 0; x < worldSize.xSize; x++) {
-			for (int y = 0; y < worldSize.ySize; y++) {
-				Block block = getBlock(x, y);
+		try {
+			for(Block block : (ArrayList<Block>)tickableBlocks.clone()){
+				if (block instanceof ITickBlock) {
+					ITickBlock up = (ITickBlock) block;
 
-				if (block != null) {
-					if (block instanceof ITickBlock) {
-						Vec2d tempB = new Vec2d(x, y);
-						Vec2d tempP = new Vec2d(player.getEntityPostion().x, player.getEntityPostion().y);
-						ITickBlock up = (ITickBlock) block;
-
-						if (tempB.distance(tempP) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
+					if (player.getEntityPostion().distance(block.x, block.y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
+						if (up.shouldupdate()) {
 							if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
-								if (up.shouldupdate()) {
-									up.updateBlock();
-								}
+								up.updateBlock();
+								up.setTimeSinceUpdate(0);
+							} else {
+								up.setTimeSinceUpdate(up.getTimeSinceUpdate() + 1);
 							}
 						}
 					}
 				}
 			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 

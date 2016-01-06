@@ -279,9 +279,12 @@ public class DefaultBlockRendering implements IBlockRenderer {
 						drawShadowFront(g, xStart, yStart, block);
 						drawFront(g, xStart, yStart, new Color(1,1,1, 0.02F));
 					}
+
 				} else {
 					drawFront(g, xStart, yStart, block.getDefaultBlockColor());
 				}
+
+
 
 			} else {
 				if (block.getBlockTextureFromSide(EnumBlockSide.FRONT) != null) {
