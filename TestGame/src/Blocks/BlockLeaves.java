@@ -2,7 +2,7 @@ package Blocks;
 
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
-import Items.IItem;
+import Items.Utils.ItemStack;
 import Utils.RenderUtil;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
@@ -25,7 +25,7 @@ public class BlockLeaves extends Block {
 	}
 
 	@Override
-	public Image getBlockTextureFromSide( EnumBlockSide side ) {
+	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
 		if (texture == null) {
 			texture = RenderUtil.getBlockImage("leaves");
 		}
@@ -35,8 +35,8 @@ public class BlockLeaves extends Block {
 
 	//TODO Add saplings
 	@Override
-	public IItem getItemDropped() {
-		return rand.nextInt(3) == 1 ? new BlockSapling() : null;
+	public ItemStack getItemDropped(World world, int x, int y) {
+		return rand.nextInt(10) == 1 ? new ItemStack(new BlockSapling()) : null;
 	}
 
 	public boolean isBlockSolid() {
@@ -47,11 +47,11 @@ public class BlockLeaves extends Block {
 		return false;
 	}
 
-	public boolean canStay() {
-		for (int x = -3; x <= 3; x++) {
-			for (int y = -3; y <= 3; y++) {
-				int xPos = x + this.x;
-				int yPos = y + this.y;
+	public boolean canStay(World world, int x, int y) {
+		for (int xx = -3; xx <= 3; xx++) {
+			for (int yy = -3; yy <= 3; yy++) {
+				int xPos = xx + x;
+				int yPos = yy + y;
 
 				if (world.getBlock(xPos, yPos) instanceof BlockWood) {
 					return true;
@@ -67,11 +67,17 @@ public class BlockLeaves extends Block {
 	}
 
 	@Override
-	public void updateBlock( World world, int fromX, int fromY ) {
-		super.updateBlock(world, fromX, fromY);
+	public void updateBlock( World world, int fromX, int fromY, int curX, int curY ) {
+		super.updateBlock(world, fromX, fromY, curX, curY);
 
-		if (!canStay()) {
-			world.setBlock(null, x, y);
+		if (!canStay(world, curX, curY)) {
+			if(world.player != null){
+				ItemStack stack = getItemDropped(world, curX, curY);
+
+				if(stack != null)
+				world.player.addItem(stack);
+			}
+			world.setBlock(null, curX, curY);
 		}
 	}
 }

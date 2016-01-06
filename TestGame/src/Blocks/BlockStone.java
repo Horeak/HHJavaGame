@@ -3,20 +3,14 @@ package Blocks;
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
 import Utils.RenderUtil;
+import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
 
 public class BlockStone extends Block {
 
-	public static Image texture = RenderUtil.getBlockImage("stone");
-
-	public BlockStone( int x, int y ) {
-		super(x, y);
-	}
-	public BlockStone() {
-		super();
-	}
+	public static Image texture;
 
 	@Override
 	public String getBlockDisplayName() {
@@ -28,7 +22,9 @@ public class BlockStone extends Block {
 		return new Color(151, 152, 151);
 	}
 
-	public Image getBlockTextureFromSide( EnumBlockSide side ) {
+	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
+		if(texture == null) texture = RenderUtil.getBlockImage("stone");
+
 		return texture;
 	}
 

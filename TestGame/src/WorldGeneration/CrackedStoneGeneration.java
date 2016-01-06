@@ -9,9 +9,12 @@ import WorldGeneration.Util.WorldGenPriority;
 import java.util.Random;
 
 public class CrackedStoneGeneration extends GenerationBase {
+
+	private static Random rand = new Random();
+
 	@Override
 	public boolean canGenerate( World world, int x, int y ) {
-		return world.getBlock(x, y) instanceof BlockStone && new Random().nextInt(20) == 1;
+		return world.getBlock(x, y) != null && world.getBlock(x, y) instanceof BlockStone && rand.nextInt(20) == 1;
 	}
 
 	@Override

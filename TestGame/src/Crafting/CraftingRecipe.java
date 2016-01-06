@@ -1,14 +1,14 @@
 package Crafting;
 
-import Items.IItem;
+import Items.Utils.ItemStack;
 
 import java.util.Arrays;
 
 public class CraftingRecipe {
-	public IItem output;
-	public IItem[] input;
+	public ItemStack output;
+	public ItemStack[] input;
 
-	public CraftingRecipe( IItem[] input, IItem output ) {
+	public CraftingRecipe( ItemStack[] input, ItemStack output ) {
 		this.input = input;
 		this.output = output;
 	}

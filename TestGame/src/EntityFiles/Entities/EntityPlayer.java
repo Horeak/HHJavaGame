@@ -4,8 +4,8 @@ package EntityFiles.Entities;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
-import Items.IInventory;
-import Items.IItem;
+import Items.Utils.IInventory;
+import Items.Utils.ItemStack;
 import Utils.RenderUtil;
 import org.newdawn.slick.Graphics;
 
@@ -22,7 +22,7 @@ public class EntityPlayer extends Entity implements IInventory {
 	 * 2 = right
 	 */
 	public int facing = 0;
-	public IItem[] inventoryItems = new IItem[ 50 ];
+	public ItemStack[] inventoryItems = new ItemStack[ 50 ];
 	private int playerHealth = 100, playerMaxHealth = 100;
 
 	public EntityPlayer( float x, float y ) {
@@ -71,17 +71,17 @@ public class EntityPlayer extends Entity implements IInventory {
 	}
 
 	@Override
-	public IItem[] getItems() {
+	public ItemStack[] getItems() {
 		return inventoryItems;
 	}
 
 	@Override
-	public IItem getItem( int i ) {
+	public ItemStack getItem( int i ) {
 		return i < inventoryItems.length ? inventoryItems[ i ] : null;
 	}
 
 	@Override
-	public void setItem( int i, IItem item ) {
+	public void setItem( int i, ItemStack item ) {
 		if (i < inventoryItems.length) {
 			inventoryItems[ i ] = item;
 		}
@@ -98,23 +98,23 @@ public class EntityPlayer extends Entity implements IInventory {
 	}
 
 
-	public void consumeItem( IItem item ) {
-		int size = item.getItemStackSize();
+	public void consumeItem( ItemStack item ) {
+		int size = item.getStackSize();
 
 		for (int i = 0; i < getInvetorySize(); i++) {
-			IItem it = getItem(i);
+			ItemStack it = getItem(i);
 			if (it != null && item != null) {
 
-				if (it.equals(item) && it.getItemStackSize() >= size) {
-					getItem(i).decreaseStackSize(item.getItemStackSize());
+				if (it.equals(item) && it.getStackSize() >= size) {
+					getItem(i).decreaseStackSize(item.getStackSize());
 
-					if (getItem(i).getItemStackSize() <= 0)
+					if (getItem(i).getStackSize() <= 0)
 						setItem(i, null);
 
 					return;
 
-				} else if (it.equals(item) && it.getItemStackSize() < size) {
-					size -= it.getItemStackSize();
+				} else if (it.equals(item) && it.getStackSize() < size) {
+					size -= it.getStackSize();
 					setItem(i, null);
 				}
 			}
@@ -123,18 +123,18 @@ public class EntityPlayer extends Entity implements IInventory {
 
 
 	//TODO Make sure fix worked. (Items were added twice when adding an item would make a full stack)
-	public boolean addItem( IItem item ) {
+	public boolean addItem( ItemStack item ) {
 		if(item == null)
 			return false;
 
-		int stack = item.getItemStackSize();
+		int stack = item.getStackSize();
 
 		boolean checkedCurrent = false;
 
 		start:
 		for (int g = 0; g < 2; g++)
 			for (int i = 0; i < getInvetorySize(); i++) {
-				IItem it = getItem(i);
+				ItemStack it = getItem(i);
 
 				if (checkedCurrent) {
 					if (it == null && item != null) {
@@ -142,16 +142,16 @@ public class EntityPlayer extends Entity implements IInventory {
 						return true;
 					}
 				} else {
-					if (it != null && it.getItemID().equals(item.getItemID()) && it.getItemStackSize() < it.getItemMaxStackSize()) {
-						int t = it.getItemMaxStackSize() - it.getItemStackSize();
+					if (it != null && it.equals(item) && it.getStackSize() < it.getMaxStackSize()) {
+						int t = it.getMaxStackSize() - it.getStackSize();
 						int tt = t - stack;
 
 						if (tt > 0) {
-							it.setStackSize(it.getItemMaxStackSize() - tt);
+							it.setStackSize(it.getMaxStackSize() - tt);
 							return true;
 						} else {
-							it.setStackSize(it.getItemMaxStackSize() - tt);
-							stack = -(it.getItemMaxStackSize() - tt);
+							it.setStackSize(it.getMaxStackSize() - tt);
+							stack = -(it.getMaxStackSize() - tt);
 
 							if (stack <= 0) {
 								return true;
@@ -170,5 +170,16 @@ public class EntityPlayer extends Entity implements IInventory {
 			}
 
 		return false;
+	}
+
+
+	public void updateEntity() {
+		super.updateEntity();
+
+		for(int i = 0; i < getInvetorySize(); i++){
+			if(getItem(i) != null){
+				getItem(i).slot = i;
+			}
+		}
 	}
 }

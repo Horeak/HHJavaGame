@@ -7,8 +7,7 @@ package Utils;
 
 
 import Blocks.BlockRender.IBlockRenderer;
-import Blocks.Util.Block;
-import Items.IItem;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.EnumRenderMode;
 import WorldFiles.EnumWorldTime;
@@ -165,12 +164,12 @@ public class RenderUtil {
 		return new org.newdawn.slick.Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 
-	public static void renderItem( Graphics g2, IItem item, int x, int y, EnumRenderMode mode ) {
-		if (item != null && item.getRender() != null) {
-			if (item instanceof Block) {
-				((IBlockRenderer) (item.getRender())).renderBlock(g2, x, y, mode, (Block) item, true, true, false, true);
+	public static void renderItem(Graphics g2, ItemStack item, int x, int y, EnumRenderMode mode ) {
+		if (item != null && item.getItem().getRender() != null) {
+			if (item.isBlock()) {
+				((IBlockRenderer)(item.getBlock().getRender())).renderBlock(g2, x, y, mode, item.getBlock(), true, true, false, true, MainFile.currentWorld, 0,0);
 			} else {
-				item.getRender().renderItem(g2, x, y, mode, item);
+				item.getItem().getRender().renderItem(g2, x, y, mode, item);
 			}
 		}
 	}

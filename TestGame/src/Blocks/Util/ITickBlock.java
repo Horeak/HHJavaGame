@@ -1,6 +1,8 @@
 package Blocks.Util;
 
 
+import WorldFiles.World;
+
 public interface ITickBlock {
 
 
@@ -8,7 +10,7 @@ public interface ITickBlock {
 		return false;
 	}
 
-	boolean shouldupdate();
+	boolean shouldupdate(World world, int x, int y);
 
 	//In seconds
 	default int blockupdateDelay() {
@@ -18,5 +20,5 @@ public interface ITickBlock {
 	int getTimeSinceUpdate();
 	void setTimeSinceUpdate(int i);
 
-	void updateBlock();
+	void updateBlock( World world, int x, int y);
 }

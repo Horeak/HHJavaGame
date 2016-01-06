@@ -20,7 +20,7 @@ public class TreeGeneration extends GenerationBase {
 		if (world.getBlock(x, y) instanceof BlockGrass) {
 			Block b = world.getBlock(x, y);
 
-			if (b.canBlockSeeSky()) {
+			if (b.canBlockSeeSky(world, x, y)) {
 				for (int xx = -1; xx < 2; xx++) {
 					for (int yy = -6; yy < 0; yy++) {
 						Block bg = world.getBlock(x + xx, y + yy);

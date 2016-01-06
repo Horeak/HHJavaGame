@@ -1,7 +1,8 @@
 package Utils;
 
 import Blocks.Util.Block;
-import Items.IItem;
+import Items.Item;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.Renders.HotbarRender;
 import org.newdawn.slick.GameContainer;
@@ -16,7 +17,7 @@ public class BlockAction {
 			int selected = (HotbarRender.slotSelected - 1);
 
 			if (selected < MainFile.currentWorld.player.getInvetorySize()) {
-				IItem item = MainFile.currentWorld.player.getItem(selected);
+				ItemStack item = MainFile.currentWorld.player.getItem(selected);
 
 				if (button == Input.MOUSE_LEFT_BUTTON) {
 					if (MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY) != null) {
@@ -24,21 +25,29 @@ public class BlockAction {
 						Block b = MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
 						if (b.getBlockDamage() >= b.getMaxBlockDamage()) {
-							if (MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped() != null) {
-								MainFile.currentWorld.player.addItem(MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped());
+							if (MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY) != null) {
+								MainFile.currentWorld.player.addItem(MainFile.currentWorld.getBlock(BlockSelection.selectedX, BlockSelection.selectedY).getItemDropped(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY));
 							}
 
 							MainFile.currentWorld.setBlock(null, BlockSelection.selectedX, BlockSelection.selectedY);
+
+							if(item != null)
+							if(item.getItem() instanceof Item){
+								((Item)item.getItem()).damageItem(item);
+							}
+
 						} else {
-							b.setBlockDamage(b.getBlockDamage() + (item != null ? item.getBlockDamageValue(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY) : 1));
+							b.setBlockDamage(b.getBlockDamage() + (item != null ? item.getItem().getBlockDamageValue(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY, item) : 1));
+
+							if(b.getBlockDamage() >= b.getMaxBlockDamage()){
+								mouseClick(button);
+							}
 						}
 					}
 
 				} else if (button == Input.MOUSE_RIGHT_BUTTON) {
 					if (item != null) {
-						if (item.useItem(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY)) {
-							item.onItemUsed(selected);
-						}
+						item.useItem(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY);
 					}
 				}
 			}

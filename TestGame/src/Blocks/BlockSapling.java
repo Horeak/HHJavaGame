@@ -4,6 +4,7 @@ import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
 import Blocks.Util.ITickBlock;
 import Utils.RenderUtil;
+import WorldFiles.World;
 import WorldGeneration.TreeGeneration;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -14,7 +15,7 @@ public class BlockSapling extends Block implements ITickBlock{
 
 	private static TreeGeneration treeGeneration = new TreeGeneration();
 	private static Random rand = new Random();
-	public static Image texture = RenderUtil.getBlockImage("sapling");
+	public static Image texture;
 
 	public BlockSapling(){
 		treeGeneration.useRandom = false;
@@ -31,12 +32,14 @@ public class BlockSapling extends Block implements ITickBlock{
 	}
 
 	@Override
-	public Image getBlockTextureFromSide( EnumBlockSide side ) {
+	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
+		if(texture == null) texture  = RenderUtil.getBlockImage("sapling");
+
 		return texture;
 	}
 
 	@Override
-	public boolean shouldupdate() {
+	public boolean shouldupdate( World world, int x, int y) {
 		return treeGeneration.canGenerate(world, x, y+1);
 	}
 
@@ -56,7 +59,7 @@ public class BlockSapling extends Block implements ITickBlock{
 	}
 
 	@Override
-	public void updateBlock() {
+	public void updateBlock(World world, int x, int y) {
 		if(rand.nextInt(20) == 2){
 			if(treeGeneration.canGenerate(world, x, y+1)){
 				treeGeneration.generate(world, x, y+1);

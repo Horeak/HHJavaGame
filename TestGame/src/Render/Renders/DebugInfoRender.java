@@ -87,7 +87,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 			if (BlockSelection.selectedBlock != null) {
 				g2.setColor(Color.black);
-				g2.drawString("Block cords: " + "[" + BlockSelection.selectedBlock.x + ", " + BlockSelection.selectedBlock.y + "]", textStartX, linePos += (lineLength));
+				g2.drawString("Block cords: " + "[" + BlockSelection.selectedX + ", " + BlockSelection.selectedY + "]", textStartX, linePos += (lineLength));
 				if (BlockSelection.selectedBlock.blockInfoList.size() > 0) {
 					g2.drawString("Blockinfo: ", textStartX, linePos += (lineLength));
 					for (String t : BlockSelection.selectedBlock.blockInfoList) {
@@ -96,7 +96,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 				}
 
 				BlockSelection.selectedBlock.blockInfoList.clear();
-				BlockSelection.selectedBlock.addInfo();
+				BlockSelection.selectedBlock.addInfo(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY);
 			}
 		}
 

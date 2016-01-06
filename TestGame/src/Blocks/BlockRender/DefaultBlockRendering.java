@@ -6,6 +6,7 @@ import Render.EnumRenderMode;
 import Utils.BlockUtils;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
+import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -49,8 +50,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	}
 
 
-	private static void drawShadowFront( Graphics g, int xStart, int yStart, Block block) {
-		float t = (float)block.getLightValue() / (float)ILightSource.MAX_LIGHT_STRENGTH;
+	private static void drawShadowFront( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
+		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
 		Color temp = block.getLightUnit().getLightColor();
 		Color c = new Color(0, 0, 0, 1F - t);
@@ -68,8 +69,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 	}
 
-	private static void drawShadowSide( Graphics g, int xStart, int yStart, Block block) {
-		float t = (float)block.getLightValue() / (float)ILightSource.MAX_LIGHT_STRENGTH;
+	private static void drawShadowSide( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
+		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
 		Color temp = block.getLightUnit().getLightColor();
 		Color c = new Color(0, 0, 0, 1F - t);
@@ -92,8 +93,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 	}
 
-	private static void drawShadowTop( Graphics g, int xStart, int yStart, Block block) {
-		float t = ((float)block.getLightValue() / (float)ILightSource.MAX_LIGHT_STRENGTH);
+	private static void drawShadowTop( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
+		float t = ((float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH);
 
 		Color temp = block.getLightUnit().getLightColor();
 		Color c = new Color(0, 0, 0, 1F - t);
@@ -114,12 +115,12 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	}
 
 	@Override
-	public void renderBlock( Graphics g, int xStart, int yStart, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem ) {
+	public void renderBlock( Graphics g, int xStart, int yStart, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem, World world, int x, int y ) {
 		if (ConfigValues.simpleBlockRender) {
 			BlockUtils.renderDefaultBlockDebug(g, block, xStart, yStart);
 
 			if (renderLighting) {
-				drawShadowFront(g, xStart, yStart, block);
+				drawShadowFront(g, xStart, yStart, block, world, x, y);
 			}
 
 			if (!isItem) {
@@ -150,7 +151,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					g.popTransform();
 
 					if (renderLighting) {
-						drawShadowSide(g, xStart, yStart, block);
+						drawShadowSide(g, xStart, yStart, block, world, x, y);
 					} else {
 						drawSide(g, xStart, yStart, block.getDefaultBlockColor().darker());
 					}
@@ -166,7 +167,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					}
 
 					if (renderLighting) {
-						drawShadowTop(g, xStart, yStart, block);
+						drawShadowTop(g, xStart, yStart, block, world, x, y);
 					} else {
 						drawTop(g, xStart, yStart, block.getDefaultBlockColor().brighter());
 					}
@@ -175,7 +176,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 				drawFront(g, xStart, yStart, block.getDefaultBlockColor());
 
 				if (renderLighting) {
-					drawShadowFront(g, xStart, yStart, block);
+					drawShadowFront(g, xStart, yStart, block, world, x, y);
 				}
 
 				if (!isItem) {
@@ -188,7 +189,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 				drawFront(g, xStart, yStart, block.getDefaultBlockColor());
 
 				if (renderLighting) {
-					drawShadowFront(g, xStart, yStart, block);
+					drawShadowFront(g, xStart, yStart, block, world, x, y);
 				}
 
 				if (!isItem) {
@@ -201,13 +202,13 @@ public class DefaultBlockRendering implements IBlockRenderer {
 			if (renderMode == EnumRenderMode.render2_5D) {
 
 				if (right) {
-					if (block.getBlockTextureFromSide(EnumBlockSide.SIDE) != null) {
+					if (block.getBlockTextureFromSide(EnumBlockSide.SIDE, world, x, y) != null) {
 						g.pushTransform();
 
 						g.rotate(xStart + (ConfigValues.size / 2), yStart + ConfigValues.size / 2, 90);
 						g.translate(0, -ConfigValues.size);
 
-						Image image = block.getBlockTextureFromSide(EnumBlockSide.SIDE).getFlippedCopy(true, false);
+						Image image = block.getBlockTextureFromSide(EnumBlockSide.SIDE, world, x, y).getFlippedCopy(true, false);
 						image.drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
 
 
@@ -220,7 +221,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 						g.popTransform();
 
 						if (renderLighting) {
-							drawShadowSide(g, xStart, yStart, block);
+							drawShadowSide(g, xStart, yStart, block, world, x, y);
 							drawSide(g, xStart, yStart, new Color(0, 0, 0, 0.1F));
 
 						} else if (isItem) {
@@ -233,8 +234,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 				}
 
 				if (top) {
-					if (block.getBlockTextureFromSide(EnumBlockSide.TOP) != null) {
-						Image image = block.getBlockTextureFromSide(EnumBlockSide.TOP).getFlippedCopy(true, false);
+					if (block.getBlockTextureFromSide(EnumBlockSide.TOP, world, x, y) != null) {
+						Image image = block.getBlockTextureFromSide(EnumBlockSide.TOP, world, x, y).getFlippedCopy(true, false);
 
 						g.pushTransform();
 
@@ -253,7 +254,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 						g.popTransform();
 
 						if(renderLighting) {
-							drawShadowTop(g, xStart, yStart, block);
+							drawShadowTop(g, xStart, yStart, block, world, x, y);
 							drawTop(g, xStart, yStart, new Color(1, 1, 1, 0.05F));
 							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.1F));
 						} else if (isItem) {
@@ -265,8 +266,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					}
 				}
 
-				if (block.getBlockTextureFromSide(EnumBlockSide.FRONT) != null) {
-					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT);
+				if (block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y) != null) {
+					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y);
 					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
 					if (!isItem) {
@@ -276,7 +277,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					}
 
 					if(renderLighting) {
-						drawShadowFront(g, xStart, yStart, block);
+						drawShadowFront(g, xStart, yStart, block, world, x, y);
 						drawFront(g, xStart, yStart, new Color(1,1,1, 0.02F));
 					}
 
@@ -287,8 +288,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 
 			} else {
-				if (block.getBlockTextureFromSide(EnumBlockSide.FRONT) != null) {
-					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT);
+				if (block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y) != null) {
+					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y);
 					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
 					if (!isItem) {
@@ -299,7 +300,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 
 					if (renderLighting) {
-						drawShadowFront(g, xStart, yStart, block);
+						drawShadowFront(g, xStart, yStart, block, world, x, y);
 					}
 
 					drawFront(g, xStart, yStart, new Color(1,1,1, 0.02F));
@@ -316,6 +317,9 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	public Image getBreakImageForBlock( Block block ) {
 		float tt = ((float) block.getBlockDamage() / (float) block.getMaxBlockDamage()) * 5;
 		int g = (int) tt;
+
+		if(block.getBlockDamage() > block.getMaxBlockDamage())
+			return breakImages[4];
 
 		if (g > 0 && (g - 1) < 5) {
 			return breakImages[ g - 1 ];

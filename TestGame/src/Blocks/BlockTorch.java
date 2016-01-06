@@ -3,10 +3,15 @@ package Blocks;
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
 import Blocks.Util.ILightSource;
+import Utils.RenderUtil;
+import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
 public class BlockTorch extends Block implements ILightSource {
+
+	public static Image texture;
+
 	@Override
 	public String getBlockDisplayName() {
 		return "Torch";
@@ -17,13 +22,12 @@ public class BlockTorch extends Block implements ILightSource {
 		return Color.yellow;
 	}
 
-	@Override
-	public Image getBlockTextureFromSide( EnumBlockSide side ) {
-		return null;
-	}
 
-	public boolean useBlockTexture() {
-		return false;
+	@Override
+	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
+		if(texture == null) texture = RenderUtil.getBlockImage("torch");
+
+		return texture;
 	}
 
 	@Override
@@ -33,6 +37,14 @@ public class BlockTorch extends Block implements ILightSource {
 
 	public int getMaxBlockDamage() {
 		return 2;
+	}
+
+	public boolean isBlockSolid() {
+		return false;
+	}
+
+	public boolean canPassThrough() {
+		return true;
 	}
 
 }

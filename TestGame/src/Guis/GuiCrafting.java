@@ -5,7 +5,7 @@ import Crafting.CraftingRegister;
 import Guis.Button.InventoryButton;
 import Interface.GuiObject;
 import Interface.Menu;
-import Items.IItem;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Settings.Config;
 import Utils.RenderUtil;
@@ -15,8 +15,6 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
 
 public class GuiCrafting extends Gui {
 
@@ -86,63 +84,14 @@ public class GuiCrafting extends Gui {
 		}
 	}
 
-	public void renderPost( Graphics g2 ) {
-		int mouseX = MainFile.gameContainer.getInput().getMouseX();
-		int mouseY = MainFile.gameContainer.getInput().getMouseY();
-
-		for (GuiObject ob : guiObjects) {
-			if (ob != null && ob instanceof InventoryButton) {
-				InventoryButton button = (InventoryButton) ob;
-				IItem item = MainFile.currentWorld.player.getItem(button.num);
-
-				if (button.isMouseOver() && item != null) {
-					g2.pushTransform();
-
-					AffineTransform affinetransform = new AffineTransform();
-					FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
-					Font font = new Font("ARIAL", Font.BOLD, 11);
-
-					String text = item.getItemStackSize() + "x " + item.getItemName();
-
-					int textwidth = (int) (font.getStringBounds(text, frc).getWidth());
-					Rectangle rect = new Rectangle(mouseX - 20, mouseY - 20, textwidth + 10, 20);
-
-					g2.setColor(Color.lightGray);
-					g2.fill(rect);
-
-					g2.setColor(Color.black);
-					g2.draw(rect);
-
-					RenderUtil.resizeFont(g2, 11);
-					RenderUtil.changeFontStyle(g2, Font.BOLD);
-
-					g2.drawString(text, mouseX - 15, mouseY - 15);
-
-					RenderUtil.resetFont(g2);
-
-					g2.popTransform();
-				}
-			}
-		}
-		g2.pushTransform();
-
-		g2.scale(0.5F, 0.5F);
-		g2.translate(mouseX - 16, mouseY - 16);
-
-		if(heldItem != null)
-		RenderUtil.renderItem(g2,heldItem, mouseX, mouseY, heldItem.getRenderMode());
-
-		g2.scale(2, 2);
-		g2.popTransform();
-	}
-
-
 	@Override
 	public void render( Graphics g2 ) {
 		if (!init) {
 			init();
 			init = true;
 		}
+
+		renderInventoryButtons();
 
 		g2.setColor(new Color(0.3F, 0.3F, 0.3F, 0.4F));
 		g2.fill(MainFile.blockRenderBounds);
@@ -182,7 +131,7 @@ public class GuiCrafting extends Gui {
 			g2.setColor(Color.black);
 			RenderUtil.resizeFont(g2, 12);
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			g2.drawString("Current recipe: " + selectedRes.output.getItemName(), rightArea.getX() + 5, rightArea.getY() + 5);
+			g2.drawString("Current recipe: " + selectedRes.output.getItem().getItemName(), rightArea.getX() + 5, rightArea.getY() + 5);
 			RenderUtil.resetFont(g2);
 
 			g2.setColor(Color.black);
@@ -191,7 +140,7 @@ public class GuiCrafting extends Gui {
 			RenderUtil.resetFont(g2);
 
 			for (int i = 0; i < selectedRes.input.length; i++) {
-				IItem req = selectedRes.input[ i ];
+				ItemStack req = selectedRes.input[ i ];
 				boolean hasItem = CraftingRegister.hasMaterial(req);
 
 				Rectangle rect = new Rectangle((int) rightArea.getX() + 8, (int) rightArea.getY() + 55 + (i * 35), 243, 32);
@@ -206,16 +155,16 @@ public class GuiCrafting extends Gui {
 				g2.scale(0.5F, 0.5F);
 				g2.translate(rect.getX(), rect.getY());
 
-				RenderUtil.renderItem(g2, req, (int) rect.getX() + 10, (int) rect.getY() + 25, req.getRenderMode());
+				RenderUtil.renderItem(g2, req, (int) rect.getX() + 10, (int) rect.getY() + 25, req.getItem().getRenderMode());
 
 				g2.scale(2, 2);
 				g2.popTransform();
 
 				g2.setColor(hasItem ? Color.white : Color.red);
 				RenderUtil.resizeFont(g2, 12);
-				g2.drawString(req.getItemStackSize() + "x " + req.getItemName(), rect.getX() + 35, rect.getY() + 8);
+				g2.drawString(req.getStackSize() + "x " + req.getItem().getItemName(), rect.getX() + 35, rect.getY() + 8);
 
-				FontUtils.drawRight(g2.getFont(), "(" + CraftingRegister.getAmount(req) + "/" + req.getItemStackSize() + ")", (int)rect.getX(), (int)rect.getY() + 8, (int)rect.getWidth() - 8, g2.getColor());
+				FontUtils.drawRight(g2.getFont(), "(" + CraftingRegister.getAmount(req) + "/" + req.getStackSize() + ")", (int)rect.getX(), (int)rect.getY() + 8, (int)rect.getWidth() - 8, g2.getColor());
 
 				RenderUtil.resetFont(g2);
 
@@ -238,13 +187,13 @@ public class GuiCrafting extends Gui {
 			g2.scale(0.5F, 0.5F);
 			g2.translate(rect.getX(), rect.getY());
 
-			RenderUtil.renderItem(g2, selectedRes.output, (int) rect.getX() + 10, (int) rect.getY() + 25, selectedRes.output.getRenderMode());
+			RenderUtil.renderItem(g2, selectedRes.output, (int) rect.getX() + 10, (int) rect.getY() + 25, selectedRes.output.getItem().getRenderMode());
 
 			g2.scale(2, 2);
 			g2.popTransform();
 			g2.setColor(Color.white);
 			RenderUtil.resizeFont(g2, 12);
-			g2.drawString(selectedRes.output.getItemStackSize() + "x " + selectedRes.output.getItemName(), rect.getX() + 35, rect.getY() + 8);
+			g2.drawString(selectedRes.output.getStackSize() + "x " + selectedRes.output.getItem().getItemName(), rect.getX() + 35, rect.getY() + 8);
 			RenderUtil.resetFont(g2);
 
 		}
@@ -333,7 +282,7 @@ public class GuiCrafting extends Gui {
 			Rectangle rectangle = new Rectangle(x, y, width, height);
 			Rectangle sub = new Rectangle(x, y, 48, 48);
 
-			IItem item = res.output;
+			ItemStack item = res.output;
 
 			g2.setColor(selected ? Color.orange : isMouseOver() ? Color.gray : CraftingRegister.hasMaterialFor(res) ? Color.lightGray : Color.lightGray.darker().darker());
 			g2.fill(rectangle);
@@ -350,15 +299,15 @@ public class GuiCrafting extends Gui {
 
 			g2.scale(0.5F, 0.5F);
 			g2.translate(rectangle.getX() + 20, rectangle.getY() + 40);
-			RenderUtil.renderItem(g2, item, (int) rectangle.getX(), (int) rectangle.getY(), item.getRenderMode());
+			RenderUtil.renderItem(g2, item, (int) rectangle.getX(), (int) rectangle.getY(), item.getItem().getRenderMode());
 			g2.scale(2, 2);
 			g2.popTransform();
 
 			String required = "";
 
 			int g = 0;
-			for(IItem req : res.input){
-				required += req.getItemStackSize() + "x " + req.getItemName();
+			for(ItemStack req : res.input){
+				required += req.getStackSize() + "x " + req.getItem().getItemName();
 
 				if((g + 1) < res.input.length){
 					required += ", ";
@@ -371,9 +320,9 @@ public class GuiCrafting extends Gui {
 
 			g2.setColor(Color.black);
 			RenderUtil.resizeFont(g2, 12);
-			FontUtils.drawRight(g2.getFont(), item.getItemStackSize() + "x", x, y + 30, 40, g2.getColor());
+			FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 30, 40, g2.getColor());
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			g2.drawString(item.getItemName(), x + 50, y);
+			g2.drawString(item.getItem().getItemName(), x + 50, y);
 			RenderUtil.resetFont(g2);
 
 			g2.setColor(Color.black);
@@ -399,11 +348,11 @@ public class GuiCrafting extends Gui {
 			try {
 				if (CraftingRegister.hasMaterialFor(selectedRes)) {
 
-					for (IItem item : selectedRes.input) {
+					for (ItemStack item : selectedRes.input) {
 						MainFile.currentWorld.player.consumeItem(item);
 					}
 
-					MainFile.currentWorld.player.addItem(selectedRes.output.clone());
+					MainFile.currentWorld.player.addItem(new ItemStack(selectedRes.output));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -1,7 +1,7 @@
 package WorldGeneration.Structures;
+
 import Blocks.BlockDirt;
 import Blocks.BlockGrass;
-import Blocks.Util.Block;
 import Render.SimplexNoise;
 import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
@@ -13,8 +13,6 @@ public class GrassGeneration extends StructureGeneration {
 		return true;
 	}
 
-
-	//TODO Randomize frequency
 	@Override
 	public void generate( World world ) {
 		SimplexNoise noise = new SimplexNoise();
@@ -28,14 +26,12 @@ public class GrassGeneration extends StructureGeneration {
 				int ySize = (world.worldSize.ySize) / 4;
 				float current = (float) (ySize - y) / ySize;
 
-				Block b = null;
-				Block temp = world.getBlock(x, y + 1);
-
-				if (temp == null || !temp.isBlockSolid()) b = new BlockGrass();
-				else if (temp != null && temp.isBlockSolid()) b = new BlockDirt();
-
 				if (current < h) {
-					world.setBlock(b, x, y);
+					world.setBlock(new BlockGrass(), x, y);
+
+					if(!world.getBlock(x, y).canBlockSeeSky(world, x, y)){
+						world.setBlock(new BlockDirt(), x, y);
+					}
 				}
 			}
 		}

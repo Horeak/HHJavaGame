@@ -2,9 +2,11 @@ package Interface.Interfaces;
 
 import Blocks.BlockDirt;
 import Blocks.BlockGrass;
+import Blocks.BlockRender.DefaultBlockRendering;
 import Blocks.BlockStone;
 import Blocks.Util.Block;
 import Interface.Menu;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.Renders.BackgroundRender;
 import Render.Renders.BlockRendering;
@@ -17,7 +19,9 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
-import java.util.ArrayList;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class AbstractMainMenu extends Menu {
@@ -68,25 +72,32 @@ public class AbstractMainMenu extends Menu {
 
 		if (world != null && world.Blocks != null) {
 
-			ArrayList<Block> bbb = new ArrayList<>();
+			HashMap<Point, Block> bbb = new HashMap<>();
 
-			for (Block[] bb : world.Blocks) {
-				for (Block b : bb) {
+			for(int x = 0; x < world.worldSize.xSize; x++){
+				for(int y = 0; y < world.worldSize.ySize; y++){
+					Block b = world.getBlock(x, y);
+
 					if (b != null && b.getRender() != null) {
 						if (b.isBlockSolid()) {
-							b.getRender().renderItem(g2, (BlockRendering.START_X_POS) + (b.x * ConfigValues.size), (BlockRendering.START_Y_POS) + (b.y * ConfigValues.size), ConfigValues.renderMod, b);
+							((DefaultBlockRendering)b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + (x * ConfigValues.size), (BlockRendering.START_Y_POS) + (y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, x, y);
 						} else {
-							bbb.add(b);
+							bbb.put(new Point(x, y), b);
 						}
 					}
+
+			}
+		}
+
+			for(Map.Entry<Point, Block> ent : bbb.entrySet()){
+				Block b = ent.getValue();
+
+				if (b != null && b.getRender() != null) {
+					((DefaultBlockRendering)b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + (ent.getKey().x * ConfigValues.size), (BlockRendering.START_Y_POS) + (ent.getKey().y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, ent.getKey().x, ent.getKey().y);
 				}
 			}
 
-			for(Block b : bbb){
-				if (b != null && b.getRender() != null) {
-					b.getRender().renderItem(g2, (BlockRendering.START_X_POS) + (b.x * ConfigValues.size), (BlockRendering.START_Y_POS) + (b.y * ConfigValues.size), ConfigValues.renderMod, b);
-				}
-			}
+
 
 		}
 

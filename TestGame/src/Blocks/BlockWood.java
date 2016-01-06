@@ -3,6 +3,7 @@ package Blocks;
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
 import Utils.RenderUtil;
+import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
@@ -21,7 +22,7 @@ public class BlockWood extends Block {
 	}
 
 	@Override
-	public Image getBlockTextureFromSide( EnumBlockSide side ) {
+	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
 		return side == EnumBlockSide.TOP ? topTexture : sideTexture;
 	}
 }

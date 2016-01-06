@@ -90,7 +90,7 @@ public abstract class Entity {
 		if ((int) y == MainFile.currentWorld.worldSize.ySize) y = Float.floatToIntBits(y);
 
 		if (x < MainFile.currentWorld.worldSize.xSize && x >= 0 && y < MainFile.currentWorld.worldSize.ySize)
-			if (targetBlock != null && !targetBlock.blockBounds().contains(x, y, getEntityBounds().getBounds().getWidth(), getEntityBounds().getBounds().getHeight()) && targetBlock != null && !targetBlock.blockBounds().intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
+			if (targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).contains(x, y, getEntityBounds().getBounds().getWidth(), getEntityBounds().getBounds().getHeight()) && targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
 				if (canMoveTo(x, y)) {
 					setEntityPosition(x, y);
 					return true;

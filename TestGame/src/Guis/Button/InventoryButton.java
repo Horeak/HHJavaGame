@@ -4,7 +4,7 @@ import EntityFiles.Entities.EntityPlayer;
 import Guis.Gui;
 import Interface.GuiObject;
 import Interface.Menu;
-import Items.IItem;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
@@ -31,37 +31,37 @@ public class InventoryButton extends GuiObject {
 
 	public static int addItem( Gui gui, int slot, EntityPlayer player ) throws Exception {
 		if (gui.heldItem == null && player.getItem(slot) != null) {
-			gui.heldItem = player.getItem(slot).clone();
+			gui.heldItem = new ItemStack(player.getItem(slot));
 			player.setItem(slot, null);
 
 		} else if (gui.heldItem != null && player.getItem(slot) == null) {
 			player.setItem(slot, gui.heldItem);
 			return 0;
 
-		} else if (gui.heldItem != null && player.getItem(slot) != null && gui.heldItem.getItemID().equals(player.getItem(slot).getItemID()) && player.getItem(slot).getItemStackSize() < player.getItem(slot).getItemMaxStackSize()) {
-			int t = player.getItem(slot).getItemMaxStackSize() - MainFile.currentWorld.player.getItem(slot).getItemStackSize();
-			int tt = t - gui.heldItem.getItemStackSize();
+		} else if (gui.heldItem != null && player.getItem(slot) != null && gui.heldItem.equals(player.getItem(slot)) && player.getItem(slot).getStackSize() < player.getItem(slot).getMaxStackSize()) {
+			int t = player.getItem(slot).getMaxStackSize() - MainFile.currentWorld.player.getItem(slot).getStackSize();
+			int tt = t - gui.heldItem.getStackSize();
 
 			if (tt > 0) {
-				if (player.getItem(slot).getItemMaxStackSize() - tt > player.getItem(slot).getItemMaxStackSize()) {
-					player.getItem(slot).setStackSize(player.getItem(slot).getItemMaxStackSize());
+				if (player.getItem(slot).getMaxStackSize() - tt > player.getItem(slot).getMaxStackSize()) {
+					player.getItem(slot).setStackSize(player.getItem(slot).getMaxStackSize());
 				} else {
-					player.getItem(slot).setStackSize(player.getItem(slot).getItemMaxStackSize() - tt);
+					player.getItem(slot).setStackSize(player.getItem(slot).getMaxStackSize() - tt);
 				}
 
 				return 0;
 			} else {
-				gui.heldItem.setStackSize(gui.heldItem.getItemStackSize() - t);
-				player.getItem(slot).setStackSize(player.getItem(slot).getItemMaxStackSize() - tt);
+				gui.heldItem.setStackSize(gui.heldItem.getStackSize() - t);
+				player.getItem(slot).setStackSize(player.getItem(slot).getMaxStackSize() - tt);
 
-				if (gui.heldItem.getItemStackSize() == 0) {
+				if (gui.heldItem.getStackSize() == 0) {
 					return 0;
 				}
 			}
 
 		}
 
-		return gui.heldItem != null ? gui.heldItem.getItemStackSize() : 0;
+		return gui.heldItem != null ? gui.heldItem.getStackSize() : 0;
 	}
 
 	@Override
@@ -86,13 +86,13 @@ public class InventoryButton extends GuiObject {
 
 			} else if (button == Input.MOUSE_RIGHT_BUTTON) {
 				if (gui.heldItem == null && MainFile.currentWorld.player.getItem(num) != null) {
-					gui.heldItem = MainFile.currentWorld.player.getItem(num).clone();
+					gui.heldItem = new ItemStack(MainFile.currentWorld.player.getItem(num));
 
-					int t = gui.heldItem.getItemStackSize();
+					int t = gui.heldItem.getStackSize();
 					int tj = t / 2;
 
-					if (gui.heldItem.getItemStackSize() == 1) {
-						gui.heldItem = MainFile.currentWorld.player.getItem(num).clone();
+					if (gui.heldItem.getStackSize() == 1) {
+						gui.heldItem = new ItemStack(MainFile.currentWorld.player.getItem(num));
 						MainFile.currentWorld.player.setItem(num, null);
 					} else {
 						gui.heldItem.decreaseStackSize(tj);
@@ -100,15 +100,15 @@ public class InventoryButton extends GuiObject {
 					}
 
 				} else if (gui.heldItem != null && MainFile.currentWorld.player.getItem(num) == null) {
-					int t = gui.heldItem.getItemStackSize();
+					int t = gui.heldItem.getStackSize();
 					int tj = t / 2;
 
-					if (gui.heldItem.getItemStackSize() == 1) {
+					if (gui.heldItem.getStackSize() == 1) {
 						MainFile.currentWorld.player.setItem(num, gui.heldItem);
 						gui.heldItem = null;
 					} else {
 						gui.heldItem.decreaseStackSize(tj);
-						MainFile.currentWorld.player.setItem(num, gui.heldItem.clone());
+						MainFile.currentWorld.player.setItem(num, new ItemStack(gui.heldItem));
 						gui.heldItem.setStackSize(tj);
 					}
 
@@ -123,7 +123,7 @@ public class InventoryButton extends GuiObject {
 
 	@Override
 	public void renderObject( Graphics g2, Menu menu ) {
-		IItem item = MainFile.currentWorld.player.getItem(num);
+		ItemStack item = MainFile.currentWorld.player.getItem(num);
 		Rectangle tangle = new Rectangle(x, y, width, height);
 
 		tangle.setLocation(x - 2, y - 1);
@@ -155,7 +155,7 @@ public class InventoryButton extends GuiObject {
 			g2.scale(0.5F, 0.5F);
 			g2.translate(tangle.getX() + 20, tangle.getY() + 40);
 
-			RenderUtil.renderItem(g2, item, (int) tangle.getX(), (int) tangle.getY(), item.getRenderMode());
+			RenderUtil.renderItem(g2, item, (int) tangle.getX(), (int) tangle.getY(), item.getItem().getRenderMode());
 
 			g2.scale(2, 2);
 			g2.popTransform();
@@ -163,7 +163,7 @@ public class InventoryButton extends GuiObject {
 			g2.setColor(Color.black);
 			RenderUtil.resizeFont(g2, 12);
 
-			FontUtils.drawRight(g2.getFont(), item.getItemStackSize() + "x", x, y + 30, 40, g2.getColor());
+			FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 30, 40, g2.getColor());
 
 			RenderUtil.resetFont(g2);
 

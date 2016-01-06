@@ -7,8 +7,9 @@ package Blocks.Util;
 
 import Blocks.BlockRender.DefaultBlockRendering;
 import Blocks.BlockRender.EnumBlockSide;
-import Items.IItem;
 import Items.Rendering.IItemRenderer;
+import Items.Utils.IItem;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.BlockUtils;
 import WorldFiles.World;
@@ -22,25 +23,14 @@ public abstract class Block implements IItem {
 
 	public static int DEFAULT_MAX_STACK_SIZE = 64;
 
-	public int x, y;
-	public World world;
-
 	public ArrayList<String> blockInfoList = new ArrayList<>();
-	int blockBreakDelay = 0, blockBreakReach = 200;
-	private int stackDamage = 0;
-	private int stackSize = 1;
-	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
-	private int blockDamage = 0;
-	private LightUnit unit = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
-	public Block( int x, int y ) {
-		this.x = x;
-		this.y = y;
-		this.world = MainFile.currentWorld;
-	}
 
-	public Block() {
-		this(0, 0);
-	}
+	private int blockDamage = 0;
+	private int blockBreakDelay = 0, blockBreakReach = 200;
+
+	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
+
+	private LightUnit unit = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
 
 	public abstract String getBlockDisplayName();
 	public abstract Color getDefaultBlockColor();
@@ -48,41 +38,39 @@ public abstract class Block implements IItem {
 	public float getMovementFriction() {
 		return 1F;
 	}
-
 	public boolean isBlockSolid() {
 		return true;
 	}
-
 	public boolean canPassThrough() {
 		return !isBlockSolid();
 	}
 
-	public void addInfo() {
+	public void addInfo(World world, int x, int y) {
 		if(this instanceof ITickBlock){
 			blockInfoList.add("Block is Tickable");
-			blockInfoList.add("Should tick: " + ((ITickBlock)this).shouldupdate());
+			blockInfoList.add("Should tick: " + ((ITickBlock)this).shouldupdate(world, x, y));
 			blockInfoList.add("Block ticks every: " + ((ITickBlock)this).blockupdateDelay() + "s");
 			blockInfoList.add("Time until update: " + (((ITickBlock)this).blockupdateDelay() - ((ITickBlock)this).getTimeSinceUpdate()) + "s");
 			blockInfoList.add("");
 		}
 
 		blockInfoList.add("Block damage: " + getBlockDamage() + " / " + getMaxBlockDamage());
-		blockInfoList.add("Light level: " + getLightValue());
+		blockInfoList.add("Light level: " + getLightValue(world, x, y));
 		blockInfoList.add("Light color: " + getLightUnit().getLightColor());
-		blockInfoList.add("Can block see sky: " + canBlockSeeSky());
+		blockInfoList.add("Can block see sky: " + canBlockSeeSky(world, x, y));
 
 	}
 
-	public Shape blockBounds() {
+	public Shape blockBounds(int x, int y) {
 		return new Rectangle(x, y, 1, 1);
 	}
 
-	public int getLightValue() {
+	public int getLightValue(World world, int x, int y) {
 		int tt = unit.getLightValue();
 
 		//TODO Find a way to achieve smooth transition between the light multipliers of to time periods
 
-		int g = (int) ((canBlockSeeSky() ? (ILightSource.MAX_LIGHT_STRENGTH * (world.worldTimeOfDay.lightMultiplier)) : 0));
+		int g = (int) ((canBlockSeeSky(world, x, y) ? (ILightSource.MAX_LIGHT_STRENGTH * (world.worldTimeOfDay.lightMultiplier)) : 0));
 
 		if (tt < g) {
 			tt += g;
@@ -95,12 +83,10 @@ public abstract class Block implements IItem {
 	public void setLightValue( int lightValue ) {
 		unit.setLightValue(lightValue);
 	}
-
 	public LightUnit getLightUnit() {
 		return unit;
 	}
-
-	public void updateBlock( World world, int fromX, int fromY ) {
+	public void updateBlock( World world, int fromX, int fromY, int curX, int curY ) {
 		if (blockBreakDelay >= blockBreakReach) {
 			blockDamage = 0;
 		} else if (getBlockDamage() > 0 && blockBreakDelay < blockBreakReach) {
@@ -109,7 +95,7 @@ public abstract class Block implements IItem {
 	}
 
 
-	public abstract Image getBlockTextureFromSide( EnumBlockSide side );
+	public abstract Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y );
 	public boolean useBlockTexture() {
 		return true;
 	}
@@ -127,34 +113,14 @@ public abstract class Block implements IItem {
 	}
 
 
-	public IItem getItemDropped() {
-		return this;
+	public ItemStack getItemDropped(World world, int x, int y) {
+		return new ItemStack(this);
 	}
-
-
-
 	public String getItemName() {
 		return getBlockDisplayName();
 	}
-
 	public IItemRenderer getRender() {
 		return DefaultBlockRendering.staticReference;
-	}
-
-
-	@Override
-	public int getItemDamage() {
-		return stackDamage;
-	}
-
-	@Override
-	public void setItemDamage( int damage ) {
-		stackDamage = damage;
-	}
-
-	@Override
-	public int getItemStackSize() {
-		return stackSize;
 	}
 
 	@Override
@@ -162,50 +128,36 @@ public abstract class Block implements IItem {
 		return maxStackSize;
 	}
 
-	@Override
-	public String getItemID() {
-		return "block." + getBlockDisplayName().toLowerCase().replace(" ", "_") + "." + getItemDamage();
-	}
+
+	public boolean useItem( World world, int x, int y, ItemStack stack ) {
+		if(stack.isBlock()) {
+			Block block = null;
+
+			try {
+				block = (Block)stack.getBlock().clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
 
 
-	public boolean useItem( World world, int x, int y ) throws IllegalAccessException, InstantiationException {
-		Block block = this.getClass().newInstance();
+			if (BlockUtils.canPlaceBlockAt(block, x, y)) {
+				MainFile.currentWorld.setBlock(block, x, y);
 
-		if (BlockUtils.canPlaceBlockAt(block, x, y)) {
-			MainFile.currentWorld.setBlock(block, x, y);
-			return true;
+
+				if (MainFile.currentWorld.player.getItem(stack.slot) != null && MainFile.currentWorld.player.getItem(stack.slot).getStackSize() > 1) {
+					MainFile.currentWorld.player.getItem(stack.slot).decreaseStackSize(1);
+				} else {
+					MainFile.currentWorld.player.setItem(stack.slot, null);
+				}
+
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	@Override
-	public void decreaseStackSize( int i ) {
-		stackSize -= i;
-	}
-
-	@Override
-	public void increaseStackSize( int i ) {
-		stackSize += i;
-
-		if (stackSize > maxStackSize) stackSize = maxStackSize;
-	}
-
-	@Override
-	public void setStackSize( int i ) {
-		stackSize = i;
-	}
-
-	@Override
-	public void onItemUsed( int hotbarSlot ) {
-		if (MainFile.currentWorld.player.getItem(hotbarSlot) != null && MainFile.currentWorld.player.getItem(hotbarSlot).getItemStackSize() > 1) {
-			MainFile.currentWorld.player.getItem(hotbarSlot).decreaseStackSize(1);
-		} else {
-			MainFile.currentWorld.player.setItem(hotbarSlot, null);
-		}
-	}
-
-	public boolean canBlockSeeSky() {
+	public boolean canBlockSeeSky(World world, int x, int y) {
 		for (int g = y - 1; g > 0; g -= 1) {
 			Block cc = world.getBlock(x, g);
 			if(cc != null && cc.isBlockSolid()) return false;
@@ -220,16 +172,6 @@ public abstract class Block implements IItem {
 	public IItem clone() throws CloneNotSupportedException {
 		try {
 			Block block = this.getClass().newInstance();
-
-			block.x = x;
-			block.y = y;
-
-			block.world = world;
-
-			block.blockDamage = blockDamage;
-			block.stackSize = stackSize;
-			block.stackDamage = stackDamage;
-
 			return block;
 
 		} catch (Exception e) {
@@ -250,32 +192,13 @@ public abstract class Block implements IItem {
 
 		Block block = (Block) o;
 
-		if (x != block.x) {
-			return false;
-		}
-		if (y != block.y) {
-			return false;
-		}
-		if (stackDamage != block.stackDamage) {
-			return false;
-		}
-		if (getBlockDamage() != block.getBlockDamage()) {
-			return false;
-		}
-		if (world != null ? !world.equals(block.world) : block.world != null) {
-			return false;
-		}
 		return unit.equals(block.unit);
 
 	}
 
 	@Override
 	public int hashCode() {
-		int result = x;
-		result = 31 * result + y;
-		result = 31 * result + (world != null ? world.hashCode() : 0);
-		result = 31 * result + stackDamage;
-		result = 31 * result + getBlockDamage();
+		int result = getBlockDamage();
 		result = 31 * result + unit.hashCode();
 		return result;
 	}

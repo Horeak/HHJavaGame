@@ -1,8 +1,6 @@
 package Guis;
 
 import Guis.Button.InventoryButton;
-import Interface.GuiObject;
-import Items.IItem;
 import Main.MainFile;
 import Settings.Config;
 import Utils.RenderUtil;
@@ -11,8 +9,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
 
 public class GuiInventory extends Gui {
 
@@ -57,57 +53,7 @@ public class GuiInventory extends Gui {
 		g2.drawString(MainFile.currentWorld.player.getInventoryName(), startX + 5, startY + 5);
 		RenderUtil.resetFont(g2);
 
-	}
-
-	public void renderPost( Graphics g2 ) {
-		int mouseX = MainFile.gameContainer.getInput().getMouseX();
-		int mouseY = MainFile.gameContainer.getInput().getMouseY();
-
-		for (GuiObject ob : guiObjects) {
-			if (ob instanceof InventoryButton) {
-				InventoryButton button = (InventoryButton) ob;
-				IItem item = MainFile.currentWorld.player.getItem(button.num);
-
-				if (button.isMouseOver() && item != null) {
-					g2.pushTransform();
-
-					AffineTransform affinetransform = new AffineTransform();
-					FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
-					Font font = new Font("ARIAL", Font.BOLD, 10);
-
-					String text = item.getItemStackSize() + "x " + item.getItemName();
-
-					int textwidth = (int) (font.getStringBounds(text, frc).getWidth());
-
-					Rectangle rect = new Rectangle(mouseX - 20, mouseY - 20, textwidth + 10, 20);
-
-					g2.setColor(Color.lightGray);
-					g2.fill(rect);
-
-					g2.setColor(Color.black);
-					g2.draw(rect);
-
-					RenderUtil.resizeFont(g2, 10);
-					RenderUtil.changeFontStyle(g2, Font.BOLD);
-
-					g2.drawString(text, mouseX - 15, mouseY - 15);
-
-					RenderUtil.resetFont(g2);
-
-					g2.popTransform();
-				}
-			}
-		}
-		g2.pushTransform();
-
-		g2.scale(0.5F, 0.5F);
-		g2.translate(mouseX - 16, mouseY - 16);
-
-		if(heldItem != null)
-		RenderUtil.renderItem(g2, heldItem, mouseX, mouseY, heldItem.getRenderMode());
-
-		g2.scale(2, 2);
-		g2.popTransform();
+		renderInventoryButtons();
 	}
 
 	@Override

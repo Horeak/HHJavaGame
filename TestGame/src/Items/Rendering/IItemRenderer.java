@@ -1,9 +1,9 @@
 package Items.Rendering;
 
-import Items.IItem;
+import Items.Utils.ItemStack;
 import Render.EnumRenderMode;
 import org.newdawn.slick.Graphics;
 
 public interface IItemRenderer {
-	void renderItem( Graphics g, int rX, int rY, EnumRenderMode renderMode, IItem item );
+	void renderItem( Graphics g, int rX, int rY, EnumRenderMode renderMode, ItemStack item );
 }

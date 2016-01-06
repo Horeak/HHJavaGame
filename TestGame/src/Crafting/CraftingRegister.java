@@ -1,10 +1,11 @@
 package Crafting;
 
+import Blocks.BlockStone;
 import Blocks.BlockTorch;
 import Blocks.BlockWood;
-import Items.IItem;
+import Items.ItemAxe;
+import Items.Utils.ItemStack;
 import Main.MainFile;
-import Utils.ItemUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ public class CraftingRegister {
 
 	public static ArrayList<CraftingRecipe> recipes = new ArrayList<>();
 
-	public static CraftingRecipe getRecipeFromInput( IItem[] input ) {
+	public static CraftingRecipe getRecipeFromInput( ItemStack[] input ) {
 		for (CraftingRecipe res : recipes) {
 			if (Arrays.equals(res.input, input)) {
 				return res;
@@ -23,7 +24,7 @@ public class CraftingRegister {
 		return null;
 	}
 
-	public static void addRecipe( IItem[] input, IItem output ) {
+	public static void addRecipe( ItemStack[] input, ItemStack output ) {
 		try {
 			if (input.length > 4) {
 				throw new Exception("Recipes cant be longer then 4 input items!");
@@ -35,14 +36,14 @@ public class CraftingRegister {
 		}
 	}
 
-	public static int getAmount(IItem item){
+	public static int getAmount(ItemStack item){
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (IItem tem : MainFile.currentWorld.player.inventoryItems) {
+		for (ItemStack tem : MainFile.currentWorld.player.inventoryItems) {
 			if(tem != null && item != null) {
 				if (tem.equals(item)) {
-					hasSize += tem.getItemStackSize();
+					hasSize += tem.getStackSize();
 				}
 			}
 		}
@@ -53,7 +54,7 @@ public class CraftingRegister {
 	public static boolean hasMaterialFor( CraftingRecipe recipe ) {
 
 		if(recipe != null)
-		for (IItem item : recipe.input) {
+		for (ItemStack item : recipe.input) {
 			if(item != null)
 			if (!hasMaterial(item)) {
 				return false;
@@ -64,21 +65,21 @@ public class CraftingRegister {
 		return true;
 	}
 
-	public static boolean hasMaterial( IItem item ) {
+	public static boolean hasMaterial( ItemStack item ) {
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (IItem tem : MainFile.currentWorld.player.inventoryItems) {
-			if (!hasItem && hasSize >= item.getItemStackSize()) {
+		for (ItemStack tem : MainFile.currentWorld.player.inventoryItems) {
+			if (!hasItem && hasSize >= item.getStackSize()) {
 				hasItem = true;
 				break;
 			}
 
-			if (item.equals(tem) && tem.getItemStackSize() >= item.getItemStackSize()) {
+			if (item.equals(tem) && tem.getStackSize() >= item.getStackSize()) {
 				hasItem = true;
-				hasSize = item.getItemStackSize();
-			} else if (item.equals(tem) && tem.getItemStackSize() < item.getItemStackSize()) {
-				hasSize += tem.getItemStackSize();
+				hasSize = item.getStackSize();
+			} else if (item.equals(tem) && tem.getStackSize() < item.getStackSize()) {
+				hasSize += tem.getStackSize();
 				continue;
 			}
 		}
@@ -87,7 +88,9 @@ public class CraftingRegister {
 	}
 
 	public static void registerRecipes() {
-		addRecipe(new IItem[]{ ItemUtil.getItem(new BlockWood(), 2)}, ItemUtil.getItem(new BlockTorch(), 5));
+		addRecipe(new ItemStack[]{ new ItemStack(new BlockWood(), 2)}, new ItemStack(new BlockTorch(), 5));
+
+		addRecipe(new ItemStack[]{new ItemStack(new BlockWood(), 1), new ItemStack(new BlockStone(), 2)}, new ItemStack(new ItemAxe()));
 	}
 
 }

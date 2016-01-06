@@ -1,12 +1,16 @@
 package Render.Renders;
 
+import Blocks.BlockRender.DefaultBlockRendering;
 import Blocks.Util.Block;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.AbstractWindowRender;
 import Utils.ConfigValues;
 import com.sun.javafx.geom.Vec2d;
 
-import java.util.ArrayList;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class BlockRendering extends AbstractWindowRender {
@@ -21,7 +25,7 @@ public class BlockRendering extends AbstractWindowRender {
 		org.newdawn.slick.geom.Rectangle c = g2.getClip();
 		g2.setClip(MainFile.blockRenderBounds);
 
-		ArrayList<Block> b = new ArrayList<>();
+		HashMap<Point, Block> b = new HashMap<>();
 
 
 		for (int x = -(ConfigValues.renderRange + 2); x < (ConfigValues.renderRange + 2); x++) {
@@ -37,9 +41,9 @@ public class BlockRendering extends AbstractWindowRender {
 					Block block = MainFile.currentWorld.getBlock(xx, yy);
 
 					if (block.isBlockSolid()) {
-						block.getRender().renderItem(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), block);
+						((DefaultBlockRendering)block.getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.currentWorld, xx, yy);
 					} else {
-						b.add(block);
+						b.put(new Point(xx, yy), block);
 					}
 				}
 
@@ -48,11 +52,11 @@ public class BlockRendering extends AbstractWindowRender {
 
 		//TODO Fix overlay when a non-solid block is diagonally down to the left of a solid one
 		//Non-solid block rendering is delayed to prevent overlay issues
-		for (Block block : b) {
-			float blockX = (float) (((block.x) - plPos.x) + ConfigValues.renderRange);
-			float blockY = (float) (((block.y) - plPos.y) + ConfigValues.renderRange);
+		for (Map.Entry<Point, Block> bb : b.entrySet()) {
+			float blockX = (float) (((bb.getKey().x) - plPos.x) + ConfigValues.renderRange);
+			float blockY = (float) (((bb.getKey().y) - plPos.y) + ConfigValues.renderRange);
 
-			block.getRender().renderItem(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), block);
+			((DefaultBlockRendering)bb.getValue().getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), bb.getValue().getRenderMode(), new ItemStack(bb.getValue()), MainFile.currentWorld, bb.getKey().x, bb.getKey().y);
 		}
 
 		g2.setClip(c);

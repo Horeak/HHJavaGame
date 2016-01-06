@@ -2,7 +2,7 @@ package Render.Renders;
 
 import Interface.Menu;
 import Interface.Objects.GuiButton;
-import Items.IItem;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.AbstractWindowRender;
 import Utils.ConfigValues;
@@ -53,6 +53,16 @@ public class HotbarRender extends AbstractWindowRender {
 			bt.renderObject(g2, null);
 		}
 
+		ItemStack item = MainFile.currentWorld.player.getItem(slotSelected-1);
+
+		if(item != null) {
+			g2.setColor(Color.white);
+			RenderUtil.resizeFont(g2, 12);
+			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			g2.drawString(item.getStackName(), startX, startY - 15);
+			RenderUtil.resetFont(g2);
+		}
+
 		g2.setColor(temp);
 	}
 
@@ -76,7 +86,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 
 	class hotbarButton extends GuiButton {
-		public IItem item;
+		public ItemStack item;
 		int num;
 
 		public hotbarButton( int x, int y, Menu menu, int num ) {
@@ -116,7 +126,7 @@ public class HotbarRender extends AbstractWindowRender {
 			g2.scale(0.5F, 0.5F);
 
 			if(item != null)
-			RenderUtil.renderItem(g2, item, (x + 14) * 2, (y + 23) * 2, item.getRenderMode());
+			RenderUtil.renderItem(g2, item, (x + 14) * 2, (y + 23) * 2, item.getItem().getRenderMode());
 
 			g2.scale(2, 2);
 
@@ -124,7 +134,7 @@ public class HotbarRender extends AbstractWindowRender {
 			RenderUtil.resizeFont(g2, 12);
 
 			if (item != null) {
-				FontUtils.drawRight(g2.getFont(), item.getItemStackSize() + "x", x, y + 32, 45, g2.getColor());
+				FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 32, 45, g2.getColor());
 			}
 
 			RenderUtil.resetFont(g2);

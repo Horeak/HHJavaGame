@@ -12,8 +12,10 @@ import Threads.WorldLightUpdateThread;
 import Threads.WorldUpdateThread;
 import Utils.ConfigValues;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class World {
@@ -31,7 +33,7 @@ public class World {
 	public EntityPlayer player;
 	public Block[][] Blocks;
 
-	public ArrayList<Block> tickableBlocks = new ArrayList<>();
+	public HashMap<Point, Block> tickableBlocks = new HashMap<Point, Block>();
 
 	public EnumWorldTime worldTimeOfDay = EnumWorldTime.DAY;
 	public int WorldTime = worldTimeOfDay.timeBegin, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
@@ -126,10 +128,9 @@ public class World {
 	}
 
 	public void removeTickBlock(int x, int y){
-		tickableBlocks.removeIf(e -> (e.x == x && e.y == y));
+		tickableBlocks.remove(new Point(x, y));
 	}
 
-	//TODO Add all TickableBlocks to a seperate list and remove them when block is removed. Used for ticking blocks without checking all blocks in the world!
 	public void setBlock( Block block, int x, int y ) {
 		removeTickBlock(x, y);
 
@@ -139,28 +140,17 @@ public class World {
 
 					if (x >= 0 && y >= 0) {
 						if (block != null) {
-							block.x = x;
-							block.y = y;
-						}
-
-						if (block != null) {
-							block.world = this;
-						}
-
-						if (block != null) {
 							Blocks[ x ][ y ] = block;
 
 							if(block instanceof ITickBlock){
-								tickableBlocks.add(block);
+								tickableBlocks.put(new Point(x,y), block);
 							}
 						} else {
 							Blocks[ x ][ y ] = new BlockAir();
-							Blocks[ x ][ y ].x = x;
-							Blocks[ x ][ y ].y = y;
 						}
 
-						getBlock(x, y, true).updateBlock(this, x, y);
-						updateNearbyBlocks(getBlock(x, y));
+						getBlock(x, y, true).updateBlock(this, x, y, x, y);
+						updateNearbyBlocks(x, y);
 					}
 				}
 			}
@@ -172,7 +162,7 @@ public class World {
 		for (int y = 0; y < worldSize.ySize; y++) {
 			int x = new Random().nextInt(worldSize.xSize);
 
-			if (getBlock(x, y) != null && getBlock(x, y).canBlockSeeSky() && !getBlock(x, y).canPassThrough()) {
+			if (getBlock(x, y) != null && getBlock(x, y).canBlockSeeSky(this, x, y) && !getBlock(x, y).canPassThrough()) {
 				xx = x;
 				yy = y - 1;
 				break;
@@ -188,14 +178,19 @@ public class World {
 
 	public void updateBlocks() {
 		try {
-			for(Block block : (ArrayList<Block>)tickableBlocks.clone()){
+			if(tickableBlocks != null)
+			for(Map.Entry<Point, Block> ent : ((HashMap<Point,Block>)tickableBlocks.clone()).entrySet()){
+				Block block = ent.getValue();
+
 				if (block instanceof ITickBlock) {
 					ITickBlock up = (ITickBlock) block;
 
-					if (player.getEntityPostion().distance(block.x, block.y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
-						if (up.shouldupdate()) {
+					int x = ent.getKey().x, y = ent.getKey().y;
+
+					if (player.getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
+						if (up.shouldupdate(this, x, y)) {
 							if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
-								up.updateBlock();
+								up.updateBlock(this, x, y);
 								up.setTimeSinceUpdate(0);
 							} else {
 								up.setTimeSinceUpdate(up.getTimeSinceUpdate() + 1);
@@ -210,30 +205,37 @@ public class World {
 	}
 
 
-	public void updateNearbyBlocks( Block block ) {
-		for (Block bl : getNearbyBlocks(block)) {
+	public void updateNearbyBlocks(int xx, int yy ) {
+		for (int x = -1; x < 2; x++) {
+			for (int y = -1; y < 2; y++) {
+				if (x != 0 && y != 0)
+					continue;
 
-			if (bl != null) {
-				bl.updateBlock(block.world, block.x, block.y);
+				int xPos = xx + x, yPos = yy + y;
+				Block b = getBlock(xPos, yPos, true);
+
+				if (b != null) {
+					if (xPos != xx || yPos != yy) {
+						b.updateBlock(this, xx, yy, xPos, yPos);
+					}
+				}
 			}
 		}
 	}
 
-	public Block[] getNearbyBlocks( Block block ) {
+	public Block[] getNearbyBlocks( int xx, int yy ) {
 		Block[] bl = new Block[ 4 ];
 
 		for (int x = -1; x < 2; x++) {
 			for (int y = -1; y < 2; y++) {
-
 				if (x != 0 && y != 0) continue;
 
-				if (block != null) {
-					Block b = getBlock(block.x + x, block.y + y, true);
+				int xPos = xx + x, yPos = yy + y;
+				Block b = getBlock(xPos, yPos, true);
 
-					if (b != null) {
-						if (b.x != block.x || b.y != block.y) {
-							bl[ (x + 1) + (y + 1) ] = b;
-						}
+				if (b != null) {
+					if (xPos != xx || yPos != yy) {
+						bl[ (x + 1) + (y + 1) ] = b;
 					}
 				}
 			}
@@ -242,7 +244,9 @@ public class World {
 		return bl;
 	}
 
-	public void updateLightForBlock( Block block ) {
+	public void updateLightForBlock( int xx, int yy ) {
+		Block block = getBlock(xx, yy, true);
+
 		if (block != null) {
 			block.setLightValue(0);
 			block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
@@ -260,15 +264,17 @@ public class World {
 						continue;
 					}
 
-					Block b = getBlock(block.x + x, block.y + y, true);
+					int xPos = xx + x, yPos = yy + y;
+					Block b = getBlock(xPos, yPos, true);
+
 					if (b != null) {
 
-						if (b.getLightValue() > 0) {
+						if (b.getLightValue(this, xPos, yPos) > 0) {
 							hasLight = true;
 						}
 
-						if (block.getLightValue() < b.getLightValue()) {
-							block.setLightValue(b.getLightValue() - 1);
+						if (block.getLightValue(this, xx, yy) < b.getLightValue(this, xPos, yPos)) {
+							block.setLightValue(b.getLightValue(this, xPos, yPos) - 1);
 							if (block.getLightUnit().getLightColor() != b.getLightUnit().getLightColor()) {
 								block.getLightUnit().setLightColor(b.getLightUnit().getLightColor());
 							}
@@ -290,20 +296,23 @@ public class World {
 		if (player != null) {
 			for (int x = -(ConfigValues.lightUpdateRenderRange / 2); x < (ConfigValues.lightUpdateRenderRange / 2); x++) {
 				for (int y = -(ConfigValues.lightUpdateRenderRange / 2); y < (ConfigValues.lightUpdateRenderRange / 2); y++) {
-					Block b = getBlock((int) player.getEntityPostion().x + x, (int) player.getEntityPostion().y + y, true);
+
+					int xPos = (int) player.getEntityPostion().x + x, yPos = (int) player.getEntityPostion().y + y;
+					Block b = getBlock(xPos, yPos, true);
 
 					if (b != null) {
-						updateLightForBlock(b);
-						b.updateBlock(this, b.x, b.y);
+						updateLightForBlock(xPos, yPos);
+						b.updateBlock(this, xPos, yPos, xPos, yPos);
 					}
 				}
 			}
 
 		} else {
-			for (Block[] bb : Blocks) {
-				for (Block b : bb) {
+			for(int x = 0; x < worldSize.xSize; x++){
+				for(int y = 0; y < worldSize.ySize; y++){
+					Block b = getBlock(x, y);
 					if (b != null) {
-						updateLightForBlock(b);
+						updateLightForBlock(x, y);
 					}
 				}
 			}
