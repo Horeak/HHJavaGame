@@ -1,7 +1,4 @@
-libs/
-src/META-INF/MANIFEST.MF
-*.iml
-importsWebcam/
+lib/
 META-INF/
-buildLibs/
 *.mf
+*.iml
