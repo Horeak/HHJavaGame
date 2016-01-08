@@ -19,7 +19,7 @@ public class EntityPlayer extends Entity implements IInventory {
 
 	//TODO Add proper player render
 
-	static org.newdawn.slick.Image playerRight = RenderUtil.getImage("textures", "player");
+	public static org.newdawn.slick.Image playerTexutre = RenderUtil.getImage("textures", "player");
 	/**
 	 * 1 = left
 	 * 2 = right
@@ -27,14 +27,16 @@ public class EntityPlayer extends Entity implements IInventory {
 	public int facing = 0;
 	public ItemStack[] inventoryItems = new ItemStack[ 50 ];
 	private int playerHealth = 100, playerMaxHealth = 100;
+	public String name;
 
-	public EntityPlayer( float x, float y ) {
+	public EntityPlayer( float x, float y, String name ) {
 		super(x, y);
+		this.name = name;
 	}
 
 	@Override
 	public String getEntityDisplayName() {
-		return "<ENTITYPLAYER>:INSERT_PLAYER_NAME_HERE";
+		return name;
 	}
 
 	@Override
@@ -56,10 +58,10 @@ public class EntityPlayer extends Entity implements IInventory {
 	@Override
 	public void renderEntity( Graphics g2, int renderX, int renderY ) {
 		if (facing == 1) {
-			playerRight.getFlippedCopy(true, false).draw(renderX, renderY - 64, 32, 64);
+			playerTexutre.getFlippedCopy(true, false).draw(renderX, renderY - 64, 32, 64);
 
 		} else {
-			playerRight.draw(renderX, renderY - 64, 32, 64);
+			playerTexutre.draw(renderX, renderY - 64, 32, 64);
 		}
 
 	}
@@ -85,7 +87,7 @@ public class EntityPlayer extends Entity implements IInventory {
 				entityItem.delay = 0;
 				if (entityItem != null) {
 					setItem(HotbarRender.slotSelected - 1, null);
-					MainFile.currentWorld.Entities.add(entityItem);
+					MainFile.getServer().getWorld().Entities.add(entityItem);
 				}
 			}
 		}

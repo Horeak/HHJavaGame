@@ -13,7 +13,7 @@ public class WorldLightUpdateThread extends Thread {
 			try {
 
 				if (!MainFile.gameContainer.isPaused()) {
-					MainFile.currentWorld.updateLightForBlocks();
+					MainFile.getServer().getWorld().updateLightForBlocks();
 				}
 
 				try {

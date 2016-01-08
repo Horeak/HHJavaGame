@@ -23,18 +23,22 @@ public abstract class Item implements IItem {
 
 
 	public void damageItem(ItemStack stack){
-		if(stack.getStackDamage() < getMaxItemDamage())
-		stack.setStackDamage(stack.getStackDamage() + 1);
+		if(stack.getStackDamage() != -1) {
+			if (stack.getStackDamage() < getMaxItemDamage())
+				stack.setStackDamage(stack.getStackDamage() + 1);
 
-		if(stack.getStackDamage() > getMaxItemDamage()){
-			int i = 0;
-			for(ItemStack stackk : MainFile.currentWorld.player.inventoryItems){
-				if(stackk.getItem().equals(this)){
-					MainFile.currentWorld.player.setItem(i, null);
-					break;
+			if (stack.getStackDamage() > getMaxItemDamage()) {
+				int i = 0;
+				for (ItemStack stackk : MainFile.getClient().getPlayer().inventoryItems) {
+					if (stackk != null) {
+						if (stackk.getItem().equals(this)) {
+							MainFile.getClient().getPlayer().setItem(i, null);
+							break;
+						}
+
+						i += 1;
+					}
 				}
-
-				i += 1;
 			}
 		}
 	}

@@ -18,20 +18,20 @@ public class WorldUpdateThread extends Thread {
 				if (!MainFile.gameContainer.isPaused()) {
 
 					for (EnumWorldTime en : EnumWorldTime.values()) {
-						if (MainFile.currentWorld.WorldTime > en.timeBegin && MainFile.currentWorld.WorldTime < en.timeEnd) {
-							MainFile.currentWorld.worldTimeOfDay = en;
+						if (MainFile.getServer().getWorld().WorldTime > en.timeBegin && MainFile.getServer().getWorld().WorldTime < en.timeEnd) {
+							MainFile.getServer().getWorld().worldTimeOfDay = en;
 						}
 					}
-					MainFile.currentWorld.WorldTime += 1;
+					MainFile.getServer().getWorld().WorldTime += 1;
 
-					if (MainFile.currentWorld.WorldTime > MainFile.currentWorld.WorldTimeDayEnd) {
-						MainFile.currentWorld.WorldTime = 0;
-						MainFile.currentWorld.WorldDay += 1;
+					if (MainFile.getServer().getWorld().WorldTime > MainFile.getServer().getWorld().WorldTimeDayEnd) {
+						MainFile.getServer().getWorld().WorldTime = 0;
+						MainFile.getServer().getWorld().WorldDay += 1;
 					}
 
-					MainFile.currentWorld.updateBlocks();
+					MainFile.getServer().getWorld().updateBlocks();
 
-					for (Entity ent : MainFile.currentWorld.Entities) {
+					for (Entity ent : MainFile.getServer().getWorld().Entities) {
 						ent.updateEntity();
 					}
 				}

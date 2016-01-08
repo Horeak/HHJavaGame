@@ -3,8 +3,11 @@ package Crafting;
 import Blocks.BlockStone;
 import Blocks.BlockTorch;
 import Blocks.BlockWood;
+import Blocks.BlockWoodenPlanks;
 import Items.ItemAxe;
 import Items.ItemPickaxe;
+import Items.ItemShovel;
+import Items.ItemStick;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 
@@ -41,7 +44,7 @@ public class CraftingRegister {
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (ItemStack tem : MainFile.currentWorld.player.inventoryItems) {
+		for (ItemStack tem : MainFile.getClient().getPlayer().inventoryItems) {
 			if(tem != null && item != null) {
 				if (tem.equals(item)) {
 					hasSize += tem.getStackSize();
@@ -70,7 +73,7 @@ public class CraftingRegister {
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (ItemStack tem : MainFile.currentWorld.player.inventoryItems) {
+		for (ItemStack tem : MainFile.getClient().getPlayer().inventoryItems) {
 			if (!hasItem && hasSize >= item.getStackSize()) {
 				hasItem = true;
 				break;
@@ -89,10 +92,14 @@ public class CraftingRegister {
 	}
 
 	public static void registerRecipes() {
-		addRecipe(new ItemStack[]{ new ItemStack(new BlockWood(), 2)}, new ItemStack(new BlockTorch(), 5));
+		addRecipe(new ItemStack[]{ new ItemStack(new BlockWood())}, new ItemStack(new BlockWoodenPlanks(), 3));
+		addRecipe(new ItemStack[]{ new ItemStack(new BlockWoodenPlanks(), 2)}, new ItemStack(new ItemStick(), 4));
 
-		addRecipe(new ItemStack[]{new ItemStack(new BlockWood(), 1), new ItemStack(new BlockStone(), 2)}, new ItemStack(new ItemAxe()));
-		addRecipe(new ItemStack[]{new ItemStack(new BlockWood(), 1), new ItemStack(new BlockStone(), 3)}, new ItemStack(new ItemPickaxe()));
+		addRecipe(new ItemStack[]{ new ItemStack(new ItemStick(), 1), new ItemStack(new BlockWood())}, new ItemStack(new BlockTorch(), 5));
+
+		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(new BlockStone(), 1)}, new ItemStack(new ItemShovel()));
+		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(new BlockStone(), 2)}, new ItemStack(new ItemAxe()));
+		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(new BlockStone(), 3)}, new ItemStack(new ItemPickaxe()));
 	}
 
 }

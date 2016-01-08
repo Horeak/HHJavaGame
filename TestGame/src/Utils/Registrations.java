@@ -26,6 +26,7 @@ public class Registrations {
 
 		windowRenders.add(new BlockSelectionRender());
 		windowRenders.add(new HotbarRender());
+		windowRenders.add(new MinimapRender());
 
 		windowRenders.add(new DebugInfoRender());
 		windowRenders.add(new WorldGenerationScreen());

@@ -12,6 +12,7 @@ public class ConfigValues {
 	public static boolean RENDER_ENTITIES = true;
 	public static boolean RENDER_BACKGROUND = true;
 	public static boolean RENDER_HOTBAR = true;
+	public static boolean RENDER_MINIMAP = true;
 
 	public static boolean PAUSE_GAME_IN_GUI = true;
 
@@ -30,5 +31,7 @@ public class ConfigValues {
 	public static boolean simpleBlockRender = false;
 
 	public static EnumRenderMode renderMod = EnumRenderMode.render2_5D;
+
+	public static String MinimapSize = "Normal";
 
 }

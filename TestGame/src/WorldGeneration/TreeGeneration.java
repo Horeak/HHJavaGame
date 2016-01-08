@@ -4,6 +4,7 @@ import Blocks.BlockGrass;
 import Blocks.BlockLeaves;
 import Blocks.BlockWood;
 import Blocks.Util.Block;
+import Main.MainFile;
 import WorldFiles.World;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.WorldGenPriority;
@@ -39,19 +40,21 @@ public class TreeGeneration extends GenerationBase {
 
 	@Override
 	public void generate( World world, int x, int y ) {
-		for (int i = 0; i < 5; i++) {
+		int height = 3 + MainFile.random.nextInt(4);
+
+		for (int i = 0; i < height; i++) {
 			world.setBlock(new BlockWood(), x, y - (i + 1));
 		}
 
-		Point p = new Point(x, y - 5);
+		Point p = new Point(x, y - height);
 
 		for (int xx = -5; xx < 5; xx++) {
-			for (int yy = -8; yy < -3; yy++) {
+			for (int yy = -(height + 2); yy < -(height - 2); yy++) {
 
-				if (xx == -2 && yy == -7) {
+				if (xx == -2 && yy == -(height + 2)) {
 					continue;
 				}
-				if (xx == 2 && yy == -7) {
+				if (xx == 2 && yy == -(height + 2)) {
 					continue;
 				}
 

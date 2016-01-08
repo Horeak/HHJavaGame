@@ -185,7 +185,7 @@ public class KeybindsMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new SettingsMenu();
+			MainFile.getClient().setCurrentMenu(new SettingsMenu());
 		}
 	}
 }

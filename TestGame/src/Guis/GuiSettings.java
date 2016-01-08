@@ -37,10 +37,10 @@ public class GuiSettings extends Gui {
 		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
 
 
-		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (Config.options.size() + 2))));
+		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (Config.configOptions.length + 2))));
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
-		for (ConfigOption option : Config.options) {
+		for (ConfigOption option : Config.configOptions) {
 			guiObjects.add(new configButton(buttonPos += buttonSize, option));
 		}
 
@@ -62,7 +62,7 @@ public class GuiSettings extends Gui {
 
 	public void keyPressed( int key, char c ) {
 		if (key == Config.getKeybindFromID("exit").getKey()) {
-			MainFile.currentMenu = new GuiIngameMenu();
+			MainFile.getClient().setCurrentMenu(new GuiIngameMenu());
 		}
 	}
 
@@ -71,7 +71,7 @@ public class GuiSettings extends Gui {
 		ConfigOption option;
 
 		public configButton( int y, ConfigOption option ) {
-			super(renderStart, y, 190, 32, "button." + option.getOptionCodeName(), guiInst);
+			super(renderStart, y, 190, 32, option.getName(), guiInst);
 
 			this.option = option;
 		}
@@ -79,7 +79,7 @@ public class GuiSettings extends Gui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			option.changeValue();
+			option.change();
 		}
 
 
@@ -109,7 +109,7 @@ public class GuiSettings extends Gui {
 
 			RenderUtil.resizeFont(g2, 12);
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			FontUtils.drawLeft(g2.getFont(), (option.getOptionDisplayName() + ": " + option.getValueDisplay()), x + 5, y);
+			FontUtils.drawLeft(g2.getFont(), (option.getName() + ": " + option.getOb()), x + 5, y);
 
 			RenderUtil.resetFont(g2);
 
@@ -125,7 +125,7 @@ public class GuiSettings extends Gui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new GuiKeybindings();
+			MainFile.getClient().setCurrentMenu(new GuiKeybindings());
 		}
 	}
 
@@ -137,7 +137,7 @@ public class GuiSettings extends Gui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new GuiIngameMenu();
+			MainFile.getClient().setCurrentMenu(new GuiIngameMenu());
 		}
 	}
 }

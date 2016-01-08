@@ -28,9 +28,9 @@ public class MainMenu extends AbstractMainMenu {
 		guiObjects.add(new ExitButton(buttonPos += buttonSize));
 
 
-		if (MainFile.currentWorld != null) {
-			MainFile.currentWorld.stop();
-			MainFile.currentWorld = null;
+		if (MainFile.getServer().getWorld() != null) {
+			MainFile.getServer().getWorld().stop();
+			MainFile.getServer().setWorld(null);
 		}
 	}
 
@@ -72,7 +72,7 @@ public class MainMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = (new CreateWorldMenu());
+			MainFile.getClient().setCurrentMenu(new CreateWorldMenu());
 		}
 
 	}
@@ -86,7 +86,7 @@ public class MainMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, Menu menu ) {
-			MainFile.currentMenu = (new SettingsMenu());
+			MainFile.getClient().setCurrentMenu(new SettingsMenu());
 		}
 
 	}

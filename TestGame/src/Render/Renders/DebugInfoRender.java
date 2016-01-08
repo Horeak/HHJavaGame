@@ -54,34 +54,34 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 		g2.drawString("FPS: " + MainFile.gameContainer.getFPS(), textStartX, linePos += (lineLength * 2));
 
-		if (MainFile.currentWorld != null) {
+		if (MainFile.getServer().getWorld() != null) {
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("World Size: ", textStartX, linePos += (lineLength * 2));
 
-			g2.drawString(" - " + (MainFile.currentWorld.worldSize.xSize) + " blocks wide.", textStartX, linePos += lineLength);
-			g2.drawString(" - " + (MainFile.currentWorld.worldSize.ySize) + " blocks high.", textStartX, linePos += lineLength);
+			g2.drawString(" - " + (MainFile.getServer().getWorld().worldSize.xSize) + " blocks wide.", textStartX, linePos += lineLength);
+			g2.drawString(" - " + (MainFile.getServer().getWorld().worldSize.ySize) + " blocks high.", textStartX, linePos += lineLength);
 
 
 			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
 
-			g2.drawString(" - World time: " + MainFile.currentWorld.WorldTime + " / " + MainFile.currentWorld.WorldTimeDayEnd, textStartX, linePos += (lineLength));
-			g2.drawString(" - Time to next phase (" + MainFile.currentWorld.getNextWorldTime().name + "): " + ((MainFile.currentWorld.getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.currentWorld.getNextWorldTime().timeBegin) - MainFile.currentWorld.WorldTime), textStartX, linePos += (lineLength));
-			g2.drawString(" - Time of day: " + MainFile.currentWorld.worldTimeOfDay.name, textStartX, linePos += (lineLength));
-			g2.drawString(" - Day number: " + MainFile.currentWorld.WorldDay, textStartX, linePos += (lineLength));
+			g2.drawString(" - World time: " + MainFile.getServer().getWorld().WorldTime + " / " + MainFile.getServer().getWorld().WorldTimeDayEnd, textStartX, linePos += (lineLength));
+			g2.drawString(" - Time to next phase (" + MainFile.getServer().getWorld().getNextWorldTime().name + "): " + ((MainFile.getServer().getWorld().getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.getServer().getWorld().getNextWorldTime().timeBegin) - MainFile.getServer().getWorld().WorldTime), textStartX, linePos += (lineLength));
+			g2.drawString(" - Time of day: " + MainFile.getServer().getWorld().worldTimeOfDay.name, textStartX, linePos += (lineLength));
+			g2.drawString(" - Day number: " + MainFile.getServer().getWorld().WorldDay, textStartX, linePos += (lineLength));
 
 
 			g2.drawString("Player info:", textStartX, linePos += (lineLength * 2));
 
-			g2.drawString(" - Player pos: " + MainFile.currentWorld.player.getEntityPostion(), textStartX, linePos += (lineLength));
-			g2.drawString(" - Block below: " + (MainFile.currentWorld.player.getBlockBelow() != null ? MainFile.currentWorld.player.getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
-			g2.drawString(" - Is on Ground: " + (MainFile.currentWorld.player.isOnGround), textStartX, linePos += (lineLength));
-			g2.drawString(" - Blocks fallen: " + (MainFile.currentWorld.player.blocksFallen), textStartX, linePos += lineLength);
+			g2.drawString(" - Player pos: " + MainFile.getClient().getPlayer().getEntityPostion(), textStartX, linePos += (lineLength));
+			g2.drawString(" - Block below: " + (MainFile.getClient().getPlayer().getBlockBelow() != null ? MainFile.getClient().getPlayer().getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
+			g2.drawString(" - Is on Ground: " + (MainFile.getClient().getPlayer().isOnGround), textStartX, linePos += (lineLength));
+			g2.drawString(" - Blocks fallen: " + (MainFile.getClient().getPlayer().blocksFallen), textStartX, linePos += lineLength);
 
 		}
 
 		g2.drawString("Block render size: " + ConfigValues.size, textStartX, linePos += (lineLength * 2));
 
-		if (MainFile.currentWorld != null) {
+		if (MainFile.getServer().getWorld() != null) {
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("Currently selected block: " + (BlockSelection.selectedBlock != null ? BlockSelection.selectedBlock.getItemName() : "None"), textStartX, linePos += (lineLength * 2));
 
@@ -96,7 +96,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 				}
 
 				BlockSelection.selectedBlock.blockInfoList.clear();
-				BlockSelection.selectedBlock.addInfo(MainFile.currentWorld, BlockSelection.selectedX, BlockSelection.selectedY);
+				BlockSelection.selectedBlock.addInfo(MainFile.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
 			}
 		}
 

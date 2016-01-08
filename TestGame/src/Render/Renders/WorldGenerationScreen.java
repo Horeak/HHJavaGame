@@ -53,7 +53,7 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return MainFile.currentWorld.generating;
+		return MainFile.getServer().getWorld().generating;
 	}
 
 	@Override

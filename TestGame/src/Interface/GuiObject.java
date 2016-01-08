@@ -32,7 +32,7 @@ public abstract class GuiObject extends MouseOverArea {
 	public abstract void renderObject( Graphics g2, Menu menu );
 
 	public boolean isMouseOver() {
-		if (!(MainFile.currentMenu instanceof Gui) && menu != null && (menu instanceof Gui)) {
+		if (!(MainFile.getClient().getCurrentMenu() instanceof Gui) && menu != null && (menu instanceof Gui)) {
 			return false;
 		}
 

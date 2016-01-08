@@ -69,7 +69,7 @@ public class GuiKeybindings extends Gui {
 			}
 		} else {
 			if (key == Config.getKeybindFromID("exit").getKey()) {
-				MainFile.currentMenu = new GuiSettings();
+				MainFile.getClient().setCurrentMenu(new GuiSettings());
 			}
 		}
 	}
@@ -194,7 +194,7 @@ public class GuiKeybindings extends Gui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new GuiSettings();
+			MainFile.getClient().setCurrentMenu(new GuiSettings());
 		}
 	}
 

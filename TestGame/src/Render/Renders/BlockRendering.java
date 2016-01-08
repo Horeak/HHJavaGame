@@ -20,7 +20,7 @@ public class BlockRendering extends AbstractWindowRender {
 
 	@Override
 	public void render( org.newdawn.slick.Graphics g2 ) {
-		Vec2d plPos = new Vec2d(MainFile.currentWorld.player.getEntityPostion().x, MainFile.currentWorld.player.getEntityPostion().y);
+		Vec2d plPos = new Vec2d(MainFile.getClient().getPlayer().getEntityPostion().x, MainFile.getClient().getPlayer().getEntityPostion().y);
 
 		org.newdawn.slick.geom.Rectangle c = g2.getClip();
 		g2.setClip(MainFile.blockRenderBounds);
@@ -37,11 +37,11 @@ public class BlockRendering extends AbstractWindowRender {
 				float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
 				float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
 
-				if (MainFile.currentWorld.getBlock(xx, yy) != null) {
-					Block block = MainFile.currentWorld.getBlock(xx, yy);
+				if (MainFile.getServer().getWorld().getBlock(xx, yy) != null) {
+					Block block = MainFile.getServer().getWorld().getBlock(xx, yy);
 
 					if (block.isBlockSolid()) {
-						((DefaultBlockRendering)block.getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.currentWorld, xx, yy);
+						((DefaultBlockRendering)block.getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.getServer().getWorld(), xx, yy);
 					} else {
 						b.put(new Point(xx, yy), block);
 					}
@@ -56,7 +56,7 @@ public class BlockRendering extends AbstractWindowRender {
 			float blockX = (float) (((bb.getKey().x) - plPos.x) + ConfigValues.renderRange);
 			float blockY = (float) (((bb.getKey().y) - plPos.y) + ConfigValues.renderRange);
 
-			((DefaultBlockRendering)bb.getValue().getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), bb.getValue().getRenderMode(), new ItemStack(bb.getValue()), MainFile.currentWorld, bb.getKey().x, bb.getKey().y);
+			((DefaultBlockRendering)bb.getValue().getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), bb.getValue().getRenderMode(), new ItemStack(bb.getValue()), MainFile.getServer().getWorld(), bb.getKey().x, bb.getKey().y);
 		}
 
 		g2.setClip(c);
@@ -64,7 +64,7 @@ public class BlockRendering extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_BLOCKS && !MainFile.currentWorld.generating;
+		return ConfigValues.RENDER_BLOCKS && !MainFile.getServer().getWorld().generating;
 	}
 
 	@Override

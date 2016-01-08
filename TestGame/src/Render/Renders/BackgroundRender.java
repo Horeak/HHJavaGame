@@ -70,12 +70,12 @@ public class BackgroundRender extends AbstractWindowRender {
 
 	@Override
 	public void render( Graphics g2 ) {
-		render(g2, MainFile.currentWorld);
+		render(g2, MainFile.getServer().getWorld());
 	}
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_BACKGROUND && !MainFile.currentWorld.generating;
+		return ConfigValues.RENDER_BACKGROUND && !MainFile.getServer().getWorld().generating;
 	}
 
 	@Override

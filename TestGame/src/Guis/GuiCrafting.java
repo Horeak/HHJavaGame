@@ -11,12 +11,17 @@ import Settings.Config;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 
 public class GuiCrafting extends Gui {
+
+	public GuiCrafting inst = this;
 
 	public int startX = 140, startY = 150;
 	public int Swidth = 520, Sheight = 297;
@@ -24,19 +29,37 @@ public class GuiCrafting extends Gui {
 	Rectangle rectangle1 = new Rectangle(startX + 9, startY + 25, 216, Sheight - 49);
 
 	CraftingRecipe selectedRes = null;
-	boolean init = false;
 	float translate = 0; //18 = 1 down
+
+	boolean textInput = false;
+	public String input = "";
 
 
 	public void init() {
 		int i = 0;
 		for (CraftingRecipe res : CraftingRegister.recipes) {
-			guiObjects.add(new CraftingButton(this, startX + 10, startY + 25 + (i * (54)), res));
-			i += 1;
+			if(input != null && !input.isEmpty() && res.output.getStackName().toLowerCase().contains(input.toLowerCase()) || input == null || input.isEmpty()) {
+				guiObjects.add(new CraftingButton(this, startX + 10, startY + 25 + (i * (54)) - (int)(translate * 2), res));
+				i += 1;
+			}
 		}
 
 		guiObjects.add(new craftButton(startX + (Swidth / 2) + 8, startY + (Sheight - 35), 243, 25, this));
+
+		boolean t = false, j = false;
+		for(GuiObject ob : guiObjects) {
+			if (ob instanceof scrollBar)
+				t = true;
+			else if(ob instanceof inputButton)
+				j = true;
+		}
+
+
+		if(!t)
 		guiObjects.add(new scrollBar(startX + (Swidth / 2) - 25, startY + 25, 20, Sheight - 50, this));
+
+		if(!j)
+			guiObjects.add(new inputButton(startX + 9, startY - 10, 246, 32));
 
 
 		for (int g = 0; g < 10; g++) {
@@ -51,52 +74,35 @@ public class GuiCrafting extends Gui {
 
 	}
 
-	public void renderObject( Graphics g2 ) {
-		for (GuiObject object : guiObjects) {
-			Rectangle temp = g2.getClip();
+	public void mouseClick( int button, int x, int y ) {
+		boolean t = false;
 
-			if (object instanceof CraftingButton) {
-				g2.pushTransform();
+		for (GuiObject ob : guiObjects) {
+			if (ob.isMouseOver()) {
+				ob.onClicked(button, x, y, this);
 
-				for (int i = 0; i < translate / 18; i++) {
-					g2.translate(0, -translate);
+				if(ob instanceof inputButton){
+					t = true;
 				}
-
-				g2.setClip(rectangle1);
-
-			} else {
-				g2.setClip(null);
 			}
+		}
 
-			object.renderObject(g2, this);
-
-			if (object instanceof CraftingButton) {
-
-				for (int i = 0; i < translate / 18; i++) {
-					g2.translate(0, translate);
-				}
-
-				g2.popTransform();
-			}
-
-			g2.setClip(temp);
-
+		if(!t && textInput){
+			textInput = false;
 		}
 	}
 
 	@Override
 	public void render( Graphics g2 ) {
-		if (!init) {
-			init();
-			init = true;
-		}
+		guiObjects.removeIf(e -> (!(e instanceof scrollBar) && !(e instanceof inputButton)));
+		init();
 
 		renderInventoryButtons();
 
 		g2.setColor(new Color(0.3F, 0.3F, 0.3F, 0.4F));
 		g2.fill(MainFile.blockRenderBounds);
 
-		Rectangle bounder = new Rectangle(startX, startY, Swidth, Sheight);
+		Rectangle bounder = new Rectangle(startX, startY - 30, Swidth, Sheight + 30);
 
 		g2.setColor(Color.gray);
 		g2.fill(bounder);
@@ -108,7 +114,7 @@ public class GuiCrafting extends Gui {
 		g2.setColor(Color.white);
 		RenderUtil.resizeFont(g2, 12);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString("Crafting", startX + 5, startY + 5);
+		g2.drawString("Crafting", startX + 5, startY - 25);
 		RenderUtil.resetFont(g2);
 
 		Rectangle rightArea = new Rectangle(startX + (Swidth / 2), startY, (Swidth / 2), Sheight);
@@ -211,10 +217,40 @@ public class GuiCrafting extends Gui {
 		return true;
 	}
 
+	public void renderObject( Graphics g2 ) {
+		for (GuiObject object : guiObjects) {
+			Rectangle temp = g2.getClip();
+
+			if (object instanceof CraftingButton) {
+				g2.setClip(rectangle1);
+
+			} else {
+				g2.setClip(null);
+			}
+
+			object.renderObject(g2, this);
+
+		}
+	}
+
 
 	public void keyPressed( int key, char c ) {
-		if (key == Config.getKeybindFromID("crafting").getKey() || key == Config.getKeybindFromID("exit").getKey()) {
-			closeGui();
+			if (key == Config.getKeybindFromID("crafting").getKey() && !textInput || key == Config.getKeybindFromID("exit").getKey() && !textInput) {
+				closeGui();
+			}else {
+
+				if (key == Input.KEY_BACK) {
+					if (input.length() > 0) {
+						input = input.substring(0, input.length() - 1);
+					}
+				} else {
+					if (input.length() < 19) {
+						if (Character.isDefined(c))
+							if (Character.isLetter(c) || Character.isDigit(c) || Character.isSpaceChar(c)) {
+								input += c;
+							}
+					}
+			}
 		}
 	}
 
@@ -255,13 +291,6 @@ public class GuiCrafting extends Gui {
 			}
 		}
 
-		public boolean isMouseOver() {
-			if (!(MainFile.currentMenu instanceof Gui) && menu != null && (menu instanceof Gui)) {
-				return false;
-			}
-
-			return over;
-		}
 
 		@Override
 		public void renderObject( Graphics g2, Menu menu ) {
@@ -276,9 +305,7 @@ public class GuiCrafting extends Gui {
 				}
 			}
 
-			over = this.area.contains(MainFile.gameContainer.getInput().getMouseX(), MainFile.gameContainer.getInput().getMouseY() + (float) (translate * (translate / 18))) && !other;
-			g2.setClip(new Rectangle(x - 1, y - 1, width + 2, height + 2));
-
+			selected = selectedRes == res;
 			Rectangle rectangle = new Rectangle(x, y, width, height);
 			Rectangle sub = new Rectangle(x, y, 48, 48);
 
@@ -349,10 +376,10 @@ public class GuiCrafting extends Gui {
 				if (CraftingRegister.hasMaterialFor(selectedRes)) {
 
 					for (ItemStack item : selectedRes.input) {
-						MainFile.currentWorld.player.consumeItem(item);
+						MainFile.getClient().getPlayer().consumeItem(item);
 					}
 
-					MainFile.currentWorld.player.addItem(new ItemStack(selectedRes.output));
+					MainFile.getClient().getPlayer().addItem(new ItemStack(selectedRes.output));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -406,8 +433,12 @@ public class GuiCrafting extends Gui {
 				trant = 221;
 			}
 
+			int am = 0;
+			for(GuiObject ob : guiObjects)
+			if(ob instanceof CraftingButton) am += 1;
+
 			float t = (float) trant / 221F;
-			translate = t * ((float) (CraftingRegister.recipes.size() - 4F) * 18F);
+			translate = t * ((float) (am - (am > 4 ? 4F : am)) * 18F);
 
 			Rectangle rect = new Rectangle(x, y, width, height);
 
@@ -425,7 +456,52 @@ public class GuiCrafting extends Gui {
 		}
 
 		public void onMouseWheelMoved( int change ) {
-			trant += -((change / 120) * 9);
+			trant += -((change / 120) * 10);
+		}
+	}
+
+	class inputButton extends GuiObject {
+
+		int i = 0;
+		public inputButton(int x, int y, int width, int height) {
+			super(x, y, width, height, inst);
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, Menu menu ) {
+			textInput ^= true;
+		}
+
+		@Override
+		public void renderObject( Graphics g2, Menu menu ) {
+			if(i >= 20) i = 0;
+			i += 1;
+			org.newdawn.slick.Color temp = g2.getColor();
+
+			g2.setColor(textInput ? Color.darkGray.brighter() : Color.darkGray.darker());
+			g2.fill(new Rectangle(x, y, width, height));
+
+			g2.setColor(Color.black);
+			g2.draw(new Rectangle(x, y, width, height));
+
+			g2.setColor(org.newdawn.slick.Color.white);
+			RenderUtil.resizeFont(g2, 22);
+			g2.drawString(inst.input, x + 3, y);
+
+			RenderUtil.resetFont(g2);
+
+			AffineTransform affinetransform = new AffineTransform();
+			FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
+			Font font = new Font("ARIAL", Font.PLAIN, 22);
+			int width = (int) (font.getStringBounds(inst.input, frc).getWidth());
+
+			if(textInput && i < 10 || !textInput) {
+				RenderUtil.resizeFont(g2, 22);
+				g2.drawString("_", x + 3 + width, y);
+				RenderUtil.resetFont(g2);
+			}
+
+			g2.setColor(temp);
 		}
 	}
 

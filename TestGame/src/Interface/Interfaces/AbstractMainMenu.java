@@ -58,7 +58,9 @@ public class AbstractMainMenu extends Menu {
 				world.setBlock(new BlockStone(), x, ConfigValues.renderYSize - 1);
 			}
 
-			new TreeGeneration().generate(world, 4, ConfigValues.renderYSize - 6);
+			new TreeGeneration().generate(world, 2 + MainFile.random.nextInt(4), ConfigValues.renderYSize - 6);
+			new TreeGeneration().generate(world, 9 + MainFile.random.nextInt(6), ConfigValues.renderYSize - 6);
+			new TreeGeneration().generate(world, 17 + MainFile.random.nextInt(8), ConfigValues.renderYSize - 6);
 		}
 		world.updateLightForBlocks();
 	}

@@ -22,11 +22,11 @@ public class BlockUtils {
 	}
 
 	public static boolean canPlaceBlockAt( Block block, int x, int y ) {
-		if (x != -1 && y != -1 && x < MainFile.currentWorld.worldSize.xSize && y < MainFile.currentWorld.worldSize.ySize) {
-			boolean t = (int) MainFile.currentWorld.player.getEntityPostion().x != x || (int) MainFile.currentWorld.player.getEntityPostion().y != y;
+		if (x != -1 && y != -1 && x < MainFile.getServer().getWorld().worldSize.xSize && y < MainFile.getServer().getWorld().worldSize.ySize) {
+			boolean t = (int) MainFile.getClient().getPlayer().getEntityPostion().x != x || (int) MainFile.getClient().getPlayer().getEntityPostion().y != y;
 
-			if (!MainFile.currentWorld.player.getPlayerBounds().contains(x, y) && t || block == null) {
-				return MainFile.currentWorld.getBlock(x, y) == null;
+			if (!MainFile.getClient().getPlayer().getPlayerBounds().contains(x, y) && t || block == null) {
+				return MainFile.getServer().getWorld().getBlock(x, y) == null;
 			}
 		}
 

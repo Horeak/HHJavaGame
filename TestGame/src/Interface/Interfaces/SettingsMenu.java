@@ -35,10 +35,10 @@ public class SettingsMenu extends AbstractMainMenu {
 		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
 
 
-		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (Config.options.size() + 2))));
+		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (Config.configOptions.length + 2))));
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
-		for (ConfigOption option : Config.options) {
+		for (ConfigOption option : Config.configOptions) {
 			guiObjects.add(new configButton(buttonPos += buttonSize, option));
 		}
 
@@ -71,7 +71,7 @@ public class SettingsMenu extends AbstractMainMenu {
 		ConfigOption option;
 
 		public configButton( int y, ConfigOption option ) {
-			super(renderStart, y, 190, 32, "button." + option.getOptionCodeName(), guiInst);
+			super(renderStart, y, 190, 32, "button." + option.getName(), guiInst);
 
 			this.option = option;
 		}
@@ -79,7 +79,7 @@ public class SettingsMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, Menu menu ) {
-			option.changeValue();
+			option.change();
 		}
 
 
@@ -107,7 +107,7 @@ public class SettingsMenu extends AbstractMainMenu {
 
 			RenderUtil.resizeFont(g2, 12);
 			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			FontUtils.drawLeft(g2.getFont(), (option.getOptionDisplayName() + ": " + option.getValueDisplay()), x + 5, y);
+			FontUtils.drawLeft(g2.getFont(), (option.getName() + ": " + option.getOb()), x + 5, y);
 
 			RenderUtil.resetFont(g2);
 
@@ -123,7 +123,7 @@ public class SettingsMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new KeybindsMenu();
+			MainFile.getClient().setCurrentMenu(new KeybindsMenu());
 		}
 	}
 
@@ -135,7 +135,7 @@ public class SettingsMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new MainMenu();
+			MainFile.getClient().setCurrentMenu(new MainMenu());
 		}
 	}
 }

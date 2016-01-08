@@ -40,7 +40,7 @@ public class InventoryButton extends GuiObject {
 			return 0;
 
 		} else if (gui.heldItem != null && player.getItem(slot) != null && gui.heldItem.equals(player.getItem(slot)) && player.getItem(slot).getStackSize() < player.getItem(slot).getMaxStackSize()) {
-			int t = player.getItem(slot).getMaxStackSize() - MainFile.currentWorld.player.getItem(slot).getStackSize();
+			int t = player.getItem(slot).getMaxStackSize() - MainFile.getClient().getPlayer().getItem(slot).getStackSize();
 			int tt = t - gui.heldItem.getStackSize();
 
 			if (tt > 0) {
@@ -77,7 +77,7 @@ public class InventoryButton extends GuiObject {
 			//TODO Create a inventoryhandler util so that i dont have to make this code for every inventory
 			if (button == Input.MOUSE_LEFT_BUTTON) {
 				try {
-					int tt = addItem(gui, num, MainFile.currentWorld.player);
+					int tt = addItem(gui, num, MainFile.getClient().getPlayer());
 
 					if (tt > 0) {
 						gui.heldItem.setStackSize(tt);
@@ -89,32 +89,34 @@ public class InventoryButton extends GuiObject {
 					e.printStackTrace();
 				}
 
+//TODO Make right click with held item put one item from heldItem to empty slot
+
 			} else if (button == Input.MOUSE_RIGHT_BUTTON) {
-				if (gui.heldItem == null && MainFile.currentWorld.player.getItem(num) != null) {
-					gui.heldItem = new ItemStack(MainFile.currentWorld.player.getItem(num));
+				if (gui.heldItem == null && MainFile.getClient().getPlayer().getItem(num) != null) {
+					gui.heldItem = new ItemStack(MainFile.getClient().getPlayer().getItem(num));
 
 					int t = gui.heldItem.getStackSize();
 					int tj = t / 2;
 
 					if (gui.heldItem.getStackSize() == 1) {
-						gui.heldItem = new ItemStack(MainFile.currentWorld.player.getItem(num));
-						MainFile.currentWorld.player.setItem(num, null);
+						gui.heldItem = new ItemStack(MainFile.getClient().getPlayer().getItem(num));
+						MainFile.getClient().getPlayer().setItem(num, null);
 					} else {
 						gui.heldItem.decreaseStackSize(tj);
-						MainFile.currentWorld.player.getItem(num).setStackSize(tj);
+						MainFile.getClient().getPlayer().getItem(num).setStackSize(tj);
 					}
 
-				} else if (gui.heldItem != null && MainFile.currentWorld.player.getItem(num) == null) {
+				} else if (gui.heldItem != null && MainFile.getClient().getPlayer().getItem(num) == null) {
 					int t = gui.heldItem.getStackSize();
-					int tj = t / 2;
+					int tj = 1;
 
 					if (gui.heldItem.getStackSize() == 1) {
-						MainFile.currentWorld.player.setItem(num, gui.heldItem);
+						MainFile.getClient().getPlayer().setItem(num, gui.heldItem);
 						gui.heldItem = null;
 					} else {
-						gui.heldItem.decreaseStackSize(tj);
-						MainFile.currentWorld.player.setItem(num, new ItemStack(gui.heldItem));
 						gui.heldItem.setStackSize(tj);
+						MainFile.getClient().getPlayer().setItem(num, new ItemStack(gui.heldItem));
+						gui.heldItem.setStackSize(t-1);
 					}
 
 				}
@@ -128,7 +130,7 @@ public class InventoryButton extends GuiObject {
 
 	@Override
 	public void renderObject( Graphics g2, Menu menu ) {
-		ItemStack item = MainFile.currentWorld.player.getItem(num);
+		ItemStack item = MainFile.getClient().getPlayer().getItem(num);
 		Rectangle tangle = new Rectangle(x, y, width, height);
 
 		tangle.setLocation(x - 2, y - 1);

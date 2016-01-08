@@ -76,7 +76,7 @@ public class GuiIngameMenu extends Gui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentMenu = new GuiSettings();
+			MainFile.getClient().setCurrentMenu(new GuiSettings());
 		}
 
 	}
@@ -89,10 +89,10 @@ public class GuiIngameMenu extends Gui {
 
 		@Override
 		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.currentWorld.stop();
-			MainFile.currentWorld = null;
+			MainFile.getServer().getWorld().stop();
+			MainFile.getServer().setWorld(null);
 
-			MainFile.currentMenu = new MainMenu();
+			MainFile.getClient().setCurrentMenu(new MainMenu());
 		}
 
 	}

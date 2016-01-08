@@ -16,12 +16,12 @@ public class BlockSelectionRender extends AbstractWindowRender {
 	@Override
 	public void render( Graphics g2 ) {
 		org.newdawn.slick.Color temp = g2.getColor();
-		Vec2d plPos = new Vec2d(MainFile.currentWorld.player.getEntityPostion().x, MainFile.currentWorld.player.getEntityPostion().y);
+		Vec2d plPos = new Vec2d(MainFile.getClient().getPlayer().getEntityPostion().x, MainFile.getClient().getPlayer().getEntityPostion().y);
 
 		float mouseBlockX = (float) (BlockSelection.selectedX - plPos.x) + ConfigValues.renderRange;
 		float mouseBlockY = (float) (BlockSelection.selectedY - plPos.y) + ConfigValues.renderRange;
 
-		boolean valid = BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0 && BlockSelection.selectedX < MainFile.currentWorld.worldSize.xSize && BlockSelection.selectedY < MainFile.currentWorld.worldSize.ySize;
+		boolean valid = BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0 && BlockSelection.selectedX < MainFile.getServer().getWorld().worldSize.xSize && BlockSelection.selectedY < MainFile.getServer().getWorld().worldSize.ySize;
 
 		if (valid) {
 			textureValid.draw(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);

@@ -17,14 +17,14 @@ public class WorldGenerationThread extends Thread {
 
 	public void run() {
 
-		MainFile.currentWorld.generating = true;
+		MainFile.getServer().getWorld().generating = true;
 
 		for (WorldGenPriority priority : WorldGenPriority.values()) {
 			for (StructureGeneration gen : Registrations.structureGenerations) {
 				if (gen.generationPriority().equals(priority)) {
-					if (gen.canGenerate(MainFile.currentWorld)) {
+					if (gen.canGenerate(MainFile.getServer().getWorld())) {
 						WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
-						gen.generate(MainFile.currentWorld);
+						gen.generate(MainFile.getServer().getWorld());
 					}
 				}
 			}
@@ -32,12 +32,12 @@ public class WorldGenerationThread extends Thread {
 			for (GenerationBase gen : Registrations.generationBases) {
 				if (gen.generationPriority().equals(priority)) {
 
-					for (int x = 0; x < MainFile.currentWorld.worldSize.xSize; x++) {
-						for (int y = MainFile.currentWorld.worldSize.ySize - 1; y > 0; y--) {
+					for (int x = 0; x < MainFile.getServer().getWorld().worldSize.xSize; x++) {
+						for (int y = MainFile.getServer().getWorld().worldSize.ySize - 1; y > 0; y--) {
 
-							if (gen.canGenerate(MainFile.currentWorld, x, y)) {
+							if (gen.canGenerate(MainFile.getServer().getWorld(), x, y)) {
 								WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
-								gen.generate(MainFile.currentWorld, x, y);
+								gen.generate(MainFile.getServer().getWorld(), x, y);
 							}
 						}
 					}
@@ -48,16 +48,16 @@ public class WorldGenerationThread extends Thread {
 
 		WorldGenerationScreen.generationStatus = "Air blocks.";
 
-		for (int x = 0; x < MainFile.currentWorld.worldSize.xSize; x++) {
-			for (int y = 0; y < MainFile.currentWorld.worldSize.ySize; y++) {
-				if (MainFile.currentWorld.getBlock(x, y) == null) {
-					MainFile.currentWorld.setBlock(new BlockAir(), x, y);
+		for (int x = 0; x < MainFile.getServer().getWorld().worldSize.xSize; x++) {
+			for (int y = 0; y < MainFile.getServer().getWorld().worldSize.ySize; y++) {
+				if (MainFile.getServer().getWorld().getBlock(x, y) == null) {
+					MainFile.getServer().getWorld().setBlock(new BlockAir(), x, y);
 				}
 			}
 		}
 		WorldGenerationScreen.generationStatus = "";
 
-		MainFile.currentWorld.doneGenerating();
-		MainFile.currentWorld.generating = false;
+		MainFile.getServer().getWorld().doneGenerating();
+		MainFile.getServer().getWorld().generating = false;
 	}
 }

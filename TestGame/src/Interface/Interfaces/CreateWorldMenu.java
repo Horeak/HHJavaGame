@@ -105,7 +105,7 @@ public class CreateWorldMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, Menu menu ) {
-			MainFile.currentMenu = (new MainMenu());
+			MainFile.getClient().setCurrentMenu(new MainMenu());
 		}
 	}
 
@@ -117,11 +117,11 @@ public class CreateWorldMenu extends AbstractMainMenu {
 		@Override
 		public void onClicked( int button, int x, int y, Menu menu ) {
 			if (createWorldButton.enabled) {
-				MainFile.currentWorld = new World(worldName, selected);
-				MainFile.currentWorld.generate();
-				MainFile.currentWorld.start();
+				MainFile.getServer().setWorld(new World(worldName, selected));
+				MainFile.getServer().getWorld().generate();
+				MainFile.getServer().getWorld().start();
 
-				MainFile.currentMenu = (null);
+				MainFile.getClient().setCurrentMenu(null);
 			}
 		}
 	}

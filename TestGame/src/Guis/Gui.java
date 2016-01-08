@@ -110,7 +110,7 @@ public abstract class Gui extends Menu {
 		for (GuiObject ob : guiObjects) {
 			if (ob instanceof InventoryButton) {
 				InventoryButton button = (InventoryButton) ob;
-				ItemStack item = MainFile.currentWorld.player.getItem(button.num);
+				ItemStack item = MainFile.getClient().getPlayer().getItem(button.num);
 
 				if (button.isMouseOver() && item != null) {
 					int mouseX = MainFile.gameContainer.getInput().getMouseX();
@@ -135,6 +135,6 @@ public abstract class Gui extends Menu {
 
 	public void closeGui() {
 		MainFile.gameContainer.setPaused(false);
-		MainFile.currentMenu = null;
+		MainFile.getClient().setCurrentMenu(null);
 	}
 }

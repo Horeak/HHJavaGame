@@ -35,9 +35,9 @@ public class HotbarRender extends AbstractWindowRender {
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Color temp = g2.getColor();
 
-		if (MainFile.currentWorld != null && MainFile.currentWorld.player != null) {
+		if (MainFile.getServer().getWorld() != null && MainFile.getClient().getPlayer() != null) {
 			for (hotbarButton bt : hotbarButtons) {
-				bt.item = MainFile.currentWorld.player.getItem(bt.num);
+				bt.item = MainFile.getClient().getPlayer().getItem(bt.num);
 			}
 		}
 
@@ -53,7 +53,7 @@ public class HotbarRender extends AbstractWindowRender {
 			bt.renderObject(g2, null);
 		}
 
-		ItemStack item = MainFile.currentWorld.player.getItem(slotSelected-1);
+		ItemStack item = MainFile.getClient().getPlayer().getItem(slotSelected-1);
 
 		if(item != null) {
 			g2.setColor(Color.white);
@@ -68,7 +68,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_HOTBAR && MainFile.currentMenu == null;
+		return ConfigValues.RENDER_HOTBAR && MainFile.getClient().getCurrentMenu() == null;
 	}
 	@Override
 	public boolean canRenderWithWindow() {

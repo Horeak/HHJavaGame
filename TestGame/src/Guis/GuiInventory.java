@@ -50,7 +50,7 @@ public class GuiInventory extends Gui {
 		g2.setColor(Color.white);
 		RenderUtil.resizeFont(g2, 12);
 		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString(MainFile.currentWorld.player.getInventoryName(), startX + 5, startY + 5);
+		g2.drawString(MainFile.getClient().getPlayer().getInventoryName(), startX + 5, startY + 5);
 		RenderUtil.resetFont(g2);
 
 		renderInventoryButtons();

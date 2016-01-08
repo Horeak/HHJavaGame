@@ -8,6 +8,8 @@ import EntityFiles.Entities.EntityPlayer;
 import EntityFiles.Entity;
 import EntityFiles.EntityItem;
 import Items.Utils.ItemStack;
+import Main.MainFile;
+import Render.Renders.MinimapRender;
 import Threads.WorldEntityUpdateThread;
 import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
@@ -20,25 +22,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+//TODO Make sure there is no code left that is hardcoded to one player
 public class World {
-
-	public String worldName;
-	public EnumWorldSize worldSize;
-
 	public WorldGenerationThread worldGenerationThread = new WorldGenerationThread();
 	public WorldUpdateThread worldUpdateThread = new WorldUpdateThread();
 	public WorldEntityUpdateThread worldEntityUpdateThread = new WorldEntityUpdateThread();
 	public WorldLightUpdateThread worldLightUpdateThread = new WorldLightUpdateThread();
 
 	public HashMap<String, Object> worldProperties = new HashMap<>();
+
 	public ArrayList<Entity> Entities = new ArrayList<>();
 	public ArrayList<Entity> RemoveEntities = new ArrayList<>();
-	public EntityPlayer player;
-	public Block[][] Blocks;
 
+	public Block[][] Blocks;
 	public HashMap<Point, Block> tickableBlocks = new HashMap<Point, Block>();
 
+	public String worldName;
+	public EnumWorldSize worldSize;
 	public EnumWorldTime worldTimeOfDay = EnumWorldTime.DAY;
+
 	public int WorldTime = worldTimeOfDay.timeBegin, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
 	public int WorldDay = 1;
 
@@ -76,7 +78,7 @@ public class World {
 	}
 
 	public void start() {
-		spawnPlayer();
+		spawnPlayer(MainFile.getClient().getPlayer());
 
 		worldUpdateThread.start();
 	}
@@ -96,7 +98,7 @@ public class World {
 	}
 
 	public void doneGenerating() {
-		spawnPlayer();
+		spawnPlayer(MainFile.getClient().getPlayer());
 	}
 
 	public void stop() {
@@ -173,7 +175,7 @@ public class World {
 		}
 	}
 
-	public void spawnPlayer() {
+	public void spawnPlayer(EntityPlayer player) {
 		int xx = 0, yy = 0;
 		for (int y = 0; y < worldSize.ySize; y++) {
 			int x = new Random().nextInt(worldSize.xSize);
@@ -185,16 +187,17 @@ public class World {
 			}
 		}
 
-		if (player == null) {
-			player = new EntityPlayer(xx, yy);
-			Entities.add(player);
-		}
 		player.setEntityPosition(xx, yy);
+		if(!Entities.contains(player))
+		Entities.add(player);
+
+		MinimapRender.reset();
 	}
 
 	public void updateBlocks() {
 		try {
 			if(tickableBlocks != null)
+				//TODO ConcurrentModificationError
 			for(Map.Entry<Point, Block> ent : ((HashMap<Point,Block>)tickableBlocks.clone()).entrySet()){
 				Block block = ent.getValue();
 
@@ -203,7 +206,7 @@ public class World {
 
 					int x = ent.getKey().x, y = ent.getKey().y;
 
-					if (player.getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
+					if (MainFile.getClient().getPlayer().getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
 						if (up.shouldupdate(this, x, y)) {
 							if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
 								up.updateBlock(this, x, y);
@@ -309,11 +312,11 @@ public class World {
 	}
 
 	public void updateLightForBlocks() {
-		if (player != null) {
+		if (MainFile.getClient().getPlayer() != null) {
 			for (int x = -(ConfigValues.lightUpdateRenderRange / 2); x < (ConfigValues.lightUpdateRenderRange / 2); x++) {
 				for (int y = -(ConfigValues.lightUpdateRenderRange / 2); y < (ConfigValues.lightUpdateRenderRange / 2); y++) {
 
-					int xPos = (int) player.getEntityPostion().x + x, yPos = (int) player.getEntityPostion().y + y;
+					int xPos = (int) MainFile.getClient().getPlayer().getEntityPostion().x + x, yPos = (int) MainFile.getClient().getPlayer().getEntityPostion().y + y;
 					Block b = getBlock(xPos, yPos, true);
 
 					if (b != null) {
@@ -378,7 +381,6 @@ public class World {
 		result = 31 * result + worldSize.hashCode();
 		result = 31 * result + (worldProperties != null ? worldProperties.hashCode() : 0);
 		result = 31 * result + (Entities != null ? Entities.hashCode() : 0);
-		result = 31 * result + player.hashCode();
 		result = 31 * result + Blocks.hashCode();
 		result = 31 * result + WorldTime;
 		result = 31 * result + WorldTimeDayEnd;

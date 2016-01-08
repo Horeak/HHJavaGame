@@ -148,10 +148,10 @@ public class RenderUtil {
 	}
 
 	public static org.newdawn.slick.Color getColorBasedOnLight( org.newdawn.slick.Color c, World world, int x, int y ) {
-		if (MainFile.currentWorld != null) if (MainFile.currentWorld.worldTimeOfDay == EnumWorldTime.EVENING) {
+		if (MainFile.getServer().getWorld() != null) if (MainFile.getServer().getWorld().worldTimeOfDay == EnumWorldTime.EVENING) {
 			return c.darker();
 
-		} else if (MainFile.currentWorld.worldTimeOfDay == EnumWorldTime.NIGHT) {
+		} else if (MainFile.getServer().getWorld().worldTimeOfDay == EnumWorldTime.NIGHT) {
 			return c.darker().darker();
 		}
 
@@ -167,7 +167,7 @@ public class RenderUtil {
 	public static void renderItem(Graphics g2, ItemStack item, int x, int y, EnumRenderMode mode ) {
 		if (item != null && item.getItem().getRender() != null) {
 			if (item.isBlock()) {
-				((IBlockRenderer)(item.getBlock().getRender())).renderBlock(g2, x, y, mode, item.getBlock(), true, true, false, true, MainFile.currentWorld, 0,0);
+				((IBlockRenderer)(item.getBlock().getRender())).renderBlock(g2, x, y, mode, item.getBlock(), true, true, false, true, MainFile.getServer().getWorld(), 0,0);
 			} else {
 				item.getItem().getRender().renderItem(g2, x, y, mode, item);
 			}
