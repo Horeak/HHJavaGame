@@ -3,6 +3,7 @@ package Utils;
 import Render.AbstractWindowRender;
 import Render.Renders.*;
 import WorldGeneration.CrackedStoneGeneration;
+import WorldGeneration.Structures.AirBlockGeneration;
 import WorldGeneration.Structures.GrassGeneration;
 import WorldGeneration.Structures.StoneGeneration;
 import WorldGeneration.TreeGeneration;
@@ -35,6 +36,7 @@ public class Registrations {
 	public static void registerGenerations() {
 		structureGenerations.add(new GrassGeneration());
 		structureGenerations.add(new StoneGeneration());
+		structureGenerations.add(new AirBlockGeneration());
 
 		generationBases.add(new TreeGeneration());
 		generationBases.add(new CrackedStoneGeneration());

@@ -17,7 +17,7 @@ public class WorldLightUpdateThread extends Thread {
 				}
 
 				try {
-					sleep(10);
+					sleep(50);
 				} catch (Exception e) {
 
 				}

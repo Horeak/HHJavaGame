@@ -68,7 +68,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_HOTBAR && MainFile.getClient().getCurrentMenu() == null;
+		return ConfigValues.RENDER_HOTBAR && MainFile.getClient().getCurrentMenu() == null && !MainFile.getServer().getWorld().generating;
 	}
 	@Override
 	public boolean canRenderWithWindow() {

@@ -38,15 +38,18 @@ public class BlockSelection {
 					} else {
 						selectedY = -1;
 						selectedX = -1;
+						selectedBlock = null;
 					}
 				} else {
 					selectedY = -1;
 					selectedX = -1;
+					selectedBlock = null;
 				}
 
 		} else {
 			selectedY = -1;
 			selectedX = -1;
+			selectedBlock = null;
 		}
 
 	}

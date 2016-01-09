@@ -69,18 +69,22 @@ public abstract class Entity {
 	public abstract void renderEntity( org.newdawn.slick.Graphics g2, int renderX, int renderY );
 
 	public Block getBlockBelow() {
-		return MainFile.getServer().getWorld().getBlock(Math.round((int) getEntityPostion().x), (int) getEntityPostion().y + 1);
+		return MainFile.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);
 	}
 
 	public boolean canMoveTo( float x, float y ) {
 		if (x >= 0 && x < MainFile.getServer().getWorld().worldSize.xSize && y < MainFile.getServer().getWorld().worldSize.ySize) {
-			Block b1 = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y)), b2 = MainFile.getServer().getWorld().getBlock(Math.round(x - 0.6F), Math.round(y)), b3 = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y) - 1);
+			float f = 0.38F;
+
+			Block b1 = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y)), b2 = MainFile.getServer().getWorld().getBlock(Math.round(x - f), Math.round(y)), b3 = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y) - 1);
+			Block b4 = MainFile.getServer().getWorld().getBlock(Math.round(x + f), Math.round(y));
 
 			boolean t1 = b1 == null || b1 != null && b1.canPassThrough();
 			boolean t2 = b2 == null || b2 != null && b2.canPassThrough();
 			boolean t3 = b3 == null || b3 != null && b3.canPassThrough();
+			boolean t4 = b4 == null || b4 != null && b4.canPassThrough();
 
-			return t1 && t2 && t3;
+			return t1 && t2 && t3 && t4;
 		}
 		return false;
 	}
@@ -88,11 +92,8 @@ public abstract class Entity {
 	public boolean moveTo( float x, float y ) {
 		Block targetBlock = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y));
 
-		if ((int) x == MainFile.getServer().getWorld().worldSize.xSize) x = Float.floatToIntBits(x);
-		if ((int) y == MainFile.getServer().getWorld().worldSize.ySize) y = Float.floatToIntBits(y);
-
 		if (x < MainFile.getServer().getWorld().worldSize.xSize && x >= 0 && y < MainFile.getServer().getWorld().worldSize.ySize)
-			if (targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).contains(x, y, getEntityBounds().getBounds().getWidth(), getEntityBounds().getBounds().getHeight()) && targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
+			if (targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
 				if (canMoveTo(x, y)) {
 					setEntityPosition(x, y);
 					return true;
@@ -103,25 +104,33 @@ public abstract class Entity {
 	}
 
 	public void updateEntity() {
-		timeAlive += 1;
 
-		Block bl = getBlockBelow();
-		isOnGround = bl != null && !bl.canPassThrough();
+		if(!MainFile.getServer().getWorld().generating) {
+			timeAlive += 1;
 
-		if (bl != null && !bl.canPassThrough()) {
-			isOnGround = true;
-		}
+			Block bl = getBlockBelow();
+			isOnGround = bl != null && !bl.canPassThrough();
 
-		if (!isOnGround && bl == null || !isOnGround && bl != null && bl.canPassThrough()) {
-			moveTo(pos.x, Math.round(pos.y + blocksFallen));
+			if (bl != null && !bl.canPassThrough()) {
+				isOnGround = true;
+			}
 
-			blocksFallen += 1;
-		}
+			if (!isOnGround && bl == null || !isOnGround && bl != null && bl.canPassThrough()) {
+				float x = pos.x;
+				float y = Math.round(pos.y + (blocksFallen > 2 ? 2 : 1));
 
-		if (isOnGround && getBlockBelow() != null && !getBlockBelow().canPassThrough()) {
-			blocksFallen = 0;
-		} else {
-			blocksFallen = 1;
+				if(canMoveTo(x, y)) {
+					moveTo(x, y);
+				}else if(blocksFallen > 2 && canMoveTo(x, y - 1)){
+					moveTo(x, y - 1);
+				}
+
+				blocksFallen += 1;
+			}
+
+			if (isOnGround && getBlockBelow() != null && !getBlockBelow().canPassThrough()) {
+				blocksFallen = 0;
+			}
 		}
 	}
 

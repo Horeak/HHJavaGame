@@ -32,7 +32,7 @@ public class BackgroundRender extends AbstractWindowRender {
 		int green = (int) Math.abs((ratio * nextColor.getGreen()) + ((1 - ratio) * curColor.getGreen()));
 		int blue = (int) Math.abs((ratio * nextColor.getBlue()) + ((1 - ratio) * curColor.getBlue()));
 
-		Color skyColor = new Color(red, green, blue);
+		Color skyColor = curColor;
 
 		GradientFill fill = new GradientFill(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, skyColor, ConfigValues.size * ConfigValues.renderXSize, ConfigValues.size * ConfigValues.renderYSize, skyColor.brighter());
 		g2.fill(new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, ConfigValues.size * ConfigValues.renderXSize, ConfigValues.size * ConfigValues.renderYSize), fill);

@@ -17,7 +17,7 @@ public class GrassGeneration extends StructureGeneration {
 	public void generate( World world ) {
 		SimplexNoise noise = new SimplexNoise();
 
-		int frequency = world.worldSize.ySize / world.worldSize.div;
+		int frequency = (world.worldSize.ySize) / world.worldSize.div;
 
 		for (int x = 0; x < world.worldSize.xSize; x++) {
 			float h = (noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
@@ -27,10 +27,10 @@ public class GrassGeneration extends StructureGeneration {
 				float current = (float) (ySize - y) / ySize;
 
 				if (current < h) {
-					world.setBlock(new BlockGrass(), x, y);
-
-					if(!world.getBlock(x, y).canBlockSeeSky(world, x, y)){
+					if(world.getBlock(x, y - 1) != null){
 						world.setBlock(new BlockDirt(), x, y);
+					}else {
+						world.setBlock(new BlockGrass(), x, y);
 					}
 				}
 			}
@@ -39,7 +39,7 @@ public class GrassGeneration extends StructureGeneration {
 
 	@Override
 	public String getGenerationName() {
-		return "Grass Generation";
+		return "Grass and Dirt Generation";
 	}
 
 	@Override

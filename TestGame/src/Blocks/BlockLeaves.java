@@ -21,7 +21,7 @@ public class BlockLeaves extends Block {
 
 	@Override
 	public Color getDefaultBlockColor() {
-		return Color.green;
+		return Color.green.darker();
 	}
 
 	@Override

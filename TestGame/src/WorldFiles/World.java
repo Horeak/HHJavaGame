@@ -19,8 +19,6 @@ import Utils.ConfigValues;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 //TODO Make sure there is no code left that is hardcoded to one player
 public class World {
@@ -35,7 +33,7 @@ public class World {
 	public ArrayList<Entity> RemoveEntities = new ArrayList<>();
 
 	public Block[][] Blocks;
-	public HashMap<Point, Block> tickableBlocks = new HashMap<Point, Block>();
+	public ArrayList<Point> tickableBlocks = new ArrayList<>();
 
 	public String worldName;
 	public EnumWorldSize worldSize;
@@ -78,7 +76,7 @@ public class World {
 	}
 
 	public void start() {
-		spawnPlayer(MainFile.getClient().getPlayer());
+		MainFile.getClient().setPlayer(new EntityPlayer(0,0, MainFile.getClient().playerId));
 
 		worldUpdateThread.start();
 	}
@@ -96,15 +94,32 @@ public class World {
 		worldEntityUpdateThread.start();
 		worldLightUpdateThread.start();
 	}
-
 	public void doneGenerating() {
 		spawnPlayer(MainFile.getClient().getPlayer());
 	}
 
 	public void stop() {
+		MainFile.getClient().setPlayer(null);
+
 		worldUpdateThread.stop();
 		worldEntityUpdateThread.stop();
 		worldLightUpdateThread.stop();
+	}
+
+
+	public void updateTime(){
+		for (EnumWorldTime en : EnumWorldTime.values()) {
+			if(WorldTime > en.timeBegin){
+				worldTimeOfDay = en;
+			}
+		}
+
+		WorldTime += 1;
+
+		if (WorldTime > WorldTimeDayEnd) {
+			WorldTime = 0;
+			WorldDay += 1;
+		}
 	}
 
 	public boolean isAirBlock( int x, int y ) {
@@ -137,6 +152,7 @@ public class World {
 	}
 
 	public void setBlock( Block block, int x, int y ) {
+		if(!generating)
 		removeTickBlock(x, y);
 
 		if (Blocks != null) {
@@ -148,14 +164,16 @@ public class World {
 							Blocks[ x ][ y ] = block;
 
 							if(block instanceof ITickBlock){
-								tickableBlocks.put(new Point(x,y), block);
+								tickableBlocks.add(new Point(x,y));
 							}
 						} else {
 							Blocks[ x ][ y ] = new BlockAir();
 						}
 
-						getBlock(x, y, true).updateBlock(this, x, y, x, y);
-						updateNearbyBlocks(x, y);
+						if(!generating) {
+							getBlock(x, y, true).updateBlock(this, x, y, x, y);
+							updateNearbyBlocks(x, y);
+						}
 					}
 				}
 			}
@@ -167,7 +185,7 @@ public class World {
 			ItemStack stack = getBlock(x, y).getItemDropped(this, x, y);
 
 			if(stack != null){
-				EntityItem item = new EntityItem(x + 0.25F, y + 0.25F, stack);
+				EntityItem item = new EntityItem(x, y, stack);
 				Entities.add(item);
 			}
 
@@ -176,43 +194,48 @@ public class World {
 	}
 
 	public void spawnPlayer(EntityPlayer player) {
-		int xx = 0, yy = 0;
-		for (int y = 0; y < worldSize.ySize; y++) {
-			int x = new Random().nextInt(worldSize.xSize);
+		int xx = 1 + MainFile.random.nextInt(worldSize.xSize - 1), yy = 0;
 
-			if (getBlock(x, y) != null && getBlock(x, y).canBlockSeeSky(this, x, y) && !getBlock(x, y).canPassThrough()) {
-				xx = x;
+		for (int y = 0; y < worldSize.ySize; y++) {
+			Block block = getBlock(xx, y);
+
+			if (block != null) {
 				yy = y - 1;
 				break;
 			}
 		}
 
 		player.setEntityPosition(xx, yy);
+
 		if(!Entities.contains(player))
 		Entities.add(player);
-
 		MinimapRender.reset();
+
+		MainFile.getClient().hasSpawnedPlayer = true;
 	}
 
 	public void updateBlocks() {
 		try {
-			if(tickableBlocks != null)
+			if(tickableBlocks != null) {
 				//TODO ConcurrentModificationError
-			for(Map.Entry<Point, Block> ent : ((HashMap<Point,Block>)tickableBlocks.clone()).entrySet()){
-				Block block = ent.getValue();
+				for (Point p : new ArrayList<Point>(tickableBlocks)) {
+					Block block = getBlock(p.x, p.y);
 
-				if (block instanceof ITickBlock) {
-					ITickBlock up = (ITickBlock) block;
+					if(block != null) {
+						if (block instanceof ITickBlock) {
+							ITickBlock up = (ITickBlock) block;
 
-					int x = ent.getKey().x, y = ent.getKey().y;
+							int x = p.x, y = p.y;
 
-					if (MainFile.getClient().getPlayer().getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
-						if (up.shouldupdate(this, x, y)) {
-							if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
-								up.updateBlock(this, x, y);
-								up.setTimeSinceUpdate(0);
-							} else {
-								up.setTimeSinceUpdate(up.getTimeSinceUpdate() + 1);
+							if (MainFile.getClient().getPlayer().getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
+								if (up.shouldupdate(this, x, y)) {
+									if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
+										up.updateBlock(this, x, y);
+										up.setTimeSinceUpdate(0);
+									} else {
+										up.setTimeSinceUpdate(up.getTimeSinceUpdate() + 1);
+									}
+								}
 							}
 						}
 					}

@@ -32,6 +32,9 @@ import java.util.logging.Logger;
 public class MainFile extends BasicGame implements InputListener {
 
 	//TODO Add world saving
+	//TODO Add big map (fullscreen/gui) (similar to Terraria)
+
+	//TODO Start optimizing the game. Remove all unessecary creation of new veriables. (For example creating a new rectangle each rendering call)
 
 	public static AppGameContainer gameContainer;
 	public static MainFile file = new MainFile("Test Game");
@@ -198,6 +201,11 @@ public class MainFile extends BasicGame implements InputListener {
 			BlockAction.update(container);
 		}
 
+		//TODO Find a better way to call this on the main thread
+		if(getServer().getWorld() != null && getClient().getPlayer() != null && !getServer().getWorld().generating && !getClient().hasSpawnedPlayer){
+			getServer().getWorld().doneGenerating();
+		}
+
 		if (ConfigValues.debug && !hasDebugSize) {
 			gameContainer.setDisplayMode(container.getWidth() + debugSize, container.getHeight(), false);
 			hasDebugSize = true;
@@ -273,7 +281,9 @@ public class MainFile extends BasicGame implements InputListener {
 		if(getClient().getCurrentMenu()== null && getServer().getWorld() != null) {
 			if (Character.isDigit(c)) {
 				Integer tt = Integer.parseInt(c + "");
-				if (tt > 0 && tt < 10) {
+				if (tt >= 0 && tt < 10) {
+					if(tt == 0) tt = 10;
+
 					HotbarRender.slotSelected = tt;
 				}
 			}

@@ -6,6 +6,7 @@ import Blocks.Util.ILightSource;
 import EntityFiles.Entities.EntityPlayer;
 import Main.MainFile;
 import Render.AbstractWindowRender;
+import Utils.BlockUtils;
 import Utils.ConfigValues;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -55,7 +56,8 @@ public class MinimapRender extends AbstractWindowRender {
 		g2.setColor(Color.yellow);
 		g2.draw(rectangle);
 
-		rectangle = new Rectangle(StartX, StartY, Width - 1, Height - 1);
+		//This rectangle need StarY + 1 on windows but not on mac? wierd...
+		rectangle = new Rectangle(StartX, StartY + 1, Width - 1, Height - 1);
 		g2.setClip(rectangle);
 
 		int size = 8;
@@ -63,8 +65,8 @@ public class MinimapRender extends AbstractWindowRender {
 		Width /= size;
 		Height /= size;
 
-		int xx = (int)MainFile.getClient().getPlayer().getEntityPostion().x - (Width / 2);
-		int yy = (int)MainFile.getClient().getPlayer().getEntityPostion().y - (Height / 2);
+		int xx = Math.round(MainFile.getClient().getPlayer().getEntityPostion().x) - (Width / 2);
+		int yy = Math.round(MainFile.getClient().getPlayer().getEntityPostion().y) - (Height / 2);
 
 		for(int x = -(Width); x < (Width);  x++){
 			for(int y = -(Height); y < (Height); y++){
@@ -75,7 +77,11 @@ public class MinimapRender extends AbstractWindowRender {
 				float xStart = StartX + ((x) * size), yStart = StartY + ((y) * size);
 
 				if(block != null && blockDiscoved[xPos][yPos]){
-					block.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.getServer().getWorld(), xPos, yPos).draw(xStart, yStart, size, size);
+					if(ConfigValues.simpleBlockRender){
+						BlockUtils.renderDefaultBlockDebug(g2, block, (int)xStart, (int)yStart, size, size);
+					}else{
+						block.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.getServer().getWorld(), xPos, yPos).draw(xStart, yStart, size, size);
+					}
 
 					float t = (float)block.getLightValue(MainFile.getServer().getWorld(), xPos, yPos) / (float) ILightSource.MAX_LIGHT_STRENGTH;
 
@@ -105,7 +111,7 @@ public class MinimapRender extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return MainFile.getServer().getWorld() != null && ConfigValues.RENDER_MINIMAP;
+		return MainFile.getServer().getWorld() != null && ConfigValues.RENDER_MINIMAP && !MainFile.getServer().getWorld().generating;
 	}
 
 	@Override
@@ -118,6 +124,7 @@ public class MinimapRender extends AbstractWindowRender {
 	}
 
 	public static void reset(){
+		if(MainFile.getServer().getWorld() != null)
 		blockDiscoved = new boolean[MainFile.getServer().getWorld().worldSize.xSize][MainFile.getServer().getWorld().worldSize.ySize];
 	}
 

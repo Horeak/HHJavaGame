@@ -38,7 +38,7 @@ public class BlockGrass extends Block implements ITickBlock {
 
 	@Override
 	public Color getDefaultBlockColor() {
-		return new Color(0, 127, 14);
+		return Color.green.darker().darker();
 	}
 
 	@Override

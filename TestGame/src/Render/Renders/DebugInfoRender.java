@@ -70,12 +70,14 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString(" - Day number: " + MainFile.getServer().getWorld().WorldDay, textStartX, linePos += (lineLength));
 
 
-			g2.drawString("Player info:", textStartX, linePos += (lineLength * 2));
+			if(MainFile.getClient().getPlayer() != null && !MainFile.getServer().getWorld().generating) {
+				g2.drawString("Player info:", textStartX, linePos += (lineLength * 2));
 
-			g2.drawString(" - Player pos: " + MainFile.getClient().getPlayer().getEntityPostion(), textStartX, linePos += (lineLength));
-			g2.drawString(" - Block below: " + (MainFile.getClient().getPlayer().getBlockBelow() != null ? MainFile.getClient().getPlayer().getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
-			g2.drawString(" - Is on Ground: " + (MainFile.getClient().getPlayer().isOnGround), textStartX, linePos += (lineLength));
-			g2.drawString(" - Blocks fallen: " + (MainFile.getClient().getPlayer().blocksFallen), textStartX, linePos += lineLength);
+				g2.drawString(" - Player pos: " + MainFile.getClient().getPlayer().getEntityPostion(), textStartX, linePos += (lineLength));
+				g2.drawString(" - Block below: " + (MainFile.getClient().getPlayer().getBlockBelow() != null ? MainFile.getClient().getPlayer().getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
+				g2.drawString(" - Is on Ground: " + (MainFile.getClient().getPlayer().isOnGround), textStartX, linePos += (lineLength));
+				g2.drawString(" - Blocks fallen: " + (MainFile.getClient().getPlayer().blocksFallen), textStartX, linePos += lineLength);
+			}
 
 		}
 

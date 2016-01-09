@@ -4,11 +4,16 @@ import EntityFiles.Entities.EntityPlayer;
 import Interface.Menu;
 
 public class Client {
+	public boolean hasSpawnedPlayer = false;
 	private EntityPlayer player;
 	private Menu currentMenu;
 
+	public String playerId;
+
 	public Client(String playerID){
-		player = new EntityPlayer(0,0, playerID);
+		this.playerId = playerID;
+
+		setPlayer(new EntityPlayer(0,0, playerID));
 	}
 
 
@@ -17,6 +22,7 @@ public class Client {
 	}
 	public void setPlayer(EntityPlayer player) {
 		this.player = player;
+		hasSpawnedPlayer = false;
 	}
 	public Menu getCurrentMenu() {
 		return currentMenu;

@@ -1,6 +1,5 @@
 package Threads;
 
-import Blocks.BlockAir;
 import Main.MainFile;
 import Render.Renders.WorldGenerationScreen;
 import Utils.Registrations;
@@ -16,12 +15,13 @@ public class WorldGenerationThread extends Thread {
 	}
 
 	public void run() {
-
+		try {
 		MainFile.getServer().getWorld().generating = true;
 
 		for (WorldGenPriority priority : WorldGenPriority.values()) {
 			for (StructureGeneration gen : Registrations.structureGenerations) {
 				if (gen.generationPriority().equals(priority)) {
+					if(MainFile.getServer().getWorld() != null)
 					if (gen.canGenerate(MainFile.getServer().getWorld())) {
 						WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
 						gen.generate(MainFile.getServer().getWorld());
@@ -31,10 +31,9 @@ public class WorldGenerationThread extends Thread {
 
 			for (GenerationBase gen : Registrations.generationBases) {
 				if (gen.generationPriority().equals(priority)) {
-
+					if(MainFile.getServer().getWorld() != null)
 					for (int x = 0; x < MainFile.getServer().getWorld().worldSize.xSize; x++) {
-						for (int y = MainFile.getServer().getWorld().worldSize.ySize - 1; y > 0; y--) {
-
+						for (int y = 0; y < MainFile.getServer().getWorld().worldSize.ySize; y++) {
 							if (gen.canGenerate(MainFile.getServer().getWorld(), x, y)) {
 								WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
 								gen.generate(MainFile.getServer().getWorld(), x, y);
@@ -46,18 +45,16 @@ public class WorldGenerationThread extends Thread {
 
 		}
 
-		WorldGenerationScreen.generationStatus = "Air blocks.";
-
-		for (int x = 0; x < MainFile.getServer().getWorld().worldSize.xSize; x++) {
-			for (int y = 0; y < MainFile.getServer().getWorld().worldSize.ySize; y++) {
-				if (MainFile.getServer().getWorld().getBlock(x, y) == null) {
-					MainFile.getServer().getWorld().setBlock(new BlockAir(), x, y);
-				}
-			}
-		}
-		WorldGenerationScreen.generationStatus = "";
-
 		MainFile.getServer().getWorld().doneGenerating();
 		MainFile.getServer().getWorld().generating = false;
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		stop();
+
+
 	}
 }

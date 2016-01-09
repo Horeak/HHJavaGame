@@ -27,9 +27,11 @@ public class BlockRendering extends AbstractWindowRender {
 
 		HashMap<Point, Block> b = new HashMap<>();
 
+		int xxx = (ConfigValues.renderXSize * ConfigValues.size), yyy = (ConfigValues.renderYSize * ConfigValues.size);
+		int j = ((xxx) / ConfigValues.size), g = ((yyy) / ConfigValues.size);
 
-		for (int x = -(ConfigValues.renderRange + 2); x < (ConfigValues.renderRange + 2); x++) {
-			for (int y = -(ConfigValues.renderRange + 2); y < (ConfigValues.renderRange + 2); y++) {
+		for (int x = -(j / 2); x < (j / 2) + 2; x++) {
+			for (int y = -(g / 2); y < (g / 2) + 2; y++) {
 
 				int xx = (int) (x + plPos.x);
 				int yy = (int) (y + plPos.y);
@@ -40,6 +42,7 @@ public class BlockRendering extends AbstractWindowRender {
 				if (MainFile.getServer().getWorld().getBlock(xx, yy) != null) {
 					Block block = MainFile.getServer().getWorld().getBlock(xx, yy);
 
+					if(block != null)
 					if (block.isBlockSolid()) {
 						((DefaultBlockRendering)block.getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.getServer().getWorld(), xx, yy);
 					} else {

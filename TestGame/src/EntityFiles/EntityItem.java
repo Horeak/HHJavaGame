@@ -59,7 +59,7 @@ public class EntityItem extends Entity {
 		g2.pushTransform();
 
 		g2.scale(0.5F, 0.5F);
-		g2.translate(renderX, renderY - (48 + renderOff));
+		g2.translate(renderX + 16, renderY - (48 + renderOff) + 8);
 
 		RenderUtil.renderItem(g2, stack, renderX, renderY, stack.getItem().getRenderMode());
 

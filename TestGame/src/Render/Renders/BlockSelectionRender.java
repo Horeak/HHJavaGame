@@ -34,7 +34,7 @@ public class BlockSelectionRender extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_HOTBAR;
+		return ConfigValues.RENDER_HOTBAR && !MainFile.getServer().getWorld().generating;
 	}
 
 	@Override

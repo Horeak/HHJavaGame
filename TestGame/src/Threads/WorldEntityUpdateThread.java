@@ -13,16 +13,17 @@ public class WorldEntityUpdateThread extends Thread {
 		while (true) {
 			try {
 
-				if (!MainFile.gameContainer.isPaused())
-				for (Entity ent : MainFile.getServer().getWorld().Entities) {
-					ent.updateEntity();
+				if (!MainFile.gameContainer.isPaused()) {
+					for (Entity ent : MainFile.getServer().getWorld().Entities) {
+						ent.updateEntity();
+					}
+
+					MainFile.getServer().getWorld().Entities.removeAll(MainFile.getServer().getWorld().RemoveEntities);
+					MainFile.getServer().getWorld().RemoveEntities.clear();
 				}
 
-				MainFile.getServer().getWorld().Entities.removeAll(MainFile.getServer().getWorld().RemoveEntities);
-				MainFile.getServer().getWorld().RemoveEntities.clear();
-
 				try {
-					sleep(120);
+					sleep(130);
 				} catch (Exception e) {
 
 				}

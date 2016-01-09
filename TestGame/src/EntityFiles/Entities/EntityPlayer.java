@@ -81,7 +81,7 @@ public class EntityPlayer extends Entity implements IInventory {
 
 		if(getItem(HotbarRender.slotSelected - 1) != null){
 			ItemStack stack = getItem(HotbarRender.slotSelected - 1);
-			EntityItem entityItem = new EntityItem(getEntityPostion().x + (facing == 1 ? -distance : distance), getEntityPostion().y - (distance / 4), stack);
+			EntityItem entityItem = new EntityItem(getEntityPostion().x + (facing == 1 ? -distance : distance), getEntityPostion().y - (distance / 8), stack);
 
 			if(entityItem.canMoveTo(entityItem.getEntityPostion().x, entityItem.getEntityPostion().y)) {
 				entityItem.delay = 0;
