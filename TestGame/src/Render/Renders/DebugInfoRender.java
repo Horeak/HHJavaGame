@@ -1,10 +1,10 @@
 package Render.Renders;
 
 import Main.MainFile;
-import Render.AbstractWindowRender;
+import Rendering.AbstractWindowRender;
 import Utils.BlockSelection;
 import Utils.ConfigValues;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import WorldFiles.EnumWorldTime;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -41,50 +41,50 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 		g2.setColor(Color.black);
 
-		RenderUtil.changeFontName(g2, "Times New Roman");
-		RenderUtil.resizeFont(g2, 16);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
+		FontHandler.changeFontName(g2, "Times New Roman");
+		FontHandler.resizeFont(g2, 16);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
 
 		g2.drawString("Debug info", textStartX, linePos += 2);
-		RenderUtil.resetFont(g2);
+		FontHandler.resetFont(g2);
 
-		RenderUtil.changeFontName(g2, "Arial");
-		RenderUtil.resizeFont(g2, 13);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
+		FontHandler.changeFontName(g2, "Arial");
+		FontHandler.resizeFont(g2, 13);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
 
-		g2.drawString("FPS: " + MainFile.gameContainer.getFPS(), textStartX, linePos += (lineLength * 2));
+		g2.drawString("FPS: " + MainFile.game.gameContainer.getFPS(), textStartX, linePos += (lineLength * 2));
 
-		if (MainFile.getServer().getWorld() != null) {
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+		if (MainFile.game.getServer().getWorld() != null) {
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("World Size: ", textStartX, linePos += (lineLength * 2));
 
-			g2.drawString(" - " + (MainFile.getServer().getWorld().worldSize.xSize) + " blocks wide.", textStartX, linePos += lineLength);
-			g2.drawString(" - " + (MainFile.getServer().getWorld().worldSize.ySize) + " blocks high.", textStartX, linePos += lineLength);
+			g2.drawString(" - " + (MainFile.game.getServer().getWorld().worldSize.xSize) + " blocks wide.", textStartX, linePos += lineLength);
+			g2.drawString(" - " + (MainFile.game.getServer().getWorld().worldSize.ySize) + " blocks high.", textStartX, linePos += lineLength);
 
 
 			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
 
-			g2.drawString(" - World time: " + MainFile.getServer().getWorld().WorldTime + " / " + MainFile.getServer().getWorld().WorldTimeDayEnd, textStartX, linePos += (lineLength));
-			g2.drawString(" - Time to next phase (" + MainFile.getServer().getWorld().getNextWorldTime().name + "): " + ((MainFile.getServer().getWorld().getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.getServer().getWorld().getNextWorldTime().timeBegin) - MainFile.getServer().getWorld().WorldTime), textStartX, linePos += (lineLength));
-			g2.drawString(" - Time of day: " + MainFile.getServer().getWorld().worldTimeOfDay.name, textStartX, linePos += (lineLength));
-			g2.drawString(" - Day number: " + MainFile.getServer().getWorld().WorldDay, textStartX, linePos += (lineLength));
+			g2.drawString(" - World time: " + MainFile.game.getServer().getWorld().WorldTime + " / " + MainFile.game.getServer().getWorld().WorldTimeDayEnd, textStartX, linePos += (lineLength));
+			g2.drawString(" - Time to next phase (" + MainFile.game.getServer().getWorld().getNextWorldTime().name + "): " + ((MainFile.game.getServer().getWorld().getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.game.getServer().getWorld().getNextWorldTime().timeBegin) - MainFile.game.getServer().getWorld().WorldTime), textStartX, linePos += (lineLength));
+			g2.drawString(" - Time of day: " + MainFile.game.getServer().getWorld().worldTimeOfDay.name, textStartX, linePos += (lineLength));
+			g2.drawString(" - Day number: " + MainFile.game.getServer().getWorld().WorldDay, textStartX, linePos += (lineLength));
 
 
-			if(MainFile.getClient().getPlayer() != null && !MainFile.getServer().getWorld().generating) {
+			if(MainFile.game.getClient().getPlayer() != null && !MainFile.game.getServer().getWorld().generating) {
 				g2.drawString("Player info:", textStartX, linePos += (lineLength * 2));
 
-				g2.drawString(" - Player pos: " + MainFile.getClient().getPlayer().getEntityPostion(), textStartX, linePos += (lineLength));
-				g2.drawString(" - Block below: " + (MainFile.getClient().getPlayer().getBlockBelow() != null ? MainFile.getClient().getPlayer().getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
-				g2.drawString(" - Is on Ground: " + (MainFile.getClient().getPlayer().isOnGround), textStartX, linePos += (lineLength));
-				g2.drawString(" - Blocks fallen: " + (MainFile.getClient().getPlayer().blocksFallen), textStartX, linePos += lineLength);
+				g2.drawString(" - Player pos: " + MainFile.game.getClient().getPlayer().getEntityPostion(), textStartX, linePos += (lineLength));
+				g2.drawString(" - Block below: " + (MainFile.game.getClient().getPlayer().getBlockBelow() != null ? MainFile.game.getClient().getPlayer().getBlockBelow().getBlockDisplayName() : null), textStartX, linePos += (lineLength));
+				g2.drawString(" - Is on Ground: " + (MainFile.game.getClient().getPlayer().isOnGround), textStartX, linePos += (lineLength));
+				g2.drawString(" - Blocks fallen: " + (MainFile.game.getClient().getPlayer().blocksFallen), textStartX, linePos += lineLength);
 			}
 
 		}
 
 		g2.drawString("Block render size: " + ConfigValues.size, textStartX, linePos += (lineLength * 2));
 
-		if (MainFile.getServer().getWorld() != null) {
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+		if (MainFile.game.getServer().getWorld() != null) {
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("Currently selected block: " + (BlockSelection.selectedBlock != null ? BlockSelection.selectedBlock.getItemName() : "None"), textStartX, linePos += (lineLength * 2));
 
 			if (BlockSelection.selectedBlock != null) {
@@ -98,11 +98,11 @@ public class DebugInfoRender extends AbstractWindowRender {
 				}
 
 				BlockSelection.selectedBlock.blockInfoList.clear();
-				BlockSelection.selectedBlock.addInfo(MainFile.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
+				BlockSelection.selectedBlock.addInfo(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
 			}
 		}
 
-		RenderUtil.resetFont(g2);
+		FontHandler.resetFont(g2);
 
 		g2.setColor(temp);
 		g2.setClip(MainFile.blockRenderBounds);

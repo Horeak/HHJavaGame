@@ -16,27 +16,27 @@ public class WorldGenerationThread extends Thread {
 
 	public void run() {
 		try {
-		MainFile.getServer().getWorld().generating = true;
+		MainFile.game.getServer().getWorld().generating = true;
 
 		for (WorldGenPriority priority : WorldGenPriority.values()) {
 			for (StructureGeneration gen : Registrations.structureGenerations) {
 				if (gen.generationPriority().equals(priority)) {
-					if(MainFile.getServer().getWorld() != null)
-					if (gen.canGenerate(MainFile.getServer().getWorld())) {
+					if(MainFile.game.getServer().getWorld() != null)
+					if (gen.canGenerate(MainFile.game.getServer().getWorld())) {
 						WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
-						gen.generate(MainFile.getServer().getWorld());
+						gen.generate(MainFile.game.getServer().getWorld());
 					}
 				}
 			}
 
 			for (GenerationBase gen : Registrations.generationBases) {
 				if (gen.generationPriority().equals(priority)) {
-					if(MainFile.getServer().getWorld() != null)
-					for (int x = 0; x < MainFile.getServer().getWorld().worldSize.xSize; x++) {
-						for (int y = 0; y < MainFile.getServer().getWorld().worldSize.ySize; y++) {
-							if (gen.canGenerate(MainFile.getServer().getWorld(), x, y)) {
+					if(MainFile.game.getServer().getWorld() != null)
+					for (int x = 0; x < MainFile.game.getServer().getWorld().worldSize.xSize; x++) {
+						for (int y = 0; y < MainFile.game.getServer().getWorld().worldSize.ySize; y++) {
+							if (gen.canGenerate(MainFile.game.getServer().getWorld(), x, y)) {
 								WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
-								gen.generate(MainFile.getServer().getWorld(), x, y);
+								gen.generate(MainFile.game.getServer().getWorld(), x, y);
 							}
 						}
 					}
@@ -45,8 +45,8 @@ public class WorldGenerationThread extends Thread {
 
 		}
 
-		MainFile.getServer().getWorld().doneGenerating();
-		MainFile.getServer().getWorld().generating = false;
+		MainFile.game.getServer().getWorld().doneGenerating();
+		MainFile.game.getServer().getWorld().generating = false;
 
 
 		} catch (Exception e) {

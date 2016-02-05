@@ -15,6 +15,7 @@ public class ConfigValues {
 	public static boolean RENDER_MINIMAP = true;
 
 	public static boolean PAUSE_GAME_IN_GUI = true;
+	public static boolean PAUSE_GAME_IN_INV = false;
 
 	public static int renderXSize = 25;
 	public static int renderYSize = 25;

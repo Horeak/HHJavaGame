@@ -1,15 +1,14 @@
-package Interface.Interfaces;
+package Guis.Interfaces;
 
-import Interface.Menu;
-import Interface.Objects.GuiButton;
-import Interface.Objects.MainMenuButton;
+import Guis.Objects.GuiButton;
+import Guis.Objects.MainMenuButton;
+import Interface.UIMenu;
 import Main.MainFile;
 import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
@@ -28,9 +27,9 @@ public class MainMenu extends AbstractMainMenu {
 		guiObjects.add(new ExitButton(buttonPos += buttonSize));
 
 
-		if (MainFile.getServer().getWorld() != null) {
-			MainFile.getServer().getWorld().stop();
-			MainFile.getServer().setWorld(null);
+		if (MainFile.game.getServer().getWorld() != null) {
+			MainFile.game.getServer().getWorld().stop();
+			MainFile.game.getServer().setWorld(null);
 		}
 	}
 
@@ -39,16 +38,16 @@ public class MainMenu extends AbstractMainMenu {
 		Color temp = g2.getColor();
 		super.render(g2);
 
-		RenderUtil.resizeFont(g2, 22);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		RenderUtil.changeFontName(g2, "Times New Roman");
+		FontHandler.resizeFont(g2, 22);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
+		FontHandler.changeFontName(g2, "Times New Roman");
 
 		g2.setColor(new Color(0.9F, 0.9F, 0.9F, 0.25F));
 		g2.fill(new org.newdawn.slick.geom.Rectangle(renderStart, 70, renderWidth, 50));
 
 		g2.setColor(Color.black);
-		FontUtils.drawCenter(g2.getFont(), ConfigValues.gameTitle, renderStart, 80, renderWidth - 2, g2.getColor());
-		RenderUtil.resetFont(g2);
+		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), ConfigValues.gameTitle, renderStart, 80, renderWidth - 2, g2.getColor());
+		FontHandler.resetFont(g2);
 
 		g2.setColor(temp);
 	}
@@ -67,12 +66,12 @@ public class MainMenu extends AbstractMainMenu {
 	public class NewGameButton extends MainMenuButton {
 
 		public NewGameButton( int y ) {
-			super(renderStart, y, 190, 32, "Start Game", guiInst);
+			super(MainFile.game, renderStart, y, 190, 32, "Start Game", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.getClient().setCurrentMenu(new CreateWorldMenu());
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new CreateWorldMenu());
 		}
 
 	}
@@ -80,13 +79,13 @@ public class MainMenu extends AbstractMainMenu {
 	class SettingsButton extends MainMenuButton {
 
 		public SettingsButton( int y ) {
-			super(renderStart, y, 190, 32, "Settings", guiInst);
+			super(MainFile.game, renderStart, y, 190, 32, "Settings", guiInst);
 		}
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
-			MainFile.getClient().setCurrentMenu(new SettingsMenu());
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new SettingsMenu());
 		}
 
 	}
@@ -94,13 +93,14 @@ public class MainMenu extends AbstractMainMenu {
 	class ExitButton extends MainMenuButton {
 
 		public ExitButton( int y ) {
-			super(renderStart, y, 190, 32, "Exit", guiInst);
+			super(MainFile.game, renderStart, y, 190, 32, "Exit", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			//TODO Add proper exit with saving
-			System.exit(0);
+			if(MainFile.game.closeRequested())
+				System.exit(0);
 		}
 
 	}

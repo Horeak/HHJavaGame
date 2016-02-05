@@ -2,20 +2,24 @@ package Guis;
 
 import Guis.Button.InventoryButton;
 import Main.MainFile;
-import Settings.Config;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
 
-public class GuiInventory extends Gui {
+public class GuiInventory extends GuiGame {
 
 	public int startX = 140, startY = 250;
 	public int Swidth = 520, Sheight = 297;
 
 	boolean init = false;
+
+	public GuiInventory( GameContainer container, boolean b ) {
+		super(container, b);
+	}
 
 	public void init() {
 		for (int i = 0; i < 10; i++) {
@@ -48,10 +52,10 @@ public class GuiInventory extends Gui {
 
 
 		g2.setColor(Color.white);
-		RenderUtil.resizeFont(g2, 12);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		g2.drawString(MainFile.getClient().getPlayer().getInventoryName(), startX + 5, startY + 5);
-		RenderUtil.resetFont(g2);
+		FontHandler.resizeFont(g2, 12);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
+		g2.drawString(MainFile.game.getClient().getPlayer().getInventoryName(), startX + 5, startY + 5);
+		FontHandler.resetFont(g2);
 
 		renderInventoryButtons();
 	}
@@ -62,7 +66,7 @@ public class GuiInventory extends Gui {
 	}
 
 	public void keyPressed( int key, char c ) {
-		if (key == Config.getKeybindFromID("inventory").getKey() || key == Config.getKeybindFromID("exit").getKey()) {
+		if (key == MainFile.game.getConfig().getKeybindFromID("inventory").getKey() || key == MainFile.game.getConfig().getKeybindFromID("exit").getKey()) {
 			closeGui();
 		}
 	}

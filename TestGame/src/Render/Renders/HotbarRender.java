@@ -1,15 +1,15 @@
 package Render.Renders;
 
-import Interface.Menu;
-import Interface.Objects.GuiButton;
+import Guis.Objects.GuiButton;
+import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Render.AbstractWindowRender;
+import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
+import Utils.FontHandler;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,22 +22,24 @@ public class HotbarRender extends AbstractWindowRender {
 	static float alpha = 0.5F;
 	int size = 50;
 	int startX = 10;
-	int startY = MainFile.yWindowSize - (size + 10);
+	int startY = 0;
 
 
-	public HotbarRender() {
-		for (int i = 0; i < 10; i++) {
-			hotbarButtons.add(new hotbarButton(startX + ((size + 7) * i) + 2, startY + 2, null, i));
-		}
-	}
 
 	@Override
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Color temp = g2.getColor();
+		hotbarButtons.clear();
 
-		if (MainFile.getServer().getWorld() != null && MainFile.getClient().getPlayer() != null) {
+		for (int i = 0; i < 10; i++) {
+			hotbarButtons.add(new hotbarButton(startX + ((size + 7) * i) + 2, startY + 2, null, i));
+		}
+
+		startY = (int)MainFile.blockRenderBounds.getHeight() - (size + 10);
+
+		if (MainFile.game.getServer().getWorld() != null && MainFile.game.getClient().getPlayer() != null) {
 			for (hotbarButton bt : hotbarButtons) {
-				bt.item = MainFile.getClient().getPlayer().getItem(bt.num);
+				bt.item = MainFile.game.getClient().getPlayer().getItem(bt.num);
 			}
 		}
 
@@ -53,14 +55,14 @@ public class HotbarRender extends AbstractWindowRender {
 			bt.renderObject(g2, null);
 		}
 
-		ItemStack item = MainFile.getClient().getPlayer().getItem(slotSelected-1);
+		ItemStack item = MainFile.game.getClient().getPlayer().getItem(slotSelected-1);
 
 		if(item != null) {
 			g2.setColor(Color.white);
-			RenderUtil.resizeFont(g2, 12);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			FontHandler.resizeFont(g2, 12);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString(item.getStackName(), startX, startY - 15);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 		}
 
 		g2.setColor(temp);
@@ -68,7 +70,7 @@ public class HotbarRender extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return ConfigValues.RENDER_HOTBAR && MainFile.getClient().getCurrentMenu() == null && !MainFile.getServer().getWorld().generating;
+		return ConfigValues.RENDER_HOTBAR && MainFile.game.getCurrentMenu() == null && MainFile.game.getServer().getWorld() != null && !MainFile.game.getServer().getWorld().generating;
 	}
 	@Override
 	public boolean canRenderWithWindow() {
@@ -89,19 +91,19 @@ public class HotbarRender extends AbstractWindowRender {
 		public ItemStack item;
 		int num;
 
-		public hotbarButton( int x, int y, Menu menu, int num ) {
-			super(x, y, size, size, "", menu);
+		public hotbarButton( int x, int y, UIMenu menu, int num ) {
+			super(MainFile.game, x, y, size, size, "", menu);
 
 			this.num = num;
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			slotSelected = num + 1;
 		}
 
 		@Override
-		public void renderObject( org.newdawn.slick.Graphics g2, Menu menu ) {
+		public void renderObject( org.newdawn.slick.Graphics g2, UIMenu menu ) {
 			boolean selected = (num + 1) == slotSelected;
 
 			g2.setColor(Color.darkGray);
@@ -116,12 +118,12 @@ public class HotbarRender extends AbstractWindowRender {
 			g2.draw(rectt);
 
 			g2.setColor(Color.white);
-			RenderUtil.resizeFont(g2, 14);
+			FontHandler.resizeFont(g2, 14);
 
-			if (selected) RenderUtil.changeFontStyle(g2, Font.BOLD);
+			if (selected) FontHandler.changeFontStyle(g2, Font.BOLD);
 
 			g2.drawString((num + 1) + "", rectt.getX() + 5, rectt.getY() + 4);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 			g2.scale(0.5F, 0.5F);
 
@@ -131,13 +133,13 @@ public class HotbarRender extends AbstractWindowRender {
 			g2.scale(2, 2);
 
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 12);
+			FontHandler.resizeFont(g2, 12);
 
 			if (item != null) {
-				FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 32, 45, g2.getColor());
+				org.newdawn.slick.util.FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 32, 45, g2.getColor());
 			}
 
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 		}
 

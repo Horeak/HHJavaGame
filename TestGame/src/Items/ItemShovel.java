@@ -4,7 +4,7 @@ import Blocks.BlockDirt;
 import Blocks.BlockGrass;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
-import Utils.RenderUtil;
+import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
@@ -18,7 +18,7 @@ public class ItemShovel extends Item {
 
 	@Override
 	public Image getTexture() {
-		if(texture == null)  texture = RenderUtil.getItemImage("shovel");
+		if(texture == null)  texture =  MainFile.game.imageLoader.getImage("items","shovel");
 
 		return texture;
 	}

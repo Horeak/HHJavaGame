@@ -141,13 +141,13 @@ public abstract class Block implements IItem {
 
 
 			if (BlockUtils.canPlaceBlockAt(block, x, y)) {
-				MainFile.getServer().getWorld().setBlock(block, x, y);
+				MainFile.game.getServer().getWorld().setBlock(block, x, y);
 
 
-				if (MainFile.getClient().getPlayer().getItem(stack.slot) != null && MainFile.getClient().getPlayer().getItem(stack.slot).getStackSize() > 1) {
-					MainFile.getClient().getPlayer().getItem(stack.slot).decreaseStackSize(1);
+				if (MainFile.game.getClient().getPlayer().getItem(stack.slot) != null && MainFile.game.getClient().getPlayer().getItem(stack.slot).getStackSize() > 1) {
+					MainFile.game.getClient().getPlayer().getItem(stack.slot).decreaseStackSize(1);
 				} else {
-					MainFile.getClient().getPlayer().setItem(stack.slot, null);
+					MainFile.game.getClient().getPlayer().setItem(stack.slot, null);
 				}
 
 				return true;

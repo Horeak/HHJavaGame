@@ -3,7 +3,7 @@ package Blocks;
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
 import Blocks.Util.ILightSource;
-import Utils.RenderUtil;
+import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -25,7 +25,7 @@ public class BlockTorch extends Block implements ILightSource {
 
 	@Override
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if(texture == null) texture = RenderUtil.getBlockImage("torch");
+		if(texture == null) texture =  MainFile.game.imageLoader.getImage("blocks","torch");
 
 		return texture;
 	}

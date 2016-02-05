@@ -2,10 +2,10 @@ package Blocks.BlockRender;
 
 import Blocks.Util.Block;
 import Blocks.Util.ILightSource;
+import Main.MainFile;
 import Render.EnumRenderMode;
 import Utils.BlockUtils;
 import Utils.ConfigValues;
-import Utils.RenderUtil;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -18,7 +18,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	//To make it possible to access without making a new instance for example for the grass block which will use both this and a custom one
 	public static DefaultBlockRendering staticReference = new DefaultBlockRendering();
 
-	public static Image[] breakImages = new Image[]{ RenderUtil.getImage("textures/breakBlock", "break1"), RenderUtil.getImage("textures/breakBlock", "break2"), RenderUtil.getImage("textures/breakBlock", "break3"), RenderUtil.getImage("textures/breakBlock", "break4"), RenderUtil.getImage("textures/breakBlock", "break5") };
+	public static Image[] breakImages = new Image[]{  MainFile.game.imageLoader.getImage("textures/breakBlock", "break1"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break2"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break3"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break4"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break5") };
 
 	private static void drawFront( Graphics g, int xStart, int yStart, Color c) {
 		g.setColor(c);

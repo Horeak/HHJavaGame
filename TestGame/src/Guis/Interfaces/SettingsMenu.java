@@ -1,19 +1,17 @@
-package Interface.Interfaces;
+package Guis.Interfaces;
 
-import Interface.Menu;
-import Interface.Objects.GuiButton;
-import Interface.Objects.MainMenuButton;
+import Guis.Objects.GuiButton;
+import Guis.Objects.MainMenuButton;
+import Interface.UIMenu;
 import Main.MainFile;
 import Render.EnumRenderMode;
 import Render.Renders.BlockRendering;
-import Settings.Config;
 import Settings.Values.ConfigOption;
 import Utils.ConfigValues;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
@@ -35,10 +33,10 @@ public class SettingsMenu extends AbstractMainMenu {
 		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
 
 
-		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (Config.configOptions.length + 2))));
+		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 2))));
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
-		for (ConfigOption option : Config.configOptions) {
+		for (ConfigOption option : MainFile.game.getConfig().getConfigOptions()) {
 			guiObjects.add(new configButton(buttonPos += buttonSize, option));
 		}
 
@@ -46,10 +44,10 @@ public class SettingsMenu extends AbstractMainMenu {
 		g2.setColor(Color.black);
 
 
-		RenderUtil.resizeFont(g2, 22);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		FontUtils.drawCenter(g2.getFont(), "Settings", renderStart, 80, renderWidth, g2.getColor());
-		RenderUtil.resetFont(g2);
+		FontHandler.resizeFont(g2, 22);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
+		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Settings", renderStart, 80, renderWidth, g2.getColor());
+		FontHandler.resetFont(g2);
 
 		g2.setColor(temp);
 	}
@@ -71,20 +69,19 @@ public class SettingsMenu extends AbstractMainMenu {
 		ConfigOption option;
 
 		public configButton( int y, ConfigOption option ) {
-			super(renderStart, y, 190, 32, "button." + option.getName(), guiInst);
-
+			super(MainFile.game,renderStart, y, 190, 32, "button." + option.getName(), guiInst);
 			this.option = option;
 		}
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			option.change();
 		}
 
 
 		@Override
-		public void renderObject( Graphics g2, Menu menu ) {
+		public void renderObject( Graphics g2, UIMenu menu ) {
 			Color temp = g2.getColor();
 
 			boolean hover = isMouseOver();
@@ -105,11 +102,10 @@ public class SettingsMenu extends AbstractMainMenu {
 
 			if (!enabled) g2.setColor(Color.gray);
 
-			RenderUtil.resizeFont(g2, 12);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			FontUtils.drawLeft(g2.getFont(), (option.getName() + ": " + option.getOb()), x + 5, y);
-
-			RenderUtil.resetFont(g2);
+			FontHandler.resizeFont(g2, 12);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
+			org.newdawn.slick.util.FontUtils.drawLeft(g2.getFont(), (option.getName() + ": " + option.getOb()), x + 5, y);
+			FontHandler.resetFont(g2);
 
 			g2.setColor(temp);
 		}
@@ -118,24 +114,24 @@ public class SettingsMenu extends AbstractMainMenu {
 	class keyBinds extends MainMenuButton {
 
 		public keyBinds( int y ) {
-			super(renderStart, y, 190, 32, "Keybindings", guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, "Keybindings", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.getClient().setCurrentMenu(new KeybindsMenu());
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new KeybindsMenu());
 		}
 	}
 
 	class backButton extends MainMenuButton {
 
 		public backButton( int y ) {
-			super(renderStart, y, 190, 32, "Back", guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, "Back", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.getClient().setCurrentMenu(new MainMenu());
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new MainMenu());
 		}
 	}
 }

@@ -3,7 +3,7 @@ package Items;
 import Blocks.BlockWood;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
-import Utils.RenderUtil;
+import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
@@ -18,7 +18,7 @@ public class ItemAxe extends Item {
 
 	@Override
 	public Image getTexture() {
-		if(texture == null)  texture = RenderUtil.getItemImage("axe");
+		if(texture == null)  texture =  MainFile.game.imageLoader.getImage("items","axe");
 
 		return texture;
 	}

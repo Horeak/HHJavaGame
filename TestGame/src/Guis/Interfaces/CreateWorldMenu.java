@@ -1,17 +1,16 @@
-package Interface.Interfaces;
+package Guis.Interfaces;
 
-import Interface.Menu;
-import Interface.Objects.GuiButton;
-import Interface.Objects.MainMenuButton;
+import Guis.Objects.GuiButton;
+import Guis.Objects.MainMenuButton;
+import Interface.UIMenu;
 import Main.MainFile;
 import Render.Renders.BlockRendering;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import WorldFiles.EnumWorldSize;
 import WorldFiles.World;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
@@ -60,11 +59,11 @@ public class CreateWorldMenu extends AbstractMainMenu {
 		//g2.setPaint(p);
 		g2.setColor(org.newdawn.slick.Color.black);
 
-		RenderUtil.resizeFont(g2, 16);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
+		FontHandler.resizeFont(g2, 16);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
 		g2.drawString("Enter world name:", renderStart + 5, 100);
 		g2.drawString("World size:", renderStart + 5, 170);
-		RenderUtil.resetFont(g2);
+		FontHandler.resetFont(g2);
 
 		g2.setColor(temp);
 	}
@@ -99,29 +98,28 @@ public class CreateWorldMenu extends AbstractMainMenu {
 	class backButton extends MainMenuButton {
 
 		public backButton( int y ) {
-			super(renderStart, y, 190, 32, "Back", guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, "Back", guiInst);
 		}
 
-
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
-			MainFile.getClient().setCurrentMenu(new MainMenu());
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new MainMenu());
 		}
 	}
 
 	class createWorldButton extends MainMenuButton {
 		public createWorldButton( int y ) {
-			super(renderStart, y, 190, 32, "Create world", guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, "Create world", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			if (createWorldButton.enabled) {
-				MainFile.getServer().setWorld(new World(worldName, selected));
-				MainFile.getServer().getWorld().generate();
-				MainFile.getServer().getWorld().start();
+				MainFile.game.getServer().setWorld(new World(worldName, selected));
+				MainFile.game.getServer().getWorld().generate();
+				MainFile.game.getServer().getWorld().start();
 
-				MainFile.getClient().setCurrentMenu(null);
+				MainFile.game.setCurrentMenu(null);
 			}
 		}
 	}
@@ -129,39 +127,36 @@ public class CreateWorldMenu extends AbstractMainMenu {
 	class worldNameInput extends MainMenuButton {
 
 		public worldNameInput( int y ) {
-			super(renderStart, y, 190, 32, null, guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, null, guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			textInput ^= true;
 		}
 
 		@Override
-		public void renderObject( Graphics g2, Menu menu ) {
-			org.newdawn.slick.Color temp = g2.getColor();
-			if (textInput) {
-				g2.setColor(RenderUtil.getColorToSlick(new Color(91, 91, 91, 185)));
+		public void renderObject( Graphics g2, UIMenu menu ) {
 
-			} else {
-				g2.setColor(RenderUtil.getColorToSlick(new Color(20, 20, 20, 185)));
-			}
+			org.newdawn.slick.Color temp = g2.getColor();
+			g2.setColor(FontHandler.getColorToSlick(textInput ? new Color(91, 91, 91, 185) : new Color(20, 20, 20, 185)));
+
 
 			g2.fill(new Rectangle(x, y, width, height));
 
 			g2.setColor(org.newdawn.slick.Color.white);
-			RenderUtil.resizeFont(g2, 22);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			FontHandler.resizeFont(g2, 22);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString(worldName, renderStart + 3, y);
 
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 			if (textInput) {
 				int xx = renderStart + 3 + (worldName != null ? worldName.length() * 12 : 0);
 
-				RenderUtil.resizeFont(g2, 22);
+				FontHandler.resizeFont(g2, 22);
 				g2.drawString("_", xx, y);
-				RenderUtil.resetFont(g2);
+				FontHandler.resetFont(g2);
 			}
 
 
@@ -174,39 +169,39 @@ public class CreateWorldMenu extends AbstractMainMenu {
 		public EnumWorldSize size;
 
 		public worldSizeButton( int y, EnumWorldSize size ) {
-			super(renderStart, y, 120, 32, size.name(), guiInst);
+			super(MainFile.game,renderStart, y, 120, 32, size.name(), guiInst);
 			this.size = size;
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			selected = size;
 			textInput = false;
 		}
 
 		@Override
-		public void renderObject( Graphics g2, Interface.Menu menu ) {
+		public void renderObject( Graphics g2, UIMenu menu ) {
 			org.newdawn.slick.Color temp = g2.getColor();
 
 			boolean hover = isMouseOver();
 
 			if (selected != null && selected.name().equalsIgnoreCase(size.name())) {
-				g2.setColor(RenderUtil.getColorToSlick(new Color(58, 58, 58, 174)));
+				g2.setColor(FontHandler.getColorToSlick(new Color(58, 58, 58, 174)));
 
 			} else if (hover) {
-				g2.setColor(RenderUtil.getColorToSlick(new Color(95, 95, 95, 174)));
+				g2.setColor(FontHandler.getColorToSlick(new Color(95, 95, 95, 174)));
 			} else {
-				g2.setColor(RenderUtil.getColorToSlick(new Color(95, 95, 95, 86)));
+				g2.setColor(FontHandler.getColorToSlick(new Color(95, 95, 95, 86)));
 			}
 
 			g2.fill(new Rectangle(renderStart, y, renderWidth, height));
 
 			g2.setColor(hover ? org.newdawn.slick.Color.white : org.newdawn.slick.Color.lightGray);
 
-			RenderUtil.resizeFont(g2, 22);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			FontUtils.drawCenter(g2.getFont(), text, x, y, renderWidth - 10, g2.getColor());
-			RenderUtil.resetFont(g2);
+			FontHandler.resizeFont(g2, 22);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
+			org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), text, x, y, renderWidth - 10, g2.getColor());
+			FontHandler.resetFont(g2);
 
 
 			g2.setColor(temp);

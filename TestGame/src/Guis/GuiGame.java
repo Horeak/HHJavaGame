@@ -1,12 +1,13 @@
 package Guis;
 
 import Guis.Button.InventoryButton;
+import Interface.Gui;
 import Interface.GuiObject;
-import Interface.Menu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Utils.ConfigValues;
+import Utils.FontHandler;
 import Utils.RenderUtil;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
@@ -16,26 +17,23 @@ import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Gui extends Menu {
+public abstract class GuiGame extends Gui {
 
 	public ItemStack heldItem;
 	public HashMap<Point, String[]> toolTipRendering = new HashMap<>();
 
-	public Gui( boolean b ) {
-		MainFile.gameContainer.setPaused(b);
+	public GuiGame( GameContainer container, boolean b ) {
+		super(container, b);
 	}
 
-	public Gui(){
-		MainFile.gameContainer.setPaused(ConfigValues.PAUSE_GAME_IN_GUI);
-	}
 
 	public void renderTooltip(int x, int y, String[] text){
 		toolTipRendering.put(new Point(x, y), text);
 	}
 
 	public void renderPost( Graphics g2 ) {
-		int mouseX = MainFile.gameContainer.getInput().getMouseX();
-		int mouseY = MainFile.gameContainer.getInput().getMouseY();
+		int mouseX = MainFile.game.gameContainer.getInput().getMouseX();
+		int mouseY = MainFile.game.gameContainer.getInput().getMouseY();
 
 
 		g2.pushTransform();
@@ -88,18 +86,18 @@ public abstract class Gui extends Menu {
 
 
 			for (int g = 0; g < ent.getValue().length; g++) {
-				RenderUtil.resizeFont(g2, 10);
+				FontHandler.resizeFont(g2, 10);
 
 				if (g == 0) {
 					g2.setColor(org.newdawn.slick.Color.black);
-					RenderUtil.changeFontStyle(g2, Font.BOLD);
+					FontHandler.changeFontStyle(g2, Font.BOLD);
 				} else {
 					g2.setColor(org.newdawn.slick.Color.darkGray);
 				}
 
 				g2.drawString(ent.getValue()[ g ], x - 15, (y + 5) + (g * sHeight));
 
-				RenderUtil.resetFont(g2);
+				FontHandler.resetFont(g2);
 			}
 
 		}
@@ -110,11 +108,11 @@ public abstract class Gui extends Menu {
 		for (GuiObject ob : guiObjects) {
 			if (ob instanceof InventoryButton) {
 				InventoryButton button = (InventoryButton) ob;
-				ItemStack item = MainFile.getClient().getPlayer().getItem(button.num);
+				ItemStack item = MainFile.game.getClient().getPlayer().getItem(button.num);
 
 				if (button.isMouseOver() && item != null) {
-					int mouseX = MainFile.gameContainer.getInput().getMouseX();
-					int mouseY = MainFile.gameContainer.getInput().getMouseY();
+					int mouseX = MainFile.game.gameContainer.getInput().getMouseX();
+					int mouseY = MainFile.game.gameContainer.getInput().getMouseY();
 
 					int length = item.getTooltips() != null ? item.getTooltips().size() + 1 : 1;
 
@@ -134,7 +132,7 @@ public abstract class Gui extends Menu {
 	}
 
 	public void closeGui() {
-		MainFile.gameContainer.setPaused(false);
-		MainFile.getClient().setCurrentMenu(null);
+		MainFile.game.gameContainer.setPaused(false);
+		MainFile.game.setCurrentMenu(null);
 	}
 }

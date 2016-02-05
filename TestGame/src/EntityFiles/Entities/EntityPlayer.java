@@ -9,7 +9,6 @@ import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.Renders.HotbarRender;
-import Utils.RenderUtil;
 import org.newdawn.slick.Graphics;
 
 import java.awt.geom.Rectangle2D;
@@ -19,7 +18,7 @@ public class EntityPlayer extends Entity implements IInventory {
 
 	//TODO Add proper player render
 
-	public static org.newdawn.slick.Image playerTexutre = RenderUtil.getImage("textures", "player");
+	public static org.newdawn.slick.Image playerTexutre =  MainFile.game.imageLoader.getImage("textures", "player");
 	/**
 	 * 1 = left
 	 * 2 = right
@@ -87,7 +86,7 @@ public class EntityPlayer extends Entity implements IInventory {
 				entityItem.delay = 0;
 				if (entityItem != null) {
 					setItem(HotbarRender.slotSelected - 1, null);
-					MainFile.getServer().getWorld().Entities.add(entityItem);
+					MainFile.game.getServer().getWorld().Entities.add(entityItem);
 				}
 			}
 		}

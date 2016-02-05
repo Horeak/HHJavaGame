@@ -7,9 +7,9 @@ import Settings.Values.Keybinding;
 import Utils.ConfigValues;
 import org.newdawn.slick.Input;
 
-public class Config {
+public class ConfigFile extends Config{
 
-	public static ConfigOption[] configOptions = new ConfigOption[]{
+	private ConfigOption[] configOptions = new ConfigOption[]{
 	   new ConfigOption("Simple Rendering", new Boolean[]{ false, true }, ConfigValues.simpleBlockRender) {
 		@Override
 		public void setValue( Object ob ) {
@@ -40,16 +40,15 @@ public class Config {
 			ConfigValues.MinimapSize = (String)ob;
 		}
 
-	}, new ConfigOption("Vsync", new Boolean[]{true, false}, MainFile.gameContainer.isVSyncRequested()) {
+	}, new ConfigOption("Vsync", new Boolean[]{true, false}, MainFile.game.gameContainer.isVSyncRequested()) {
 		@Override
 		public void setValue(Object ob) {
-			MainFile.gameContainer.setVSync((Boolean)ob);
+			MainFile.game.gameContainer.setVSync((Boolean)ob);
 		}
 	}
 	};
 
-
-	public static Keybinding[] keybindings = new Keybinding[]{
+	private Keybinding[] keybindings = new Keybinding[]{
 			new Keybinding("Exit/menu", "exit", Input.KEY_ESCAPE, "Menus"),
 			new Keybinding("Open map", "map", Input.KEY_M, "Menus"),
 
@@ -63,19 +62,14 @@ public class Config {
 			new Keybinding("Drop item", "drop", Input.KEY_Q, "Action")};
 
 
-	//TODO add saving for options. (Look at old game project like GameLogic)
-	@Deprecated
-	public static void writeToFile() {
+	@Override
+	public Keybinding[] getKeybindings() {
+		return keybindings;
 	}
 
-	public static Keybinding getKeybindFromID( String id ) {
-		for (Keybinding keybinding : keybindings) {
-			if (keybinding.getId().equals(id)) {
-				return keybinding;
-			}
-		}
-
-		return null;
+	@Override
+	public ConfigOption[] getConfigOptions() {
+		return configOptions;
 	}
 
 }

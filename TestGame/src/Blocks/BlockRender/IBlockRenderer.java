@@ -21,7 +21,7 @@ public interface IBlockRenderer extends IItemRenderer {
 				top = world.getBlock(x, y - 1) == null || world.getBlock(x, y - 1) != null && !world.getBlock(x, y - 1).isBlockSolid() && block.isBlockSolid();
 			}
 
-			renderBlock(g, rX, rY, renderMode, block, right, top, !world.generating, world.generating, world, x, y);
+			renderBlock(g, rX, rY, renderMode, block, right, top, true, false, world, x, y);
 		}
 	}
 

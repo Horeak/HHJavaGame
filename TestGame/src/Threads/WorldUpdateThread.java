@@ -13,9 +13,9 @@ public class WorldUpdateThread extends Thread {
 
 			try {
 
-				if (!MainFile.gameContainer.isPaused() && !MainFile.getServer().getWorld().generating) {
-					MainFile.getServer().getWorld().updateTime();
-					MainFile.getServer().getWorld().updateBlocks();
+				if (!MainFile.game.gameContainer.isPaused() && !MainFile.game.getServer().getWorld().generating) {
+					MainFile.game.getServer().getWorld().updateTime();
+					MainFile.game.getServer().getWorld().updateBlocks();
 				}
 
 				try {

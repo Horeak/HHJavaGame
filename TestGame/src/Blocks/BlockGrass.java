@@ -6,7 +6,6 @@ import Blocks.Util.Block;
 import Blocks.Util.ITickBlock;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Utils.RenderUtil;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -14,8 +13,8 @@ import org.newdawn.slick.Image;
 
 public class BlockGrass extends Block implements ITickBlock {
 
-	public static Image topTexture = RenderUtil.getBlockImage("grassTop");
-	public static Image sideTexture = RenderUtil.getBlockImage("grassSide");
+	public static Image topTexture =  MainFile.game.imageLoader.getImage("blocks","grassTop");
+	public static Image sideTexture =  MainFile.game.imageLoader.getImage("blocks","grassSide");
 
 	public static boolean canGrassGrow( World world, int x, int y ) {
 		Block block = world.getBlock(x, y);

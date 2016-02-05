@@ -71,7 +71,7 @@ public class EntityItem extends Entity {
 		super.updateEntity();
 
 		if(timeAlive > DESPAWN_TIME){
-			MainFile.getServer().getWorld().RemoveEntities.add(this);
+			MainFile.game.getServer().getWorld().RemoveEntities.add(this);
 		}
 
 		if(!top && renderOff < renderTop){
@@ -88,11 +88,11 @@ public class EntityItem extends Entity {
 		if(renderOff < 0) renderOff = 0;
 
 		if(delay >= delayTo) {
-			if (MainFile.getClient().getPlayer().getEntityPostion().distance(pos) < 1.5F) {
-				MainFile.getClient().getPlayer().addItem(stack);
+			if (MainFile.game.getClient().getPlayer().getEntityPostion().distance(pos) < 1.5F) {
+				MainFile.game.getClient().getPlayer().addItem(stack);
 				stack = null;
 
-				MainFile.getServer().getWorld().RemoveEntities.add(this);
+				MainFile.game.getServer().getWorld().RemoveEntities.add(this);
 			}
 		}else if(delay < delayTo){
 			delay += 1;
@@ -100,7 +100,7 @@ public class EntityItem extends Entity {
 	}
 
 	public Block getBlockBelow() {
-		return MainFile.getServer().getWorld().getBlock((int) getEntityPostion().x, (int) getEntityPostion().y + 1);
+		return MainFile.game.getServer().getWorld().getBlock((int) getEntityPostion().x, (int) getEntityPostion().y + 1);
 	}
 
 }

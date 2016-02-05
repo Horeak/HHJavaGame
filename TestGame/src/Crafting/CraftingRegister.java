@@ -44,7 +44,7 @@ public class CraftingRegister {
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (ItemStack tem : MainFile.getClient().getPlayer().inventoryItems) {
+		for (ItemStack tem : MainFile.game.getClient().getPlayer().inventoryItems) {
 			if(tem != null && item != null) {
 				if (tem.equals(item)) {
 					hasSize += tem.getStackSize();
@@ -73,7 +73,7 @@ public class CraftingRegister {
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (ItemStack tem : MainFile.getClient().getPlayer().inventoryItems) {
+		for (ItemStack tem : MainFile.game.getClient().getPlayer().inventoryItems) {
 			if (!hasItem && hasSize >= item.getStackSize()) {
 				hasItem = true;
 				break;

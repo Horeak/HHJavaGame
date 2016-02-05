@@ -3,7 +3,7 @@ package Items;
 import Blocks.BlockStone;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
-import Utils.RenderUtil;
+import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
@@ -19,7 +19,7 @@ public class ItemPickaxe extends Item {
 
 	@Override
 	public Image getTexture() {
-		if(texture == null) texture = RenderUtil.getItemImage("pickaxe");
+		if(texture == null) texture =  MainFile.game.imageLoader.getImage("items","pickaxe");
 
 		return texture;
 	}

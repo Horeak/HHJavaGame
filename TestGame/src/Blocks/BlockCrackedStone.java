@@ -1,7 +1,7 @@
 package Blocks;
 
 import Blocks.BlockRender.EnumBlockSide;
-import Utils.RenderUtil;
+import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -12,7 +12,7 @@ public class BlockCrackedStone extends BlockStone {
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
 		if (texture == null) {
-			texture = RenderUtil.getBlockImage("crackedStone");
+			texture =  MainFile.game.imageLoader.getImage("blocks","crackedStone");
 		}
 
 		return texture;

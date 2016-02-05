@@ -14,7 +14,7 @@ public class BlockSelection {
 
 
 	public static void update( GameContainer container ) {
-		Vec2d plPos = new Vec2d(MainFile.getClient().getPlayer().getEntityPostion().x, MainFile.getClient().getPlayer().getEntityPostion().y);
+		Vec2d plPos = new Vec2d(MainFile.game.getClient().getPlayer().getEntityPostion().x, MainFile.game.getClient().getPlayer().getEntityPostion().y);
 
 		if (container != null && container.getInput() != null) {
 			Point mousePoint = new Point(container.getInput().getMouseX(), container.getInput().getMouseY());
@@ -32,7 +32,7 @@ public class BlockSelection {
 						selectedX = blockX;
 						selectedY = blockY;
 
-						Block b = MainFile.getServer().getWorld().getBlock(selectedX, selectedY);
+						Block b = MainFile.game.getServer().getWorld().getBlock(selectedX, selectedY);
 						selectedBlock = b;
 
 					} else {

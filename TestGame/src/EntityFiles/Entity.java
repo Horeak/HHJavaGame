@@ -69,15 +69,15 @@ public abstract class Entity {
 	public abstract void renderEntity( org.newdawn.slick.Graphics g2, int renderX, int renderY );
 
 	public Block getBlockBelow() {
-		return MainFile.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);
+		return MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);
 	}
 
 	public boolean canMoveTo( float x, float y ) {
-		if (x >= 0 && x < MainFile.getServer().getWorld().worldSize.xSize && y < MainFile.getServer().getWorld().worldSize.ySize) {
+		if (x >= 0 && (Math.round(x) < MainFile.game.getServer().getWorld().worldSize.xSize) && y < MainFile.game.getServer().getWorld().worldSize.ySize) {
 			float f = 0.38F;
 
-			Block b1 = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y)), b2 = MainFile.getServer().getWorld().getBlock(Math.round(x - f), Math.round(y)), b3 = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y) - 1);
-			Block b4 = MainFile.getServer().getWorld().getBlock(Math.round(x + f), Math.round(y));
+			Block b1 = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y)), b2 = MainFile.game.getServer().getWorld().getBlock(Math.round(x - f), Math.round(y)), b3 = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y) - 1);
+			Block b4 = MainFile.game.getServer().getWorld().getBlock(Math.round(x + f), Math.round(y));
 
 			boolean t1 = b1 == null || b1 != null && b1.canPassThrough();
 			boolean t2 = b2 == null || b2 != null && b2.canPassThrough();
@@ -90,9 +90,9 @@ public abstract class Entity {
 	}
 
 	public boolean moveTo( float x, float y ) {
-		Block targetBlock = MainFile.getServer().getWorld().getBlock(Math.round(x), Math.round(y));
+		Block targetBlock = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y));
 
-		if (x < MainFile.getServer().getWorld().worldSize.xSize && x >= 0 && y < MainFile.getServer().getWorld().worldSize.ySize)
+		if (x < MainFile.game.getServer().getWorld().worldSize.xSize && x >= 0 && y < MainFile.game.getServer().getWorld().worldSize.ySize)
 			if (targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
 				if (canMoveTo(x, y)) {
 					setEntityPosition(x, y);
@@ -105,7 +105,7 @@ public abstract class Entity {
 
 	public void updateEntity() {
 
-		if(!MainFile.getServer().getWorld().generating) {
+		if(!MainFile.game.getServer().getWorld().generating) {
 			timeAlive += 1;
 
 			Block bl = getBlockBelow();

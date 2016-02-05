@@ -76,7 +76,7 @@ public class World {
 	}
 
 	public void start() {
-		MainFile.getClient().setPlayer(new EntityPlayer(0,0, MainFile.getClient().playerId));
+		MainFile.game.getClient().setPlayer(new EntityPlayer(0,0, MainFile.game.getClient().playerId));
 
 		worldUpdateThread.start();
 	}
@@ -95,11 +95,11 @@ public class World {
 		worldLightUpdateThread.start();
 	}
 	public void doneGenerating() {
-		spawnPlayer(MainFile.getClient().getPlayer());
+		spawnPlayer(MainFile.game.getClient().getPlayer());
 	}
 
 	public void stop() {
-		MainFile.getClient().setPlayer(null);
+		MainFile.game.getClient().setPlayer(null);
 
 		worldUpdateThread.stop();
 		worldEntityUpdateThread.stop();
@@ -211,7 +211,7 @@ public class World {
 		Entities.add(player);
 		MinimapRender.reset();
 
-		MainFile.getClient().hasSpawnedPlayer = true;
+		MainFile.game.getClient().hasSpawnedPlayer = true;
 	}
 
 	public void updateBlocks() {
@@ -227,7 +227,7 @@ public class World {
 
 							int x = p.x, y = p.y;
 
-							if (MainFile.getClient().getPlayer().getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
+							if (MainFile.game.getClient().getPlayer().getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
 								if (up.shouldupdate(this, x, y)) {
 									if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
 										up.updateBlock(this, x, y);
@@ -335,11 +335,15 @@ public class World {
 	}
 
 	public void updateLightForBlocks() {
-		if (MainFile.getClient().getPlayer() != null) {
+		updateLightForBlocks(MainFile.game.getClient().getPlayer() != null);
+	}
+
+	public void updateLightForBlocks(Boolean t ) {
+		if (t) {
 			for (int x = -(ConfigValues.lightUpdateRenderRange / 2); x < (ConfigValues.lightUpdateRenderRange / 2); x++) {
 				for (int y = -(ConfigValues.lightUpdateRenderRange / 2); y < (ConfigValues.lightUpdateRenderRange / 2); y++) {
 
-					int xPos = (int) MainFile.getClient().getPlayer().getEntityPostion().x + x, yPos = (int) MainFile.getClient().getPlayer().getEntityPostion().y + y;
+					int xPos = (int) MainFile.game.getClient().getPlayer().getEntityPostion().x + x, yPos = (int) MainFile.game.getClient().getPlayer().getEntityPostion().y + y;
 					Block b = getBlock(xPos, yPos, true);
 
 					if (b != null) {

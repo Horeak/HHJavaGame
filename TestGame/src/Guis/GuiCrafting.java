@@ -4,35 +4,39 @@ import Crafting.CraftingRecipe;
 import Crafting.CraftingRegister;
 import Guis.Button.InventoryButton;
 import Interface.GuiObject;
-import Interface.Menu;
+import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Settings.Config;
+import Utils.FontHandler;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
-public class GuiCrafting extends Gui {
+public class GuiCrafting extends GuiGame {
 
 	public GuiCrafting inst = this;
 
 	public int startX = 140, startY = 150;
 	public int Swidth = 520, Sheight = 297;
 
-	Rectangle rectangle1 = new Rectangle(startX + 9, startY + 25, 216, Sheight - 49);
+	Rectangle rectangle1 = new Rectangle(startX + 9, startY + 24, 216, Sheight - 49);
 
 	CraftingRecipe selectedRes = null;
 	float translate = 0; //18 = 1 down
 
 	boolean textInput = false;
 	public String input = "";
+
+	public GuiCrafting( GameContainer container, boolean b ) {
+		super(container, b);
+	}
 
 
 	public void init() {
@@ -112,10 +116,10 @@ public class GuiCrafting extends Gui {
 
 
 		g2.setColor(Color.white);
-		RenderUtil.resizeFont(g2, 12);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
+		FontHandler.resizeFont(g2, 12);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
 		g2.drawString("Crafting", startX + 5, startY - 25);
-		RenderUtil.resetFont(g2);
+		FontHandler.resetFont(g2);
 
 		Rectangle rightArea = new Rectangle(startX + (Swidth / 2), startY, (Swidth / 2), Sheight);
 
@@ -135,15 +139,15 @@ public class GuiCrafting extends Gui {
 
 		if (selectedRes != null) {
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 12);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			FontHandler.resizeFont(g2, 12);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("Current recipe: " + selectedRes.output.getItem().getItemName(), rightArea.getX() + 5, rightArea.getY() + 5);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 12);
+			FontHandler.resizeFont(g2, 12);
 			g2.drawString("Requires: ", rightArea.getX() + 5, rightArea.getY() + 35);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 			for (int i = 0; i < selectedRes.input.length; i++) {
 				ItemStack req = selectedRes.input[ i ];
@@ -167,19 +171,19 @@ public class GuiCrafting extends Gui {
 				g2.popTransform();
 
 				g2.setColor(hasItem ? Color.white : Color.red);
-				RenderUtil.resizeFont(g2, 12);
+				FontHandler.resizeFont(g2, 12);
 				g2.drawString(req.getStackSize() + "x " + req.getItem().getItemName(), rect.getX() + 35, rect.getY() + 8);
 
-				FontUtils.drawRight(g2.getFont(), "(" + CraftingRegister.getAmount(req) + "/" + req.getStackSize() + ")", (int)rect.getX(), (int)rect.getY() + 8, (int)rect.getWidth() - 8, g2.getColor());
+				org.newdawn.slick.util.FontUtils.drawRight(g2.getFont(), "(" + CraftingRegister.getAmount(req) + "/" + req.getStackSize() + ")", (int)rect.getX(), (int)rect.getY() + 8, (int)rect.getWidth() - 8, g2.getColor());
 
-				RenderUtil.resetFont(g2);
+				FontHandler.resetFont(g2);
 
 			}
 
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 12);
+			FontHandler.resizeFont(g2, 12);
 			g2.drawString("Creates: ", rightArea.getX() + 5, rightArea.getY() + 200);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 
 			Rectangle rect = new Rectangle(rightArea.getX() + 8, rightArea.getY() + 215, 243, 32);
@@ -198,9 +202,9 @@ public class GuiCrafting extends Gui {
 			g2.scale(2, 2);
 			g2.popTransform();
 			g2.setColor(Color.white);
-			RenderUtil.resizeFont(g2, 12);
+			FontHandler.resizeFont(g2, 12);
 			g2.drawString(selectedRes.output.getStackSize() + "x " + selectedRes.output.getItem().getItemName(), rect.getX() + 35, rect.getY() + 8);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 		}
 
@@ -235,7 +239,7 @@ public class GuiCrafting extends Gui {
 
 
 	public void keyPressed( int key, char c ) {
-			if (key == Config.getKeybindFromID("crafting").getKey() && !textInput || key == Config.getKeybindFromID("exit").getKey() && !textInput) {
+			if (key == MainFile.game.getConfig().getKeybindFromID("crafting").getKey() && !textInput || key == MainFile.game.getConfig().getKeybindFromID("exit").getKey() && !textInput) {
 				closeGui();
 			}else {
 
@@ -269,8 +273,8 @@ public class GuiCrafting extends Gui {
 		private boolean over;
 		private Rectangle area;
 
-		public CraftingButton( Gui gui, int x, int y, CraftingRecipe res ) {
-			super(x, y, 215, 48, gui);
+		public CraftingButton( GuiGame gui, int x, int y, CraftingRecipe res ) {
+			super(MainFile.game,x, y, 215, 48, gui);
 			area = new Rectangle(x, y, width, height);
 
 			this.res = res;
@@ -278,7 +282,7 @@ public class GuiCrafting extends Gui {
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			selected ^= true;
 			selectedRes = selected ? res : null;
 
@@ -293,7 +297,7 @@ public class GuiCrafting extends Gui {
 
 
 		@Override
-		public void renderObject( Graphics g2, Menu menu ) {
+		public void renderObject( Graphics g2, UIMenu menu ) {
 			boolean other = false;
 
 			for (GuiObject ob : guiObjects) {
@@ -346,17 +350,17 @@ public class GuiCrafting extends Gui {
 			}
 
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 12);
-			FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 30, 40, g2.getColor());
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			FontHandler.resizeFont(g2, 12);
+			org.newdawn.slick.util.FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 30, 40, g2.getColor());
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString(item.getItem().getItemName(), x + 50, y);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 10);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			FontHandler.resizeFont(g2, 10);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("Requires: " + required, x + 50, y + 20);
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 			g2.setClip(null);
 
@@ -365,21 +369,21 @@ public class GuiCrafting extends Gui {
 
 	class craftButton extends GuiObject {
 
-		public craftButton( int x, int y, int width, int height, Menu menu ) {
-			super(x, y, width, height, menu);
+		public craftButton( int x, int y, int width, int height, UIMenu menu ) {
+			super(MainFile.game,x, y, width, height, menu);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 
 			try {
 				if (CraftingRegister.hasMaterialFor(selectedRes)) {
 
 					for (ItemStack item : selectedRes.input) {
-						MainFile.getClient().getPlayer().consumeItem(item);
+						MainFile.game.getClient().getPlayer().consumeItem(item);
 					}
 
-					MainFile.getClient().getPlayer().addItem(new ItemStack(selectedRes.output));
+					MainFile.game.getClient().getPlayer().addItem(new ItemStack(selectedRes.output));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -387,7 +391,7 @@ public class GuiCrafting extends Gui {
 		}
 
 		@Override
-		public void renderObject( Graphics g2, Menu menu ) {
+		public void renderObject( Graphics g2, UIMenu menu ) {
 			Rectangle rectangle = new Rectangle(x, y, width, height);
 
 			g2.setColor(enabled ? isMouseOver() ? Color.lightGray.darker(0.3F) : Color.darkGray : Color.darkGray.darker());
@@ -397,11 +401,11 @@ public class GuiCrafting extends Gui {
 			g2.draw(rectangle);
 
 			g2.setColor(enabled ? Color.white : Color.black);
-			RenderUtil.resizeFont(g2, 12);
+			FontHandler.resizeFont(g2, 12);
 
-			FontUtils.drawCenter(g2.getFont(), "Craft", (int) rectangle.getX(), (int) rectangle.getY() + 5, (int) rectangle.getWidth(), g2.getColor());
+			org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Craft", (int) rectangle.getX(), (int) rectangle.getY() + 5, (int) rectangle.getWidth(), g2.getColor());
 
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 		}
 	}
@@ -410,12 +414,12 @@ public class GuiCrafting extends Gui {
 
 		int trant = 0;
 
-		public scrollBar( int x, int y, int width, int height, Menu menu ) {
-			super(x, y, width, height, menu);
+		public scrollBar( int x, int y, int width, int height, UIMenu menu ) {
+			super(MainFile.game,x, y, width, height, menu);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 
 			if (y >= this.y && y <= (this.y + height)) {
 				float yy = (y - getY()) - 10;
@@ -424,7 +428,7 @@ public class GuiCrafting extends Gui {
 		}
 
 		@Override
-		public void renderObject( Graphics g2, Menu menu ) {
+		public void renderObject( Graphics g2, UIMenu menu ) {
 			if (trant < 0) {
 				trant = 0;
 			}
@@ -464,16 +468,16 @@ public class GuiCrafting extends Gui {
 
 		int i = 0;
 		public inputButton(int x, int y, int width, int height) {
-			super(x, y, width, height, inst);
+			super(MainFile.game,x, y, width, height, inst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			textInput ^= true;
 		}
 
 		@Override
-		public void renderObject( Graphics g2, Menu menu ) {
+		public void renderObject( Graphics g2, UIMenu menu ) {
 			if(i >= 20) i = 0;
 			i += 1;
 			org.newdawn.slick.Color temp = g2.getColor();
@@ -485,10 +489,10 @@ public class GuiCrafting extends Gui {
 			g2.draw(new Rectangle(x, y, width, height));
 
 			g2.setColor(org.newdawn.slick.Color.white);
-			RenderUtil.resizeFont(g2, 22);
+			FontHandler.resizeFont(g2, 22);
 			g2.drawString(inst.input, x + 3, y);
 
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 			AffineTransform affinetransform = new AffineTransform();
 			FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
@@ -496,9 +500,9 @@ public class GuiCrafting extends Gui {
 			int width = (int) (font.getStringBounds(inst.input, frc).getWidth());
 
 			if(textInput && i < 10 || !textInput) {
-				RenderUtil.resizeFont(g2, 22);
+				FontHandler.resizeFont(g2, 22);
 				g2.drawString("_", x + 3 + width, y);
-				RenderUtil.resetFont(g2);
+				FontHandler.resetFont(g2);
 			}
 
 			g2.setColor(temp);

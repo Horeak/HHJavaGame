@@ -3,7 +3,7 @@ package Blocks;
 import Blocks.BlockRender.EnumBlockSide;
 import Blocks.Util.Block;
 import Blocks.Util.ITickBlock;
-import Utils.RenderUtil;
+import Main.MainFile;
 import WorldFiles.World;
 import WorldGeneration.TreeGeneration;
 import org.newdawn.slick.Color;
@@ -33,7 +33,7 @@ public class BlockSapling extends Block implements ITickBlock{
 
 	@Override
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if(texture == null) texture  = RenderUtil.getBlockImage("sapling");
+		if(texture == null) texture  =  MainFile.game.imageLoader.getImage("blocks","sapling");
 
 		return texture;
 	}

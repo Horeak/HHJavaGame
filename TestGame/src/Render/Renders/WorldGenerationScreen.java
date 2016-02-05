@@ -2,15 +2,14 @@ package Render.Renders;
 
 import Blocks.Util.Block;
 import Main.MainFile;
-import Render.AbstractWindowRender;
+import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import WorldFiles.EnumWorldSize;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
@@ -25,26 +24,29 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 	public void render( Graphics g2 ) {
 		g2.setClip(MainFile.blockRenderBounds);
 
-		g2.setColor(MainFile.getServer().getWorld().worldTimeOfDay.SkyColor);
+		g2.setColor(MainFile.game.getServer().getWorld().worldTimeOfDay.SkyColor);
 		g2.fill(MainFile.blockRenderBounds);
 
-		float h = ((MainFile.getServer().getWorld().worldSize.xSize + 32) * ConfigValues.size) / MainFile.xWindowSize;
-		World world = MainFile.getServer().getWorld();
+		float h = ((MainFile.game.getServer().getWorld().worldSize.xSize) * ConfigValues.size) / MainFile.xWindowSize;
+		World world = MainFile.game.getServer().getWorld();
 
 		g2.pushTransform();
-		g2.scale(1 / h, 1 / h);
-		g2.translate(MainFile.xWindowSize / 4, (MainFile.yWindowSize / 4) * (h));
+//		g2.scale(1 / h, 1 / h);
+		g2.translate(0, (MainFile.yWindowSize / 4));
 
-		int size = world.worldSize == EnumWorldSize.LARGE ? 9 : world.worldSize == EnumWorldSize.MEDIUM ? 2 : 1;
+		float g = (1f / h);
+		int temP = world.worldSize == EnumWorldSize.LARGE ? 10 : world.worldSize == EnumWorldSize.MEDIUM ? 2 : 1;
 
-		for(int x = 0; x < MainFile.getServer().getWorld().worldSize.xSize; x += size){
-			for(int y = 0; y < MainFile.getServer().getWorld().worldSize.ySize; y += size){
-				Block bl = MainFile.getServer().getWorld().getBlock(x, y);
+		for(int x = 0; x < MainFile.game.getServer().getWorld().worldSize.xSize; x += temP){
+			for(int y = 0; y < MainFile.game.getServer().getWorld().worldSize.ySize; y += temP){
+				Block bl = MainFile.game.getServer().getWorld().getBlock(x, y);
 
 				if(bl != null){
 //					((DefaultBlockRendering)bl.getRender()).renderBlock(g2, x * ConfigValues.size, y * ConfigValues.size, EnumRenderMode.render2D, bl, false, false, false, false, world, x, y);
+					float size = (g * ConfigValues.size);
+
 					g2.setColor(bl.getDefaultBlockColor());
-					g2.fill(new Rectangle((x * ConfigValues.size), (y * ConfigValues.size), ConfigValues.size * size, ConfigValues.size * size));
+					g2.fill(new Rectangle((x * size), (y * size), size * temP, size * temP));
 				}
 			}
 		}
@@ -55,26 +57,26 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 
 
 		g2.setColor(Color.white);
-		RenderUtil.resizeFont(g2, 24);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		FontUtils.drawCenter(g2.getFont(), "Generating world", 0, (MainFile.yWindowSize / 2) - 10, MainFile.xWindowSize, g2.getColor());
-		FontUtils.drawLeft(g2.getFont(), text, (MainFile.xWindowSize / 2) + 100, (MainFile.yWindowSize / 2) - 10);
-		RenderUtil.resetFont(g2);
+		FontHandler.resizeFont(g2, 24);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
+		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Generating world", 0, (MainFile.yWindowSize / 2) - 10, MainFile.xWindowSize, g2.getColor());
+		org.newdawn.slick.util.FontUtils.drawLeft(g2.getFont(), text, (MainFile.xWindowSize / 2) + 100, (MainFile.yWindowSize / 2) - 10);
+		FontHandler.resetFont(g2);
 
 
 		if(generationStatus != null && generationStatus.contains("-|-")) {
 			String[] tg = generationStatus.split("-\\|-", 2);
 
 			g2.setColor(Color.white);
-			RenderUtil.resizeFont(g2, 16);
-			FontUtils.drawCenter(g2.getFont(), "Currently generating: " + tg[ 1 ] + (ConfigValues.debug ? " - " + tg[ 0 ] : ""), 0, (MainFile.yWindowSize / 2) + 25, MainFile.xWindowSize, g2.getColor());
-			RenderUtil.resetFont(g2);
+			FontHandler.resizeFont(g2, 16);
+			org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Currently generating: " + tg[ 1 ] + (ConfigValues.debug ? " - " + tg[ 0 ] : ""), 0, (MainFile.yWindowSize / 2) + 25, MainFile.xWindowSize, g2.getColor());
+			FontHandler.resetFont(g2);
 		}
 
 		g2.setColor(Color.white);
-		RenderUtil.resizeFont(g2, 12);
-		FontUtils.drawCenter(g2.getFont(), "Displaying generation", 0, (MainFile.yWindowSize / 2) + 45, MainFile.xWindowSize, g2.getColor());
-		RenderUtil.resetFont(g2);
+		FontHandler.resizeFont(g2, 12);
+		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Displaying generation", 0, (MainFile.yWindowSize / 2) + 45, MainFile.xWindowSize, g2.getColor());
+		FontHandler.resetFont(g2);
 
 		if (tt >= 10) {
 			tt = 0;
@@ -91,7 +93,7 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return MainFile.getServer().getWorld().generating;
+		return MainFile.game.getServer().getWorld() != null && MainFile.game.getServer().getWorld().generating;
 	}
 
 	@Override

@@ -16,16 +16,16 @@ public class BlockAction {
 		try {
 			int selected = (HotbarRender.slotSelected - 1);
 
-			if (selected < MainFile.getClient().getPlayer().getInvetorySize()) {
-				ItemStack item = MainFile.getClient().getPlayer().getItem(selected);
+			if (selected < MainFile.game.getClient().getPlayer().getInvetorySize()) {
+				ItemStack item = MainFile.game.getClient().getPlayer().getItem(selected);
 
 				if (button == Input.MOUSE_LEFT_BUTTON) {
-					if (MainFile.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY) != null) {
+					if (MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY) != null) {
 
-						Block b = MainFile.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
+						Block b = MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
 						if (b.getBlockDamage() >= b.getMaxBlockDamage()) {
-							MainFile.getServer().getWorld().breakBlock(BlockSelection.selectedX, BlockSelection.selectedY);
+							MainFile.game.getServer().getWorld().breakBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
 							if(item != null)
 							if(item.getItem() instanceof Item){
@@ -33,7 +33,7 @@ public class BlockAction {
 							}
 
 						} else {
-							b.setBlockDamage(b.getBlockDamage() + (item != null ? item.getItem().getBlockDamageValue(MainFile.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item) : 1));
+							b.setBlockDamage(b.getBlockDamage() + (item != null ? item.getItem().getBlockDamageValue(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item) : 1));
 
 							if(b.getBlockDamage() >= b.getMaxBlockDamage()){
 								mouseClick(button);
@@ -43,7 +43,7 @@ public class BlockAction {
 
 				} else if (button == Input.MOUSE_RIGHT_BUTTON) {
 					if (item != null) {
-						item.useItem(MainFile.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
+						item.useItem(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
 					}
 				}
 			}
@@ -54,7 +54,7 @@ public class BlockAction {
 	}
 
 	public static void update( GameContainer container ) {
-		if (MainFile.getServer().getWorld() != null && waitActionTime >= waitTimeForAction) {
+		if (MainFile.game.getServer().getWorld() != null && waitActionTime >= waitTimeForAction) {
 			BlockSelection.update(container);
 
 			if (container.getInput().isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)) {

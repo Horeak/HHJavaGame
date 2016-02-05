@@ -1,17 +1,17 @@
 package Guis.Button;
 
 import EntityFiles.Entities.EntityPlayer;
-import Guis.Gui;
+import Guis.GuiGame;
 import Interface.GuiObject;
-import Interface.Menu;
+import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Utils.FontHandler;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
@@ -19,17 +19,17 @@ public class InventoryButton extends GuiObject {
 
 	public int num;
 	public boolean renderNum;
-	public Gui gui;
+	public GuiGame gui;
 
-	public InventoryButton( Gui gui, int x, int y, boolean renderNumber, int number ) {
-		super(x, y, 48, 48, gui);
+	public InventoryButton( GuiGame gui, int x, int y, boolean renderNumber, int number ) {
+		super(MainFile.game,x, y, 48, 48, gui);
 
 		this.num = number;
 		this.renderNum = renderNumber;
 		this.gui = gui;
 	}
 
-	public static int addItem( Gui gui, int slot, EntityPlayer player ) throws Exception {
+	public static int addItem( GuiGame gui, int slot, EntityPlayer player ) throws Exception {
 		if (gui.heldItem == null && player.getItem(slot) != null) {
 			gui.heldItem = new ItemStack(player.getItem(slot));
 			player.setItem(slot, null);
@@ -40,7 +40,7 @@ public class InventoryButton extends GuiObject {
 			return 0;
 
 		} else if (gui.heldItem != null && player.getItem(slot) != null && gui.heldItem.equals(player.getItem(slot)) && player.getItem(slot).getStackSize() < player.getItem(slot).getMaxStackSize()) {
-			int t = player.getItem(slot).getMaxStackSize() - MainFile.getClient().getPlayer().getItem(slot).getStackSize();
+			int t = player.getItem(slot).getMaxStackSize() - MainFile.game.getClient().getPlayer().getItem(slot).getStackSize();
 			int tt = t - gui.heldItem.getStackSize();
 
 			if (tt > 0) {
@@ -70,14 +70,14 @@ public class InventoryButton extends GuiObject {
 	}
 
 	@Override
-	public void onClicked( int button, int x, int y, Menu menu ) {
+	public void onClicked( int button, int x, int y, UIMenu menu ) {
 
 		try {
 
 			//TODO Create a inventoryhandler util so that i dont have to make this code for every inventory
 			if (button == Input.MOUSE_LEFT_BUTTON) {
 				try {
-					int tt = addItem(gui, num, MainFile.getClient().getPlayer());
+					int tt = addItem(gui, num, MainFile.game.getClient().getPlayer());
 
 					if (tt > 0) {
 						gui.heldItem.setStackSize(tt);
@@ -92,30 +92,30 @@ public class InventoryButton extends GuiObject {
 //TODO Make right click with held item put one item from heldItem to empty slot
 
 			} else if (button == Input.MOUSE_RIGHT_BUTTON) {
-				if (gui.heldItem == null && MainFile.getClient().getPlayer().getItem(num) != null) {
-					gui.heldItem = new ItemStack(MainFile.getClient().getPlayer().getItem(num));
+				if (gui.heldItem == null && MainFile.game.getClient().getPlayer().getItem(num) != null) {
+					gui.heldItem = new ItemStack(MainFile.game.getClient().getPlayer().getItem(num));
 
 					int t = gui.heldItem.getStackSize();
 					int tj = t / 2;
 
 					if (gui.heldItem.getStackSize() == 1) {
-						gui.heldItem = new ItemStack(MainFile.getClient().getPlayer().getItem(num));
-						MainFile.getClient().getPlayer().setItem(num, null);
+						gui.heldItem = new ItemStack(MainFile.game.getClient().getPlayer().getItem(num));
+						MainFile.game.getClient().getPlayer().setItem(num, null);
 					} else {
 						gui.heldItem.decreaseStackSize(tj);
-						MainFile.getClient().getPlayer().getItem(num).setStackSize(tj);
+						MainFile.game.getClient().getPlayer().getItem(num).setStackSize(tj);
 					}
 
-				} else if (gui.heldItem != null && MainFile.getClient().getPlayer().getItem(num) == null) {
+				} else if (gui.heldItem != null && MainFile.game.getClient().getPlayer().getItem(num) == null) {
 					int t = gui.heldItem.getStackSize();
 					int tj = 1;
 
 					if (gui.heldItem.getStackSize() == 1) {
-						MainFile.getClient().getPlayer().setItem(num, gui.heldItem);
+						MainFile.game.getClient().getPlayer().setItem(num, gui.heldItem);
 						gui.heldItem = null;
 					} else {
 						gui.heldItem.setStackSize(tj);
-						MainFile.getClient().getPlayer().setItem(num, new ItemStack(gui.heldItem));
+						MainFile.game.getClient().getPlayer().setItem(num, new ItemStack(gui.heldItem));
 						gui.heldItem.setStackSize(t-1);
 					}
 
@@ -129,8 +129,8 @@ public class InventoryButton extends GuiObject {
 	}
 
 	@Override
-	public void renderObject( Graphics g2, Menu menu ) {
-		ItemStack item = MainFile.getClient().getPlayer().getItem(num);
+	public void renderObject( Graphics g2, UIMenu menu ) {
+		ItemStack item = MainFile.game.getClient().getPlayer().getItem(num);
 		Rectangle tangle = new Rectangle(x, y, width, height);
 
 		tangle.setLocation(x - 2, y - 1);
@@ -168,23 +168,23 @@ public class InventoryButton extends GuiObject {
 			g2.popTransform();
 
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 12);
+			FontHandler.resizeFont(g2, 12);
 
-			FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 30, 40, g2.getColor());
+			org.newdawn.slick.util.FontUtils.drawRight(g2.getFont(), item.getStackSize() + "x", x, y + 30, 40, g2.getColor());
 
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 
 		}
 
 		if (renderNum) {
 			g2.setColor(Color.black);
 
-			RenderUtil.resizeFont(g2, 12);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
+			FontHandler.resizeFont(g2, 12);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
 
 			g2.drawString((num + 1) + "", x + 5, y + 5);
 
-			RenderUtil.resetFont(g2);
+			FontHandler.resetFont(g2);
 		}
 
 	}

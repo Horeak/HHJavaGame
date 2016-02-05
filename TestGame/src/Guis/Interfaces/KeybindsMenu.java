@@ -1,16 +1,15 @@
-package Interface.Interfaces;
+package Guis.Interfaces;
 
+import Guis.Objects.MainMenuButton;
 import Interface.GuiObject;
-import Interface.Objects.MainMenuButton;
+import Interface.UIMenu;
 import Main.MainFile;
 import Render.Renders.BlockRendering;
-import Settings.Config;
 import Settings.Values.Keybinding;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class KeybindsMenu extends AbstractMainMenu {
 
 	public KeybindsMenu() {
 		super();
-		for (Keybinding key : Config.keybindings) {
+		for (Keybinding key : MainFile.game.getConfig().getKeybindings()) {
 			if (keyGroups.get(key.getGroup()) != null) {
 				keyGroups.get(key.getGroup()).add(key);
 			} else {
@@ -88,10 +87,10 @@ public class KeybindsMenu extends AbstractMainMenu {
 			g2.fill(new org.newdawn.slick.geom.Rectangle(renderStart, pos - (buttonSize / 2), renderWidth, 16));
 
 			g2.setColor(Color.black);
-			RenderUtil.resizeFont(g2, 12);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			FontUtils.drawCenter(g2.getFont(), ent.getKey(), renderStart, pos - (buttonSize / 2), renderWidth, g2.getColor());
-			RenderUtil.resetFont(g2);
+			FontHandler.resizeFont(g2, 12);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
+			org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), ent.getKey(), renderStart, pos - (buttonSize / 2), renderWidth, g2.getColor());
+			FontHandler.resetFont(g2);
 
 			for (Keybinding binding : ent.getValue()) {
 				pos = buttonPos += (buttonSize);
@@ -99,10 +98,10 @@ public class KeybindsMenu extends AbstractMainMenu {
 		}
 
 
-		RenderUtil.resizeFont(g2, 22);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		FontUtils.drawCenter(g2.getFont(), "Keybindings", renderStart, 80, renderWidth, g2.getColor());
-		RenderUtil.resetFont(g2);
+		FontHandler.resizeFont(g2, 22);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
+		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Keybindings", renderStart, 80, renderWidth, g2.getColor());
+		FontHandler.resetFont(g2);
 
 		g2.setColor(temp);
 	}
@@ -118,14 +117,14 @@ public class KeybindsMenu extends AbstractMainMenu {
 		boolean selected = false;
 
 		public keybindButton( int y, Keybinding option ) {
-			super(renderStart, y, 190, 32, "button." + option.getId(), guiInst);
+			super(MainFile.game, renderStart, y, 190, 32, "button." + option.getId(), guiInst);
 
 			this.option = option;
 		}
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			if (dd > 10) {
 				selected ^= true;
 				selecting = true;
@@ -142,7 +141,7 @@ public class KeybindsMenu extends AbstractMainMenu {
 
 
 		@Override
-		public void renderObject( Graphics g2, Interface.Menu menu ) {
+		public void renderObject( Graphics g2, UIMenu menu ) {
 			Color temp = g2.getColor();
 
 			boolean hover = isMouseOver();
@@ -165,13 +164,17 @@ public class KeybindsMenu extends AbstractMainMenu {
 				g2.setColor(Color.gray);
 			}
 
-			String name = (option.getName() + ": [" + Input.getKeyName(option.getKey()) + "]");
+			String name = (option.getName() + ": [ " + Input.getKeyName(option.getKey()) + " ]");
 
-			RenderUtil.resizeFont(g2, 12);
-			RenderUtil.changeFontStyle(g2, Font.BOLD);
-			FontUtils.drawLeft(g2.getFont(), selected ? option.getName() + ": [Press any key]" : name, x + 5, y);
+			FontHandler.resizeFont(g2, 12);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
+			org.newdawn.slick.util.FontUtils.drawLeft(g2.getFont(), selected ? option.getName() + ": [Press any key]" : name, x + 5, y);
+			FontHandler.resetFont(g2);
 
-			RenderUtil.resetFont(g2);
+			FontHandler.resizeFont(g2, 9);
+			FontHandler.changeFontStyle(g2, Font.BOLD);
+			org.newdawn.slick.util.FontUtils.drawLeft(g2.getFont(), "Default: [ " + (Input.getKeyName(option.getDefaultKey())) + " ]", x + 5, y + 16);
+			FontHandler.resetFont(g2);
 
 			g2.setColor(temp);
 		}
@@ -180,12 +183,12 @@ public class KeybindsMenu extends AbstractMainMenu {
 	class backButton extends MainMenuButton {
 
 		public backButton( int y ) {
-			super(renderStart, y, 190, 32, "Back", guiInst);
+			super(MainFile.game, renderStart, y, 190, 32, "Back", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.getClient().setCurrentMenu(new SettingsMenu());
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new SettingsMenu());
 		}
 	}
 }

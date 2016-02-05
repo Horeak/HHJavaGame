@@ -1,25 +1,29 @@
 package Guis;
 
-import Interface.Interfaces.MainMenu;
-import Interface.Objects.MainMenuButton;
+import Guis.Interfaces.MainMenu;
+import Guis.Objects.MainMenuButton;
+import Interface.UIMenu;
 import Main.MainFile;
 import Render.Renders.BlockRendering;
-import Settings.Config;
 import Utils.ConfigValues;
-import Utils.RenderUtil;
+import Utils.FontHandler;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
 import java.awt.*;
 
-public class GuiIngameMenu extends Gui {
+public class GuiIngameMenu extends GuiGame {
 
 	public static int renderStart = 290;
 	public static int renderWidth = 190;
 	public GuiIngameMenu guiInst = this;
 	Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
+
+	public GuiIngameMenu( GameContainer container, boolean b ) {
+		super(container, b);
+	}
 
 	@Override
 	public void render( Graphics g2 ) {
@@ -43,16 +47,16 @@ public class GuiIngameMenu extends Gui {
 		g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
 
 
-		RenderUtil.resizeFont(g2, 22);
-		RenderUtil.changeFontStyle(g2, Font.BOLD);
-		RenderUtil.changeFontName(g2, "Times New Roman");
+		FontHandler.resizeFont(g2, 22);
+		FontHandler.changeFontStyle(g2, Font.BOLD);
+		FontHandler.changeFontName(g2, "Times New Roman");
 
 		g2.setColor(new Color(0.9F, 0.9F, 0.9F, 0.25F));
 		g2.fill(new org.newdawn.slick.geom.Rectangle(renderStart, 70, renderWidth, 50));
 
 		g2.setColor(Color.black);
-		FontUtils.drawCenter(g2.getFont(), "Game Paused", renderStart, 80, renderWidth - 2, g2.getColor());
-		RenderUtil.resetFont(g2);
+		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Game Paused", renderStart, 80, renderWidth - 2, g2.getColor());
+		FontHandler.resetFont(g2);
 
 	}
 
@@ -62,7 +66,7 @@ public class GuiIngameMenu extends Gui {
 	}
 
 	public void keyPressed( int key, char c ) {
-		if (key == Config.getKeybindFromID("exit").getKey()) {
+		if (key == MainFile.game.getConfig().getKeybindFromID("exit").getKey()) {
 			closeGui();
 		}
 	}
@@ -70,13 +74,13 @@ public class GuiIngameMenu extends Gui {
 	class SettingsButton extends MainMenuButton {
 
 		public SettingsButton( int y ) {
-			super(renderStart, y, 190, 32, "Settings", guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, "Settings", guiInst);
 		}
 
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.getClient().setCurrentMenu(new GuiSettings());
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new GuiSettings(MainFile.game.gameContainer, ConfigValues.PAUSE_GAME_IN_GUI));
 		}
 
 	}
@@ -84,15 +88,15 @@ public class GuiIngameMenu extends Gui {
 	class ExitButton extends MainMenuButton {
 
 		public ExitButton( int y ) {
-			super(renderStart, y, 190, 32, "Exit To Main Menu", guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, "Exit To Main Menu", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
-			MainFile.getServer().getWorld().stop();
-			MainFile.getServer().setWorld(null);
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.getServer().getWorld().stop();
+			MainFile.game.getServer().setWorld(null);
 
-			MainFile.getClient().setCurrentMenu(new MainMenu());
+			MainFile.game.setCurrentMenu(new MainMenu());
 		}
 
 	}
@@ -100,11 +104,11 @@ public class GuiIngameMenu extends Gui {
 	class ResumeButton extends MainMenuButton {
 
 		public ResumeButton( int y ) {
-			super(renderStart, y, 190, 32, "Resume", guiInst);
+			super(MainFile.game,renderStart, y, 190, 32, "Resume", guiInst);
 		}
 
 		@Override
-		public void onClicked( int button, int x, int y, Interface.Menu menu ) {
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			closeGui();
 		}
 

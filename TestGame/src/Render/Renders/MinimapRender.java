@@ -5,7 +5,7 @@ import Blocks.Util.Block;
 import Blocks.Util.ILightSource;
 import EntityFiles.Entities.EntityPlayer;
 import Main.MainFile;
-import Render.AbstractWindowRender;
+import Rendering.AbstractWindowRender;
 import Utils.BlockUtils;
 import Utils.ConfigValues;
 import org.newdawn.slick.Color;
@@ -25,17 +25,17 @@ public class MinimapRender extends AbstractWindowRender {
 	@Override
 	public void render( Graphics g2 ) {
 		if(blockDiscoved == null){
-			blockDiscoved = new boolean[MainFile.getServer().getWorld().worldSize.xSize][MainFile.getServer().getWorld().worldSize.ySize];
+			blockDiscoved = new boolean[MainFile.game.getServer().getWorld().worldSize.xSize][MainFile.game.getServer().getWorld().worldSize.ySize];
 		}
 
 		int distance = 8;
 		for(int x = -distance; x < distance;  x++) {
 			for (int y = -distance; y < distance; y++) {
-				int xPos = ((int)MainFile.getClient().getPlayer().getEntityPostion().x + x);
-				int yPos = ((int)MainFile.getClient().getPlayer().getEntityPostion().y + y);
+				int xPos = ((int)MainFile.game.getClient().getPlayer().getEntityPostion().x + x);
+				int yPos = ((int)MainFile.game.getClient().getPlayer().getEntityPostion().y + y);
 
-				if(xPos < MainFile.getServer().getWorld().worldSize.xSize && xPos >= 0 && yPos < MainFile.getServer().getWorld().worldSize.ySize && yPos >= 0){
-					if(MainFile.getClient().getPlayer().getEntityPostion().distance(xPos, yPos) < distance) {
+				if(xPos < MainFile.game.getServer().getWorld().worldSize.xSize && xPos >= 0 && yPos < MainFile.game.getServer().getWorld().worldSize.ySize && yPos >= 0){
+					if(MainFile.game.getClient().getPlayer().getEntityPostion().distance(xPos, yPos) < distance) {
 						blockDiscoved[ xPos ][ yPos ] = true;
 					}
 				}
@@ -50,7 +50,7 @@ public class MinimapRender extends AbstractWindowRender {
 
 		Rectangle rectangle = new Rectangle(StartX, StartY, Width, Height);
 
-		g2.setColor(MainFile.getServer().getWorld().worldTimeOfDay.SkyColor);
+		g2.setColor(MainFile.game.getServer().getWorld().worldTimeOfDay.SkyColor);
 		g2.fill(rectangle);
 
 		g2.setColor(Color.yellow);
@@ -65,25 +65,25 @@ public class MinimapRender extends AbstractWindowRender {
 		Width /= size;
 		Height /= size;
 
-		int xx = Math.round(MainFile.getClient().getPlayer().getEntityPostion().x) - (Width / 2);
-		int yy = Math.round(MainFile.getClient().getPlayer().getEntityPostion().y) - (Height / 2);
+		int xx = Math.round(MainFile.game.getClient().getPlayer().getEntityPostion().x) - (Width / 2);
+		int yy = Math.round(MainFile.game.getClient().getPlayer().getEntityPostion().y) - (Height / 2);
 
 		for(int x = -(Width); x < (Width);  x++){
 			for(int y = -(Height); y < (Height); y++){
 				int xPos = (xx + x);
 				int yPos = (yy + y);
 
-				Block block = MainFile.getServer().getWorld().getBlock(xPos, yPos);
+				Block block = MainFile.game.getServer().getWorld().getBlock(xPos, yPos);
 				float xStart = StartX + ((x) * size), yStart = StartY + ((y) * size);
 
 				if(block != null && blockDiscoved[xPos][yPos]){
 					if(ConfigValues.simpleBlockRender){
 						BlockUtils.renderDefaultBlockDebug(g2, block, (int)xStart, (int)yStart, size, size);
 					}else{
-						block.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.getServer().getWorld(), xPos, yPos).draw(xStart, yStart, size, size);
+						block.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.game.getServer().getWorld(), xPos, yPos).draw(xStart, yStart, size, size);
 					}
 
-					float t = (float)block.getLightValue(MainFile.getServer().getWorld(), xPos, yPos) / (float) ILightSource.MAX_LIGHT_STRENGTH;
+					float t = (float)block.getLightValue(MainFile.game.getServer().getWorld(), xPos, yPos) / (float) ILightSource.MAX_LIGHT_STRENGTH;
 
 					Color temp = block.getLightUnit().getLightColor();
 					Color c = new Color(0, 0, 0, 1F - t);
@@ -97,7 +97,7 @@ public class MinimapRender extends AbstractWindowRender {
 					}
 
 				}else{
-					boolean t = xPos < MainFile.getServer().getWorld().worldSize.xSize && xPos >= 0 && yPos < MainFile.getServer().getWorld().worldSize.ySize && yPos >= 0;
+					boolean t = xPos < MainFile.game.getServer().getWorld().worldSize.xSize && xPos >= 0 && yPos < MainFile.game.getServer().getWorld().worldSize.ySize && yPos >= 0;
 					if(t && !blockDiscoved[xPos][yPos] || !t){
 						g2.setColor(Color.darkGray);
 						g2.fill(new Rectangle(xStart, yStart, size, size));
@@ -106,12 +106,12 @@ public class MinimapRender extends AbstractWindowRender {
 			}
 		}
 
-		EntityPlayer.playerTexutre.getFlippedCopy(MainFile.getClient().getPlayer().facing == 1, false).draw(StartX + ((float)get() / 2F) - 4F, StartY + ((float)get() / 2F) - 12F, 8, 16);
+		EntityPlayer.playerTexutre.getFlippedCopy(MainFile.game.getClient().getPlayer().facing == 1, false).draw(StartX + ((float)get() / 2F) - 4F, StartY + ((float)get() / 2F) - 12F, 8, 16);
 	}
 
 	@Override
 	public boolean canRender() {
-		return MainFile.getServer().getWorld() != null && ConfigValues.RENDER_MINIMAP && !MainFile.getServer().getWorld().generating;
+		return MainFile.game.getServer().getWorld() != null && ConfigValues.RENDER_MINIMAP && !MainFile.game.getServer().getWorld().generating;
 	}
 
 	@Override
@@ -124,12 +124,12 @@ public class MinimapRender extends AbstractWindowRender {
 	}
 
 	public static void reset(){
-		if(MainFile.getServer().getWorld() != null)
-		blockDiscoved = new boolean[MainFile.getServer().getWorld().worldSize.xSize][MainFile.getServer().getWorld().worldSize.ySize];
+		if(MainFile.game.getServer().getWorld() != null)
+		blockDiscoved = new boolean[MainFile.game.getServer().getWorld().worldSize.xSize][MainFile.game.getServer().getWorld().worldSize.ySize];
 	}
 
 	public static boolean discoved(int x, int y){
-		boolean t = x < MainFile.getServer().getWorld().worldSize.xSize && x >= 0 && y < MainFile.getServer().getWorld().worldSize.ySize && y >= 0;
+		boolean t = x < MainFile.game.getServer().getWorld().worldSize.xSize && x >= 0 && y < MainFile.game.getServer().getWorld().worldSize.ySize && y >= 0;
 
 		return t && blockDiscoved[x][y];
 	}

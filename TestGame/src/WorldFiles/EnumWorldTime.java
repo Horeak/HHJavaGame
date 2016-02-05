@@ -1,15 +1,15 @@
 package WorldFiles;
 
-import Utils.RenderUtil;
+import Utils.FontHandler;
 
 import java.awt.*;
 
 public enum EnumWorldTime {
 
-	MORNING("Morning", 0, 450, RenderUtil.getColorToSlick(new Color(0, 235, 255)), 0.7F),
-	DAY("Midday", 450, 1200, RenderUtil.getColorToSlick(new Color(0, 135, 242)), 0.9F),
-	EVENING("Evening", 1200, 1500, RenderUtil.getColorToSlick(new Color(112, 44, 27)), 0.4F),
-	NIGHT("Night", 1500, 2400, RenderUtil.getColorToSlick(new Color(14, 0, 58)), 0.2F);
+	MORNING("Morning", 0, 450, FontHandler.getColorToSlick(new Color(0, 235, 255)), 0.7F),
+	DAY("Midday", 450, 1200, FontHandler.getColorToSlick(new Color(0, 135, 242)), 0.9F),
+	EVENING("Evening", 1200, 1500, FontHandler.getColorToSlick(new Color(112, 44, 27)), 0.4F),
+	NIGHT("Night", 1500, 2400, FontHandler.getColorToSlick(new Color(14, 0, 58)), 0.2F);
 
 	public String name;
 	public int timeBegin, timeEnd;
