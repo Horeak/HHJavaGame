@@ -1,6 +1,6 @@
 package EntityFiles;
 
-import Blocks.Util.Block;
+import BlockFiles.Util.Block;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import Items.Utils.ItemStack;

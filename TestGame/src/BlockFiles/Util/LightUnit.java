@@ -1,13 +1,13 @@
-package Blocks.Util;
+package BlockFiles.Util;
 
 import org.newdawn.slick.Color;
 
 public class LightUnit {
 
 	private Color lightColor;
-	private int lightValue;
+	private float lightValue;
 
-	public LightUnit( Color c, int strength ) {
+	public LightUnit( Color c, float strength ) {
 		this.lightColor = c;
 		this.lightValue = strength;
 	}
@@ -20,11 +20,11 @@ public class LightUnit {
 		this.lightColor = lightColor;
 	}
 
-	public int getLightValue() {
+	public float getLightValue() {
 		return lightValue;
 	}
 
-	public void setLightValue( int lightValue ) {
+	public void setLightValue( float lightValue ) {
 		this.lightValue = lightValue;
 	}
 
@@ -49,7 +49,7 @@ public class LightUnit {
 	@Override
 	public int hashCode() {
 		int result = getLightColor().hashCode();
-		result = 31 * result + getLightValue();
+		result = 31 * result + Math.round(getLightValue());
 		return result;
 	}
 }

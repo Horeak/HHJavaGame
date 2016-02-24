@@ -1,7 +1,8 @@
 package WorldGeneration.Structures;
 
 
-import Blocks.BlockStone;
+import BlockFiles.BlockStone;
+import BlockFiles.Blocks;
 import Render.SimplexNoise;
 import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
@@ -30,7 +31,7 @@ public class StoneGeneration extends StructureGeneration {
 
 						float current = (float) (ySize - y) / ySize;
 						if (current <= h) {
-							world.setBlock(new BlockStone(), x, y);
+							world.setBlock(Blocks.blockStone, x, y);
 						}
 					}
 				} catch (Exception e) {

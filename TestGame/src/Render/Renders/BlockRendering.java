@@ -1,7 +1,7 @@
 package Render.Renders;
 
-import Blocks.BlockRender.DefaultBlockRendering;
-import Blocks.Util.Block;
+import BlockFiles.BlockRender.DefaultBlockRendering;
+import BlockFiles.Util.Block;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Rendering.AbstractWindowRender;

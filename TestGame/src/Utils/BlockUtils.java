@@ -5,7 +5,7 @@ package Utils;
 * Created: 26.07.2015
 */
 
-import Blocks.Util.Block;
+import BlockFiles.Util.Block;
 import Main.MainFile;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;

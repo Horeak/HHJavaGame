@@ -1,34 +1,39 @@
-package Blocks;
+package BlockFiles;
 
-import Blocks.BlockRender.EnumBlockSide;
-import Blocks.Util.Block;
+import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Util.Block;
 import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-
-public class BlockStone extends Block {
+public class BlockDirt extends Block {
 
 	public static Image texture;
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Stone";
+		return "Dirt";
 	}
 
 	@Override
 	public Color getDefaultBlockColor() {
-		return new Color(151, 152, 151);
+		return new Color(107, 62, 33);
+	}
+
+	public boolean useBlockTexture() {
+		return true;
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if(texture == null) texture =  MainFile.game.imageLoader.getImage("blocks","stone");
+		if(texture == null) texture =  MainFile.game.imageLoader.getImage("blocks","dirt");
 
 		return texture;
 	}
 
 	public int getMaxBlockDamage() {
-		return 20;
+		return 5;
 	}
+
+
 }

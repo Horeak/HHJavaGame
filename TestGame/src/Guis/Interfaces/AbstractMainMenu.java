@@ -1,10 +1,11 @@
 package Guis.Interfaces;
 
-import Blocks.BlockDirt;
-import Blocks.BlockGrass;
-import Blocks.BlockRender.DefaultBlockRendering;
-import Blocks.BlockStone;
-import Blocks.Util.Block;
+import BlockFiles.BlockDirt;
+import BlockFiles.BlockGrass;
+import BlockFiles.BlockRender.DefaultBlockRendering;
+import BlockFiles.BlockStone;
+import BlockFiles.Blocks;
+import BlockFiles.Util.Block;
 import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
@@ -42,26 +43,26 @@ public class AbstractMainMenu extends UIMenu {
 			world.WorldTime /= 2;
 
 			for (int x = 0; x < world.worldSize.xSize; x++) {
-				world.setBlock(new BlockGrass(), x, (ConfigValues.renderYSize - 6));
+				world.setBlock(Blocks.blockGrass, x, (ConfigValues.renderYSize - 6));
 			}
 			for (int y = (ConfigValues.renderYSize - 5); y < ConfigValues.renderYSize; y++) {
 				for (int x = 0; x < world.worldSize.xSize; x++) {
-					world.setBlock(new BlockDirt(), x, y);
+					world.setBlock(Blocks.blockDirt, x, y);
 				}
 			}
 			for (int x = 0; x < world.worldSize.xSize; x++) {
 				for(int y = (ConfigValues.renderYSize - 3); y < (ConfigValues.renderYSize); y++) {
 					if (MainFile.random.nextInt(3) == 1) {
-						world.setBlock(new BlockStone(), x, y);
+						world.setBlock(Blocks.blockStone, x, y);
 					}else{
-						world.setBlock(new BlockDirt(), x, y);
+						world.setBlock(Blocks.blockDirt, x, y);
 					}
 				}
 			}
 
 			for(int y = (ConfigValues.renderYSize); y < world.worldSize.ySize; y++) {
 				for (int x = 0; x < world.worldSize.xSize; x++) {
-					world.setBlock(new BlockStone(), x, y);
+					world.setBlock(Blocks.blockStone, x, y);
 				}
 			}
 
@@ -79,7 +80,7 @@ public class AbstractMainMenu extends UIMenu {
 
 		render.render(g2, world);
 
-		if (world != null && world.Blocks != null) {
+		if (world != null && world.worldBlocks != null) {
 
 			HashMap<Point, Block> bbb = new HashMap<>();
 

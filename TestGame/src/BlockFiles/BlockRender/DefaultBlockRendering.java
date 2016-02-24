@@ -1,9 +1,10 @@
-package Blocks.BlockRender;
+package BlockFiles.BlockRender;
 
-import Blocks.Util.Block;
-import Blocks.Util.ILightSource;
+import BlockFiles.Util.Block;
+import BlockFiles.Util.ILightSource;
 import Main.MainFile;
 import Render.EnumRenderMode;
+import Utils.BlockAction;
 import Utils.BlockUtils;
 import Utils.ConfigValues;
 import WorldFiles.World;
@@ -53,7 +54,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	private static void drawShadowFront( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
 		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
-		Color temp = block.getLightUnit().getLightColor();
+		Color temp = world.getLightUnit(x,y).getLightColor();
 		Color c = new Color(0, 0, 0, 1F - t);
 
 		Rectangle tangle = new Rectangle(xStart, yStart, ConfigValues.size, ConfigValues.size);
@@ -72,7 +73,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	private static void drawShadowSide( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
 		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
-		Color temp = block.getLightUnit().getLightColor();
+		Color temp = world.getLightUnit(x,y).getLightColor();
 		Color c = new Color(0, 0, 0, 1F - t);
 
 		xStart += ConfigValues.size;
@@ -96,7 +97,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	private static void drawShadowTop( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
 		float t = ((float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH);
 
-		Color temp = block.getLightUnit().getLightColor();
+		Color temp = world.getLightUnit(x,y).getLightColor();
 		Color c = new Color(0, 0, 0, 1F - t);
 
 		Path path = new Path(xStart, yStart);
@@ -124,8 +125,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 			}
 
 			if (!isItem) {
-				if (getBreakImageForBlock(block) != null) {
-					getBreakImageForBlock(block).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+				if (getBreakImageForBlock(block, x, y) != null) {
+					getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 				}
 			}
 
@@ -143,8 +144,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					g.translate(0, -ConfigValues.size);
 
 					if (!isItem) {
-						if (getBreakImageForBlock(block) != null) {
-							getBreakImageForBlock(block).getFlippedCopy(true, false).drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
+						if (getBreakImageForBlock(block, x, y) != null) {
+							getBreakImageForBlock(block, x, y).getFlippedCopy(true, false).drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
 						}
 					}
 
@@ -161,8 +162,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					drawTop(g, xStart, yStart, block.getDefaultBlockColor().brighter());
 
 					if (!isItem) {
-						if (getBreakImageForBlock(block) != null) {
-							getBreakImageForBlock(block).drawWarped(xStart, yStart, xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2), xStart + ((ConfigValues.size) * 1.5F), yStart - (ConfigValues.size / 2), xStart + ConfigValues.size, yStart);
+						if (getBreakImageForBlock(block, x, y) != null) {
+							getBreakImageForBlock(block, x, y).drawWarped(xStart, yStart, xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2), xStart + ((ConfigValues.size) * 1.5F), yStart - (ConfigValues.size / 2), xStart + ConfigValues.size, yStart);
 						}
 					}
 
@@ -180,8 +181,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 				}
 
 				if (!isItem) {
-					if (getBreakImageForBlock(block) != null) {
-						getBreakImageForBlock(block).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+					if (getBreakImageForBlock(block, x, y) != null) {
+						getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 					}
 				}
 
@@ -193,8 +194,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 				}
 
 				if (!isItem) {
-					if (getBreakImageForBlock(block) != null) {
-						getBreakImageForBlock(block).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+					if (getBreakImageForBlock(block, x, y) != null) {
+						getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 					}
 				}
 			}
@@ -213,8 +214,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 
 						if (!isItem) {
-							if (getBreakImageForBlock(block) != null) {
-								getBreakImageForBlock(block).getFlippedCopy(true, false).drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
+							if (getBreakImageForBlock(block, x, y) != null) {
+								getBreakImageForBlock(block, x, y).getFlippedCopy(true, false).drawWarped(xStart - (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size / 2), yStart + (ConfigValues.size / 2), xStart + (ConfigValues.size), yStart + (ConfigValues.size), xStart, yStart + (ConfigValues.size));
 							}
 						}
 
@@ -246,8 +247,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 
 						if (!isItem) {
-							if (getBreakImageForBlock(block) != null) {
-								getBreakImageForBlock(block).getFlippedCopy(true, false).drawWarped(xStart, yStart, xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2), xStart + ((ConfigValues.size) * 1.5F), yStart - (ConfigValues.size / 2), xStart + ConfigValues.size, yStart);
+							if (getBreakImageForBlock(block, x, y) != null) {
+								getBreakImageForBlock(block, x, y).getFlippedCopy(true, false).drawWarped(xStart, yStart, xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2), xStart + ((ConfigValues.size) * 1.5F), yStart - (ConfigValues.size / 2), xStart + ConfigValues.size, yStart);
 							}
 						}
 
@@ -271,8 +272,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
 					if (!isItem) {
-						if (getBreakImageForBlock(block) != null) {
-							getBreakImageForBlock(block).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						if (getBreakImageForBlock(block, x, y) != null) {
+							getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 						}
 					}
 
@@ -293,8 +294,8 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
 					if (!isItem) {
-						if (getBreakImageForBlock(block) != null) {
-							getBreakImageForBlock(block).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						if (getBreakImageForBlock(block, x, y) != null) {
+							getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 						}
 					}
 
@@ -314,11 +315,13 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 	}
 
-	public Image getBreakImageForBlock( Block block ) {
-		float tt = ((float) block.getBlockDamage() / (float) block.getMaxBlockDamage()) * 5;
+	public Image getBreakImageForBlock( Block block, int x, int y ) {
+		if(x != BlockAction.prevX || y != BlockAction.prevY) return null;
+
+		float tt = ((float) BlockAction.blockDamage / (float) block.getMaxBlockDamage()) * 5;
 		int g = (int) tt;
 
-		if(block.getBlockDamage() > block.getMaxBlockDamage())
+		if(BlockAction.blockDamage > block.getMaxBlockDamage())
 			return breakImages[4];
 
 		if (g > 0 && (g - 1) < 5) {

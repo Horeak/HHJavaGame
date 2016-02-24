@@ -1,6 +1,6 @@
 package Render.Renders;
 
-import Blocks.Util.Block;
+import BlockFiles.Util.Block;
 import Main.MainFile;
 import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;

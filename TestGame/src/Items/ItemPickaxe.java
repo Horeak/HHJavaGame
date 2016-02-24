@@ -1,6 +1,6 @@
 package Items;
 
-import Blocks.BlockStone;
+import BlockFiles.BlockStone;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Main.MainFile;

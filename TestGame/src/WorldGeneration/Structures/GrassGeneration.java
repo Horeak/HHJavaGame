@@ -1,7 +1,8 @@
 package WorldGeneration.Structures;
 
-import Blocks.BlockDirt;
-import Blocks.BlockGrass;
+import BlockFiles.BlockDirt;
+import BlockFiles.BlockGrass;
+import BlockFiles.Blocks;
 import Render.SimplexNoise;
 import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
@@ -28,9 +29,9 @@ public class GrassGeneration extends StructureGeneration {
 
 				if (current < h) {
 					if(world.getBlock(x, y - 1) != null){
-						world.setBlock(new BlockDirt(), x, y);
+						world.setBlock(Blocks.blockDirt, x, y);
 					}else {
-						world.setBlock(new BlockGrass(), x, y);
+						world.setBlock(Blocks.blockGrass, x, y);
 					}
 				}
 			}

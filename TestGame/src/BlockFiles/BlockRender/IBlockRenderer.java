@@ -1,6 +1,6 @@
-package Blocks.BlockRender;
+package BlockFiles.BlockRender;
 
-import Blocks.Util.Block;
+import BlockFiles.Util.Block;
 import Items.Rendering.IItemRenderer;
 import Items.Utils.ItemStack;
 import Render.EnumRenderMode;

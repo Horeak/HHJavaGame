@@ -14,4 +14,12 @@ public enum EnumWorldSize {
 
 		this.div = div;
 	}
+
+	@Override
+	public String toString() {
+		return "EnumWorldSize{" +
+				"ySize=" + ySize +
+				", xSize=" + xSize +
+				'}';
+	}
 }

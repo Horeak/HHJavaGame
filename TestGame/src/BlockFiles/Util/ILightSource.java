@@ -1,4 +1,4 @@
-package Blocks.Util;
+package BlockFiles.Util;
 
 import org.newdawn.slick.Color;
 

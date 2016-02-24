@@ -1,6 +1,6 @@
 package Utils;
 
-import Blocks.Util.Block;
+import BlockFiles.Util.Block;
 import Main.MainFile;
 import Render.Renders.BlockRendering;
 import com.sun.javafx.geom.Vec2d;

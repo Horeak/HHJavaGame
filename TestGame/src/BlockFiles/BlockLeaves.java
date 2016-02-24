@@ -1,7 +1,7 @@
-package Blocks;
+package BlockFiles;
 
-import Blocks.BlockRender.EnumBlockSide;
-import Blocks.Util.Block;
+import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Util.Block;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import WorldFiles.World;
@@ -36,7 +36,7 @@ public class BlockLeaves extends Block {
 	//TODO Add saplings
 	@Override
 	public ItemStack getItemDropped(World world, int x, int y) {
-		return rand.nextInt(10) == 1 ? new ItemStack(new BlockSapling()) : null;
+		return rand.nextInt(10) == 1 ? new ItemStack(Blocks.blockSapling) : null;
 	}
 
 	public boolean isBlockSolid() {

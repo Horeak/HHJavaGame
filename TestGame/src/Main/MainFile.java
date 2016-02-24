@@ -176,7 +176,16 @@ public class MainFile extends BaseGame {
 	public void updateGame( GameContainer container, int delta ) throws SlickException {
 		if (!(getCurrentMenu() instanceof Gui)) {
 			updateKeys(container, delta);
-			BlockAction.update(container);
+			BlockAction.update(container, delta);
+
+			if(BlockAction.timeSince >= (BlockAction.blockBreakReach / 2)){
+				BlockAction.blockBreakDelay = 0;
+				BlockAction.blockDamage = 0;
+				BlockAction.prevX = -1;
+				BlockAction.prevY = -1;
+			}else{
+				BlockAction.timeSince += 1;
+			}
 		}
 
 		//TODO Find a better way to call this on the main thread
@@ -305,17 +314,21 @@ public class MainFile extends BaseGame {
 	}
 
 	public void updateKeys( GameContainer gameContainer, int delta ) {
+
+		float tt = (float)delta / 35;
+		float t = 0.14f * tt;
+
 		if (getServer().getWorld() != null) {
 			if (gameContainer.getInput().isKeyPressed(getConfig().getKeybindFromID("left.walk").getKey()) || gameContainer.getInput().isKeyDown(getConfig().getKeybindFromID("left.walk").getKey())) {
 				if (getClient().getPlayer().facing == 1) {
-					getClient().getPlayer().moveTo(getClient().getPlayer().getEntityPostion().x - 0.14F, getClient().getPlayer().getEntityPostion().y);
+					getClient().getPlayer().moveTo(getClient().getPlayer().getEntityPostion().x - t, getClient().getPlayer().getEntityPostion().y);
 				}
 
 				getClient().getPlayer().facing = 1;
 
 			} else if (gameContainer.getInput().isKeyPressed(getConfig().getKeybindFromID("right.walk").getKey()) || gameContainer.getInput().isKeyDown(getConfig().getKeybindFromID("right.walk").getKey())) {
 				if (getClient().getPlayer().facing == 2) {
-					getClient().getPlayer().moveTo(getClient().getPlayer().getEntityPostion().x + 0.14F, getClient().getPlayer().getEntityPostion().y);
+					getClient().getPlayer().moveTo(getClient().getPlayer().getEntityPostion().x + t, getClient().getPlayer().getEntityPostion().y);
 				}
 
 				getClient().getPlayer().facing = 2;
@@ -338,6 +351,16 @@ public class MainFile extends BaseGame {
 
 	public Server getServer() {
 		return server;
+	}
+
+	@Override
+	public boolean closeRequested()
+	{
+		if(getServer().getWorld() != null){
+			getServer().getWorld().stop();
+		}
+
+		return super.closeRequested();
 	}
 }
 

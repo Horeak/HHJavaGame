@@ -1,9 +1,10 @@
 package WorldGeneration;
 
-import Blocks.BlockGrass;
-import Blocks.BlockLeaves;
-import Blocks.BlockWood;
-import Blocks.Util.Block;
+import BlockFiles.BlockGrass;
+import BlockFiles.BlockLeaves;
+import BlockFiles.BlockWood;
+import BlockFiles.Blocks;
+import BlockFiles.Util.Block;
 import Main.MainFile;
 import WorldFiles.World;
 import WorldGeneration.Util.GenerationBase;
@@ -43,7 +44,7 @@ public class TreeGeneration extends GenerationBase {
 		int height = 3 + MainFile.random.nextInt(4);
 
 		for (int i = 0; i < height; i++) {
-			world.setBlock(new BlockWood(), x, y - (i + 1));
+			world.setBlock(Blocks.blockWood, x, y - (i + 1));
 		}
 
 		Point p = new Point(x, y - height);
@@ -64,7 +65,7 @@ public class TreeGeneration extends GenerationBase {
 				if (world.getBlock(xPos, yPos) == null) {
 
 					if (p.distance(xPos, yPos) <= 3) {
-						world.setBlock(new BlockLeaves(), xPos, yPos);
+						world.setBlock(Blocks.blockLeaves, xPos, yPos);
 					}
 				}
 			}

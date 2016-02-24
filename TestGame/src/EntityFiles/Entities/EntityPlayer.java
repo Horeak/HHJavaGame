@@ -12,6 +12,7 @@ import Render.Renders.HotbarRender;
 import org.newdawn.slick.Graphics;
 
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 
 
 public class EntityPlayer extends Entity implements IInventory {
@@ -24,7 +25,9 @@ public class EntityPlayer extends Entity implements IInventory {
 	 * 2 = right
 	 */
 	public int facing = 0;
-	public ItemStack[] inventoryItems = new ItemStack[ 50 ];
+	public static int INV_SIZE = 50;
+//	public ItemStack[] inventoryItems = new ItemStack[ 50 ];
+	public HashMap<Integer, ItemStack> inventoryItems = new HashMap<>();
 	private int playerHealth = 100, playerMaxHealth = 100;
 	public String name;
 
@@ -94,24 +97,24 @@ public class EntityPlayer extends Entity implements IInventory {
 
 	@Override
 	public ItemStack[] getItems() {
-		return inventoryItems;
+		return inventoryItems.values().toArray(new ItemStack[inventoryItems.values().size()]);
 	}
 
 	@Override
 	public ItemStack getItem( int i ) {
-		return i < inventoryItems.length ? inventoryItems[ i ] : null;
+		return i < INV_SIZE ? inventoryItems.get(i) : null;
 	}
 
 	@Override
 	public void setItem( int i, ItemStack item ) {
-		if (i < inventoryItems.length) {
-			inventoryItems[ i ] = item;
+		if (i < INV_SIZE) {
+			inventoryItems.put(i, item);
 		}
 	}
 
 	@Override
 	public int getInvetorySize() {
-		return inventoryItems.length;
+		return INV_SIZE;
 	}
 
 	@Override
@@ -203,5 +206,14 @@ public class EntityPlayer extends Entity implements IInventory {
 				getItem(i).slot = i;
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "EntityPlayer{" +
+				"name='" + name + '\'' +
+				", playerHealth=" + playerHealth +
+				", facing=" + facing +
+				'}';
 	}
 }

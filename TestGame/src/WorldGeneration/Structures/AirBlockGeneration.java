@@ -1,6 +1,6 @@
 package WorldGeneration.Structures;
 
-import Blocks.BlockAir;
+import BlockFiles.Blocks;
 import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
@@ -16,7 +16,7 @@ public class AirBlockGeneration extends StructureGeneration {
 		for (int x = 0; x < world.worldSize.xSize; x++) {
 			for (int y = 0; y < world.worldSize.ySize; y++) {
 				if (world.getBlock(x, y) == null) {
-					world.setBlock(new BlockAir(), x, y);
+					world.setBlock(Blocks.blockAir, x, y);
 				}
 			}
 		}

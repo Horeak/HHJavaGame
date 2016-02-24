@@ -6,7 +6,7 @@ package Utils;
 */
 
 
-import Blocks.BlockRender.IBlockRenderer;
+import BlockFiles.BlockRender.IBlockRenderer;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Render.EnumRenderMode;
@@ -17,6 +17,7 @@ public class RenderUtil {
 		return new org.newdawn.slick.Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 
+	//Optimise item rendering
 	public static void renderItem(Graphics g2, ItemStack item, int x, int y, EnumRenderMode mode ) {
 		if (item != null && item.getItem().getRender() != null) {
 			if (item.isBlock()) {

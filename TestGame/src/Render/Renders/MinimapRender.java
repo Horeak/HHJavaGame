@@ -1,8 +1,8 @@
 package Render.Renders;
 
-import Blocks.BlockRender.EnumBlockSide;
-import Blocks.Util.Block;
-import Blocks.Util.ILightSource;
+import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Util.Block;
+import BlockFiles.Util.ILightSource;
 import EntityFiles.Entities.EntityPlayer;
 import Main.MainFile;
 import Rendering.AbstractWindowRender;
@@ -85,13 +85,13 @@ public class MinimapRender extends AbstractWindowRender {
 
 					float t = (float)block.getLightValue(MainFile.game.getServer().getWorld(), xPos, yPos) / (float) ILightSource.MAX_LIGHT_STRENGTH;
 
-					Color temp = block.getLightUnit().getLightColor();
+					Color temp = MainFile.game.getServer().getWorld().getLightUnit(x,y) != null ? MainFile.game.getServer().getWorld().getLightUnit(x,y).getLightColor() : null;
 					Color c = new Color(0, 0, 0, 1F - t);
 					g2.setColor(c);
 
 					g2.fill(new Rectangle(xStart, yStart, size, size));
 
-					if(temp != ILightSource.DEFAULT_LIGHT_COLOR){
+					if(temp != null && temp != ILightSource.DEFAULT_LIGHT_COLOR){
 						g2.setColor(new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), t));
 						g2.fill(new Rectangle(xStart, yStart, size, size));
 					}

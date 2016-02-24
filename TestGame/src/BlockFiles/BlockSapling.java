@@ -1,8 +1,8 @@
-package Blocks;
+package BlockFiles;
 
-import Blocks.BlockRender.EnumBlockSide;
-import Blocks.Util.Block;
-import Blocks.Util.ITickBlock;
+import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Util.Block;
+import BlockFiles.Util.ITickBlock;
 import Main.MainFile;
 import WorldFiles.World;
 import WorldGeneration.TreeGeneration;

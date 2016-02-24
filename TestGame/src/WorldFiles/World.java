@@ -1,9 +1,11 @@
 package WorldFiles;
 
-import Blocks.BlockAir;
-import Blocks.Util.Block;
-import Blocks.Util.ILightSource;
-import Blocks.Util.ITickBlock;
+import BlockFiles.BlockAir;
+import BlockFiles.Blocks;
+import BlockFiles.Util.Block;
+import BlockFiles.Util.ILightSource;
+import BlockFiles.Util.ITickBlock;
+import BlockFiles.Util.LightUnit;
 import EntityFiles.Entities.EntityPlayer;
 import EntityFiles.Entity;
 import EntityFiles.EntityItem;
@@ -15,10 +17,15 @@ import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
 import Threads.WorldUpdateThread;
 import Utils.ConfigValues;
+import Utils.DataHandler;
+import com.sun.javafx.geom.Vec2d;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 //TODO Make sure there is no code left that is hardcoded to one player
 public class World {
@@ -32,7 +39,8 @@ public class World {
 	public ArrayList<Entity> Entities = new ArrayList<>();
 	public ArrayList<Entity> RemoveEntities = new ArrayList<>();
 
-	public Block[][] Blocks;
+	public Block[][] worldBlocks;
+	private LightUnit[][] lightUnits;
 	public ArrayList<Point> tickableBlocks = new ArrayList<>();
 
 	public String worldName;
@@ -47,7 +55,6 @@ public class World {
 	public World( String name, EnumWorldSize size ) {
 		this.worldName = name;
 		this.worldSize = size;
-
 		resetValues();
 	}
 
@@ -77,12 +84,12 @@ public class World {
 
 	public void start() {
 		MainFile.game.getClient().setPlayer(new EntityPlayer(0,0, MainFile.game.getClient().playerId));
-
 		worldUpdateThread.start();
 	}
 
 	public void resetValues() {
-		Blocks = new Block[ worldSize.xSize ][ worldSize.ySize ];
+		worldBlocks = new Block[ worldSize.xSize ][ worldSize.ySize ];
+		lightUnits = new LightUnit[worldSize.xSize][worldSize.ySize];
 
 		worldTimeOfDay = EnumWorldTime.MORNING;
 		WorldTime = worldTimeOfDay.timeBegin;
@@ -93,17 +100,84 @@ public class World {
 		worldGenerationThread.start();
 		worldEntityUpdateThread.start();
 		worldLightUpdateThread.start();
+
+		//TODO Debug
+//		resetValues();
+//		loadWorld("test123");
 	}
 	public void doneGenerating() {
 		spawnPlayer(MainFile.game.getClient().getPlayer());
 	}
 
 	public void stop() {
+		saveWorld();
+
 		MainFile.game.getClient().setPlayer(null);
 
 		worldUpdateThread.stop();
 		worldEntityUpdateThread.stop();
 		worldLightUpdateThread.stop();
+	}
+
+	//TODO Add world saving and auto saving
+	public void saveWorld(){
+		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/world.data");
+		handlerSets.setObject("worldName", worldName);
+		handlerSets.setObject("worldSize", worldSize);
+		handlerSets.setObject("worldTimeOfDay", worldTimeOfDay);
+		handlerSets.setObject("worldTime", WorldTime);
+		handlerSets.setObject("dayNumber", WorldDay);
+
+		DataHandler handlerProperties = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/worldProperties.data");
+		handlerProperties.setObject("properties", worldProperties);
+
+		DataHandler handlerEntities = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/worldEntities.data");
+		handlerEntities.setObject("entities", Entities);
+
+		HashMap<Point, Block> blStore = new HashMap<>();
+		for(int x = 0; x < worldSize.xSize; x++){
+			for(int y = 0; y < worldSize.ySize; y++){
+				if(getBlock(x, y) != null){
+					Block b = getBlock(x, y);
+					blStore.put(new Point(x, y), b);
+				}
+			}
+		}
+
+		MainFile.game.saveUtil.saveObjectFile(blStore, "saves/" + worldName + "/worldBlocks.data");
+	}
+
+	public void loadWorld(String name){
+		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + name + "/world.data");
+//		worldName = handlerSets.getString("worldName");
+		worldName = name;
+		WorldTime = handlerSets.getInteger("worldTime");
+		WorldDay = handlerSets.getInteger("dayNumber");
+
+		String t = handlerSets.getString("worldSize");
+		for(EnumWorldSize ee : EnumWorldSize.values()) {
+			if (ee.name().equals(t)) {
+				worldSize = ee;
+				break;
+			}
+		}
+		String tt = handlerSets.getString("worldTimeOfDay");
+		for(EnumWorldTime ee : EnumWorldTime.values()) {
+			if (ee.name().equals(tt)) {
+				worldTimeOfDay = ee;
+				break;
+			}
+		}
+
+		Object ob = MainFile.game.saveUtil.loadObjectFile("saves/" + name + "/worldBlocks.data");
+		HashMap<Point, Block> bl = (HashMap<Point, Block>)ob;
+
+		if(bl != null && bl.size() > 0) {
+			for (Map.Entry<Point, Block> ent : bl.entrySet()) {
+				setBlock(ent.getValue(), ent.getKey().x, ent.getKey().y);
+			}
+		}
+
 	}
 
 
@@ -136,12 +210,12 @@ public class World {
 	}
 
 	public Block getBlock( int x, int y, boolean allowAir ) {
-		if (Blocks != null) {
+		if (worldBlocks != null) {
 			if (x >= 0 && y >= 0 && x < worldSize.xSize && y < worldSize.ySize) {
-				if (!allowAir && Blocks[ x ][ y ] instanceof BlockAir) {
+				if (!allowAir && worldBlocks[ x ][ y ] == Blocks.blockAir) {
 					return null;
 				}
-				return Blocks[ x ][ y ];
+				return worldBlocks[ x ][ y ];
 			}
 		}
 		return null;
@@ -155,25 +229,27 @@ public class World {
 		if(!generating)
 		removeTickBlock(x, y);
 
-		if (Blocks != null) {
+		if (worldBlocks != null) {
 			if (x >= 0 && y >= 0) {
 				if (x < worldSize.xSize && y < worldSize.ySize) {
 
 					if (x >= 0 && y >= 0) {
 						if (block != null) {
-							Blocks[ x ][ y ] = block;
+							worldBlocks[ x ][ y ] = block;
 
 							if(block instanceof ITickBlock){
 								tickableBlocks.add(new Point(x,y));
 							}
 						} else {
-							Blocks[ x ][ y ] = new BlockAir();
+							worldBlocks[ x ][ y ] = Blocks.blockAir;
 						}
 
 						if(!generating) {
 							getBlock(x, y, true).updateBlock(this, x, y, x, y);
 							updateNearbyBlocks(x, y);
 						}
+
+						lightUnits[x][y] = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
 					}
 				}
 			}
@@ -285,17 +361,27 @@ public class World {
 
 		return bl;
 	}
+	
+	public LightUnit getLightUnit( int x, int y){
+		if(x >= 0 && y >= 0){
+			if(x < worldSize.xSize && y < worldSize.ySize){
+				return lightUnits[x][y];
+			}
+		}
+		
+		return null;
+	}
 
 	public void updateLightForBlock( int xx, int yy ) {
 		Block block = getBlock(xx, yy, true);
 
 		if (block != null) {
-			block.setLightValue(0);
-			block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
+			getLightUnit(xx,yy).setLightValue(0);
+			getLightUnit(xx,yy).setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
 
 			if (block instanceof ILightSource) {
-				block.setLightValue(((ILightSource) block).getOutputStrength());
-				block.getLightUnit().setLightColor(((ILightSource) block).getLightColor());
+				getLightUnit(xx,yy).setLightValue(((ILightSource) block).getOutputStrength());
+				getLightUnit(xx,yy).setLightColor(((ILightSource) block).getLightColor());
 			}
 
 			boolean hasLight = false;
@@ -316,9 +402,9 @@ public class World {
 						}
 
 						if (block.getLightValue(this, xx, yy) < b.getLightValue(this, xPos, yPos)) {
-							block.setLightValue(b.getLightValue(this, xPos, yPos) - 1);
-							if (block.getLightUnit().getLightColor() != b.getLightUnit().getLightColor()) {
-								block.getLightUnit().setLightColor(b.getLightUnit().getLightColor());
+							getLightUnit(xx,yy).setLightValue(b.getLightValue(this, xPos, yPos) - 1);
+							if (getLightUnit(xx,yy).getLightColor() != getLightUnit(xx,yy).getLightColor()) {
+								getLightUnit(xx,yy).setLightColor(getLightUnit(xx,yy).getLightColor());
 							}
 
 						}
@@ -327,8 +413,8 @@ public class World {
 			}
 
 			if (!hasLight && !(block instanceof ILightSource)) {
-				block.setLightValue(0);
-				block.getLightUnit().setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
+				getLightUnit(xx,yy).setLightValue(0);
+				getLightUnit(xx,yy).setLightColor(ILightSource.DEFAULT_LIGHT_COLOR);
 			}
 
 		}
@@ -395,7 +481,7 @@ public class World {
 		if (worldProperties != null ? !worldProperties.equals(world.worldProperties) : world.worldProperties != null) {
 			return false;
 		}
-		if (!Blocks.equals(world.Blocks)) {
+		if (!worldBlocks.equals(world.worldBlocks)) {
 			return false;
 		}
 		return worldTimeOfDay == world.worldTimeOfDay;
@@ -408,7 +494,7 @@ public class World {
 		result = 31 * result + worldSize.hashCode();
 		result = 31 * result + (worldProperties != null ? worldProperties.hashCode() : 0);
 		result = 31 * result + (Entities != null ? Entities.hashCode() : 0);
-		result = 31 * result + Blocks.hashCode();
+		result = 31 * result + worldBlocks.hashCode();
 		result = 31 * result + WorldTime;
 		result = 31 * result + WorldTimeDayEnd;
 		result = 31 * result + (worldTimeOfDay != null ? worldTimeOfDay.hashCode() : 0);

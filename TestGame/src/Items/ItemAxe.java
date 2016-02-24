@@ -1,6 +1,6 @@
 package Items;
 
-import Blocks.BlockWood;
+import BlockFiles.BlockWood;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Main.MainFile;

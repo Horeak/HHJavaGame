@@ -29,7 +29,7 @@ public abstract class Item implements IItem {
 
 			if (stack.getStackDamage() > getMaxItemDamage()) {
 				int i = 0;
-				for (ItemStack stackk : MainFile.game.getClient().getPlayer().inventoryItems) {
+				for (ItemStack stackk : MainFile.game.getClient().getPlayer().inventoryItems.values()) {
 					if (stackk != null) {
 						if (stackk.getItem().equals(this)) {
 							MainFile.game.getClient().getPlayer().setItem(i, null);

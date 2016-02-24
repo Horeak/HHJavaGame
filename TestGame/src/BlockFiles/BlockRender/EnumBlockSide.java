@@ -1,4 +1,4 @@
-package Blocks.BlockRender;
+package BlockFiles.BlockRender;
 
 public enum EnumBlockSide {
 	TOP,

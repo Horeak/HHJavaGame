@@ -1,7 +1,7 @@
 package Items;
 
-import Blocks.BlockDirt;
-import Blocks.BlockGrass;
+import BlockFiles.BlockDirt;
+import BlockFiles.BlockGrass;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Main.MainFile;

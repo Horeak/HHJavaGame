@@ -23,4 +23,13 @@ public enum EnumWorldTime {
 		this.SkyColor = skyColor;
 		this.lightMultiplier = lightMultiplier;
 	}
+
+	@Override
+	public String toString() {
+		return "EnumWorldTime{" +
+				"timeEnd=" + timeEnd +
+				", name='" + name + '\'' +
+				", timeBegin=" + timeBegin +
+				'}';
+	}
 }

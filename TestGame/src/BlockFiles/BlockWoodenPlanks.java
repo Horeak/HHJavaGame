@@ -1,7 +1,7 @@
-package Blocks;
+package BlockFiles;
 
-import Blocks.BlockRender.EnumBlockSide;
-import Blocks.Util.Block;
+import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Util.Block;
 import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Color;

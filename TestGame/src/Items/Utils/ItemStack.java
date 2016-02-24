@@ -1,6 +1,6 @@
 package Items.Utils;
 
-import Blocks.Util.Block;
+import BlockFiles.Util.Block;
 import WorldFiles.World;
 
 import java.util.ArrayList;

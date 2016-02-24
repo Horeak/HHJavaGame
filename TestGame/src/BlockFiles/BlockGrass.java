@@ -1,9 +1,9 @@
-package Blocks;
+package BlockFiles;
 
 
-import Blocks.BlockRender.EnumBlockSide;
-import Blocks.Util.Block;
-import Blocks.Util.ITickBlock;
+import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Util.Block;
+import BlockFiles.Util.ITickBlock;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import WorldFiles.World;
@@ -60,7 +60,7 @@ public class BlockGrass extends Block implements ITickBlock {
 	@Override
 	public void updateBlock(World world, int xx, int yy) {
 		if (!canGrassGrow(world, xx, yy)) {
-			world.setBlock(new BlockDirt(), xx, yy);
+			world.setBlock(Blocks.blockDirt, xx, yy);
 		}
 
 		if (canGrassGrow(world, xx, yy)) {
@@ -77,7 +77,7 @@ public class BlockGrass extends Block implements ITickBlock {
 							if (block instanceof BlockDirt) {
 								if (canGrassGrow(world, x, y)) {
 									if (MainFile.random.nextInt(10) == 3) {
-										world.setBlock(new BlockGrass(), x, y);
+										world.setBlock(Blocks.blockGrass, x, y);
 									}
 								}
 							}
@@ -98,7 +98,7 @@ public class BlockGrass extends Block implements ITickBlock {
 
 
 	public ItemStack getItemDropped(World world, int x, int y) {
-		return new ItemStack(new BlockDirt());
+		return new ItemStack(Blocks.blockDirt);
 	}
 
 	public int getMaxBlockDamage() {

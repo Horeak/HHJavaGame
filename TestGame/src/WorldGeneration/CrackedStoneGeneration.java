@@ -1,7 +1,8 @@
 package WorldGeneration;
 
-import Blocks.BlockCrackedStone;
-import Blocks.BlockStone;
+import BlockFiles.BlockCrackedStone;
+import BlockFiles.BlockStone;
+import BlockFiles.Blocks;
 import Main.MainFile;
 import WorldFiles.World;
 import WorldGeneration.Util.GenerationBase;
@@ -15,7 +16,7 @@ public class CrackedStoneGeneration extends GenerationBase {
 
 	@Override
 	public void generate( World world, int x, int y ) {
-		world.setBlock(new BlockCrackedStone(), x, y);
+		world.setBlock(Blocks.blockCrackedStone, x, y);
 	}
 
 	@Override
