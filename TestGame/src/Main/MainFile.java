@@ -13,10 +13,8 @@ import Settings.ConfigFile;
 import Settings.Values.KeybindingAction;
 import Sided.Client;
 import Sided.Server;
-import Utils.BlockAction;
-import Utils.ConfigValues;
-import Utils.FontHandler;
-import Utils.Registrations;
+import Utils.*;
+import WorldFiles.World;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -70,13 +68,24 @@ public class MainFile extends BaseGame {
 
 	@Override
 	public void initGame( GameContainer container ) throws SlickException {
-		client = new Client("Player1");
+		//TODO Should be easy to add ingame world loading now!
+//		FileUtil.worlds = FileUtil.getSavedWorlds();
+
+		client = new Client(saveUtil.getDataHandler("config/settings.cfg").getStringDefault("playerName", "Player"));
 		server = new Server();
 		
 		Registrations.registerGenerations();
 		CraftingRegister.registerRecipes();
 
 		setCurrentMenu(new MainMenu());
+
+		if(FileUtil.worlds != null && FileUtil.worlds.size() > 0) {
+			LoggerUtil.out.log(Level.INFO, "Found saved worlds: ");
+
+			for (World w : FileUtil.worlds) {
+				LoggerUtil.out.log(Level.INFO, w.toString());
+			}
+		}
 
 		container.getInput().addMouseListener(new MouseListener() {
 			public void mouseWheelMoved( int change ) {
@@ -315,7 +324,7 @@ public class MainFile extends BaseGame {
 
 	public void updateKeys( GameContainer gameContainer, int delta ) {
 
-		float tt = (float)delta / 35;
+		float tt = (float)delta / 25;
 		float t = 0.14f * tt;
 
 		if (getServer().getWorld() != null) {

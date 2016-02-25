@@ -51,11 +51,13 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	}
 
 
+
+
 	private static void drawShadowFront( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
 		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
 		Color temp = world.getLightUnit(x,y).getLightColor();
-		Color c = new Color(0, 0, 0, 1F - t);
+		Color c = new Color(0, 0, 0, ConfigValues.brightness - t);
 
 		Rectangle tangle = new Rectangle(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
@@ -74,7 +76,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
 		Color temp = world.getLightUnit(x,y).getLightColor();
-		Color c = new Color(0, 0, 0, 1F - t);
+		Color c = new Color(0, 0, 0, ConfigValues.brightness - t);
 
 		xStart += ConfigValues.size;
 		Path path = new Path(xStart, yStart);
@@ -98,7 +100,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 		float t = ((float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH);
 
 		Color temp = world.getLightUnit(x,y).getLightColor();
-		Color c = new Color(0, 0, 0, 1F - t);
+		Color c = new Color(0, 0, 0, ConfigValues.brightness - t);
 
 		Path path = new Path(xStart, yStart);
 		path.lineTo(xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2));
@@ -116,17 +118,19 @@ public class DefaultBlockRendering implements IBlockRenderer {
 	}
 
 	@Override
-	public void renderBlock( Graphics g, int xStart, int yStart, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem, World world, int x, int y ) {
+	public void renderBlock( Graphics g, int xStart, int yStart, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem, World world, int x, int y, int face ) {
 		if (ConfigValues.simpleBlockRender) {
 			BlockUtils.renderDefaultBlockDebug(g, block, xStart, yStart);
 
-			if (renderLighting) {
-				drawShadowFront(g, xStart, yStart, block, world, x, y);
-			}
+			if(face == 2) {
+				if (renderLighting) {
+					drawShadowFront(g, xStart, yStart, block, world, x, y);
+				}
 
-			if (!isItem) {
-				if (getBreakImageForBlock(block, x, y) != null) {
-					getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+				if (!isItem) {
+					if (getBreakImageForBlock(block, x, y) != null) {
+						getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+					}
 				}
 			}
 
@@ -136,7 +140,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 		if (!block.useBlockTexture()) {
 			if (renderMode == EnumRenderMode.render2_5D) {
 
-				if (right) {
+				if (right && face == 0) {
 					drawSide(g, xStart, yStart, block.getDefaultBlockColor().darker());
 
 					g.pushTransform();
@@ -158,7 +162,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					}
 				}
 
-				if (top) {
+				if (top && face == 1) {
 					drawTop(g, xStart, yStart, block.getDefaultBlockColor().brighter());
 
 					if (!isItem) {
@@ -174,35 +178,38 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					}
 				}
 
-				drawFront(g, xStart, yStart, block.getDefaultBlockColor());
+				if(face == 2) {
+					drawFront(g, xStart, yStart, block.getDefaultBlockColor());
 
-				if (renderLighting) {
-					drawShadowFront(g, xStart, yStart, block, world, x, y);
-				}
+					if (renderLighting) {
+						drawShadowFront(g, xStart, yStart, block, world, x, y);
+					}
 
-				if (!isItem) {
-					if (getBreakImageForBlock(block, x, y) != null) {
-						getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+					if (!isItem) {
+						if (getBreakImageForBlock(block, x, y) != null) {
+							getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						}
 					}
 				}
 
 			} else {
-				drawFront(g, xStart, yStart, block.getDefaultBlockColor());
+				if(face == 2) {
+					drawFront(g, xStart, yStart, block.getDefaultBlockColor());
+					if (renderLighting) {
+						drawShadowFront(g, xStart, yStart, block, world, x, y);
+					}
 
-				if (renderLighting) {
-					drawShadowFront(g, xStart, yStart, block, world, x, y);
-				}
-
-				if (!isItem) {
-					if (getBreakImageForBlock(block, x, y) != null) {
-						getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+					if (!isItem) {
+						if (getBreakImageForBlock(block, x, y) != null) {
+							getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						}
 					}
 				}
 			}
 		} else {
 			if (renderMode == EnumRenderMode.render2_5D) {
 
-				if (right) {
+				if (right && face == 0) {
 					if (block.getBlockTextureFromSide(EnumBlockSide.SIDE, world, x, y) != null) {
 						g.pushTransform();
 
@@ -234,7 +241,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					}
 				}
 
-				if (top) {
+				if (top && face == 0) {
 					if (block.getBlockTextureFromSide(EnumBlockSide.TOP, world, x, y) != null) {
 						Image image = block.getBlockTextureFromSide(EnumBlockSide.TOP, world, x, y).getFlippedCopy(true, false);
 
@@ -267,47 +274,51 @@ public class DefaultBlockRendering implements IBlockRenderer {
 					}
 				}
 
-				if (block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y) != null) {
-					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y);
-					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+				if(face == 2) {
+					if (block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y) != null) {
+						Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y);
+						image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
-					if (!isItem) {
-						if (getBreakImageForBlock(block, x, y) != null) {
-							getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						if (!isItem) {
+							if (getBreakImageForBlock(block, x, y) != null) {
+								getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+							}
 						}
-					}
 
-					if(renderLighting) {
-						drawShadowFront(g, xStart, yStart, block, world, x, y);
-						drawFront(g, xStart, yStart, new Color(1,1,1, 0.02F));
-					}
+						if (renderLighting) {
+							drawShadowFront(g, xStart, yStart, block, world, x, y);
+							drawFront(g, xStart, yStart, new Color(1, 1, 1, 0.02F));
+						}
 
-				} else {
-					drawFront(g, xStart, yStart, block.getDefaultBlockColor());
+					} else {
+						drawFront(g, xStart, yStart, block.getDefaultBlockColor());
+					}
 				}
 
 
 
 			} else {
-				if (block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y) != null) {
-					Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y);
-					image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+				if (face == 2) {
+					if (block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y) != null) {
+						Image image = block.getBlockTextureFromSide(EnumBlockSide.FRONT, world, x, y);
+						image.draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
 
-					if (!isItem) {
-						if (getBreakImageForBlock(block, x, y) != null) {
-							getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+						if (!isItem) {
+							if (getBreakImageForBlock(block, x, y) != null) {
+								getBreakImageForBlock(block, x, y).draw(xStart, yStart, ConfigValues.size, ConfigValues.size);
+							}
 						}
+
+
+						if (renderLighting) {
+							drawShadowFront(g, xStart, yStart, block, world, x, y);
+						}
+
+						drawFront(g, xStart, yStart, new Color(1, 1, 1, 0.02F));
+
+					} else {
+						drawFront(g, xStart, yStart, block.getDefaultBlockColor());
 					}
-
-
-					if (renderLighting) {
-						drawShadowFront(g, xStart, yStart, block, world, x, y);
-					}
-
-					drawFront(g, xStart, yStart, new Color(1,1,1, 0.02F));
-
-				} else {
-					drawFront(g, xStart, yStart, block.getDefaultBlockColor());
 				}
 			}
 		}

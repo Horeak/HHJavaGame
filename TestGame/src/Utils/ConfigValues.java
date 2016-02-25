@@ -35,4 +35,6 @@ public class ConfigValues {
 
 	public static String MinimapSize = "Normal";
 
+	public static float brightness = 1F; //Higher value = darker
+
 }

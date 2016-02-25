@@ -21,7 +21,8 @@ public class RenderUtil {
 	public static void renderItem(Graphics g2, ItemStack item, int x, int y, EnumRenderMode mode ) {
 		if (item != null && item.getItem().getRender() != null) {
 			if (item.isBlock()) {
-				((IBlockRenderer)(item.getBlock().getRender())).renderBlock(g2, x, y, mode, item.getBlock(), true, true, false, true, MainFile.game.getServer().getWorld(), 0,0);
+				for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++)
+				((IBlockRenderer)(item.getBlock().getRender())).renderBlock(g2, x, y, mode, item.getBlock(), true, true, false, true, MainFile.game.getServer().getWorld(), 0,0, i);
 			} else {
 				item.getItem().getRender().renderItem(g2, x, y, mode, item);
 			}

@@ -3,9 +3,10 @@ package Items.Utils;
 import BlockFiles.Util.Block;
 import WorldFiles.World;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ItemStack {
+public class ItemStack implements Serializable{
 
 	private IItem itemStored;
 

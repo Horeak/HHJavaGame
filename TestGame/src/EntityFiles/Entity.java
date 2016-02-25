@@ -4,28 +4,30 @@ import BlockFiles.Util.Block;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import Main.MainFile;
+import Utils.SeriPoint2D;
 import com.sun.javafx.geom.Point2D;
 
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
-public abstract class Entity {
+public abstract class Entity implements Serializable{
 
 	public boolean isOnGround = true;
-	Point2D pos;
+	SeriPoint2D pos;
 	public int blocksFallen = 0;
 	private HashMap<String, Object> entityData = new HashMap<>();
 
 	public int timeAlive = 0;
 
 	public Entity( float x, float y ) {
-		pos = new Point2D(x, y);
+		pos = new SeriPoint2D(x, y);
 	}
 
 	public abstract String getEntityDisplayName();
 
-	public Point2D getEntityPostion() {
+	public SeriPoint2D getEntityPostion() {
 		return pos;
 	}
 

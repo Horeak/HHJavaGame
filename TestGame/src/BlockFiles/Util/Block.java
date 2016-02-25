@@ -22,13 +22,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public abstract class Block implements IItem, Serializable{
-
-	//TODO Add a block id and a block registry to allow save/load
 	public static int DEFAULT_MAX_STACK_SIZE = 64;
+	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
 
 	public ArrayList<String> blockInfoList = new ArrayList<>();
 
-	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
 
 	public abstract String getBlockDisplayName();
 	public abstract Color getDefaultBlockColor();
@@ -64,7 +62,6 @@ public abstract class Block implements IItem, Serializable{
 		float tt = world.getLightUnit(x,y).getLightValue();
 
 		//TODO Find a way to achieve smooth transition between the light multipliers of to time periods
-
 		float g = (int) ((canBlockSeeSky(world, x, y) ? (ILightSource.MAX_LIGHT_STRENGTH * (world.worldTimeOfDay.lightMultiplier)) : 0));
 
 		if (tt < g) {

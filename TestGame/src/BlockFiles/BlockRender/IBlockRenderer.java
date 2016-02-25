@@ -8,9 +8,22 @@ import WorldFiles.World;
 import org.newdawn.slick.Graphics;
 
 public interface IBlockRenderer extends IItemRenderer {
-	void renderBlock( Graphics g, int rX, int rY, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem, World world, int x, int y );
+	void renderBlock( Graphics g, int rX, int rY, EnumRenderMode renderMode, Block block, boolean right, boolean top, boolean renderLighting, boolean isItem, World world, int x, int y, int face );
 
-	default void renderBlock(Graphics g, int rX, int rY, EnumRenderMode renderMode, ItemStack item, World world, int x, int y){
+
+	/**
+	 *
+	 * @param g
+	 * @param rX
+	 * @param rY
+	 * @param renderMode
+	 * @param item
+	 * @param world
+	 * @param x
+	 * @param y
+	 * @param face The face to render. (0=right, 1=top, 2=front) (required to fix the clipping on see through blocks!)
+	 */
+	default void renderBlock(Graphics g, int rX, int rY, EnumRenderMode renderMode, ItemStack item, World world, int x, int y, int  face){
 		if (item.isBlock()) {
 			Block block = item.getBlock();
 
@@ -21,7 +34,7 @@ public interface IBlockRenderer extends IItemRenderer {
 				top = world.getBlock(x, y - 1) == null || world.getBlock(x, y - 1) != null && !world.getBlock(x, y - 1).isBlockSolid() && block.isBlockSolid();
 			}
 
-			renderBlock(g, rX, rY, renderMode, block, right, top, true, false, world, x, y);
+			renderBlock(g, rX, rY, renderMode, block, right, top, true, false, world, x, y, face);
 		}
 	}
 

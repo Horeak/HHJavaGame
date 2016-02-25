@@ -9,6 +9,7 @@ import BlockFiles.Util.Block;
 import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Render.EnumRenderMode;
 import Render.Renders.BackgroundRender;
 import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
@@ -82,34 +83,37 @@ public class AbstractMainMenu extends UIMenu {
 
 		if (world != null && world.worldBlocks != null) {
 
-			HashMap<Point, Block> bbb = new HashMap<>();
+			for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
+				HashMap<Point, Block> bbb = new HashMap<>();
 
-			for(int x = 0; x < (world.worldSize.xSize); x++){
-				for(int y = 0; y < world.worldSize.ySize; y++){
-					Block b = world.getBlock(x, y);
+				for (int x = 0; x < (world.worldSize.xSize); x++) {
+					for (int y = 0; y < world.worldSize.ySize; y++) {
+						Block b = world.getBlock(x, y);
 
-					if(x > ((MainFile.game.gameContainer.getScreenWidth() / ConfigValues.size) + 1) || y > ((MainFile.game.gameContainer.getScreenHeight() / ConfigValues.size) + 1)) continue;
+						if (x > ((MainFile.game.gameContainer.getScreenWidth() / ConfigValues.size) + 1) || y > ((MainFile.game.gameContainer.getScreenHeight() / ConfigValues.size) + 1))
+							continue;
+
+						if (b != null && b.getRender() != null) {
+							if (b.isBlockSolid()) {
+								((DefaultBlockRendering) b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + ((x - 1) * ConfigValues.size), (BlockRendering.START_Y_POS) + (y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, x, y, i);
+							} else {
+								bbb.put(new Point(x, y), b);
+							}
+						}
+
+					}
+				}
+
+				for (Map.Entry<Point, Block> ent : bbb.entrySet()) {
+					Block b = ent.getValue();
 
 					if (b != null && b.getRender() != null) {
-						if (b.isBlockSolid()) {
-							((DefaultBlockRendering)b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + ((x-1) * ConfigValues.size), (BlockRendering.START_Y_POS) + (y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, x, y);
-						} else {
-							bbb.put(new Point(x, y), b);
-						}
+						((DefaultBlockRendering) b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + ((ent.getKey().x - 1) * ConfigValues.size), (BlockRendering.START_Y_POS) + (ent.getKey().y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, ent.getKey().x, ent.getKey().y, i);
 					}
-
-			}
-		}
-
-			for(Map.Entry<Point, Block> ent : bbb.entrySet()){
-				Block b = ent.getValue();
-
-				if (b != null && b.getRender() != null) {
-					((DefaultBlockRendering)b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + ((ent.getKey().x - 1) * ConfigValues.size), (BlockRendering.START_Y_POS) + (ent.getKey().y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, ent.getKey().x, ent.getKey().y);
 				}
+
+
 			}
-
-
 
 		}
 

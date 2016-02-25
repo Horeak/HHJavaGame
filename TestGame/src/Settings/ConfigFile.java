@@ -45,7 +45,16 @@ public class ConfigFile extends Config{
 		public void setValue(Object ob) {
 			MainFile.game.gameContainer.setVSync((Boolean)ob);
 		}
-	}
+	}, new ConfigOption("Brightness", new Float[]{1F, 0.25F, 0.5F, 0.75F}, 1F) {
+		@Override
+		public void setValue(Object ob) {
+			if((float)ob < 1F){
+				ConfigValues.brightness = (float)ob + 1F;
+			}else{
+				ConfigValues.brightness = (float)ob;
+			}
+		}
+	},
 	};
 
 	private Keybinding[] keybindings = new Keybinding[]{

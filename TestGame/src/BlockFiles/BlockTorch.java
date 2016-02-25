@@ -10,6 +10,7 @@ import org.newdawn.slick.Image;
 
 public class BlockTorch extends Block implements ILightSource {
 
+//TODO Get a proper texture that always fits or just use a colored cube (current texture looks weird when in the air or on a wall)
 	public static Image texture;
 
 	@Override

@@ -16,8 +16,7 @@ import Threads.WorldEntityUpdateThread;
 import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
 import Threads.WorldUpdateThread;
-import Utils.ConfigValues;
-import Utils.DataHandler;
+import Utils.*;
 import com.sun.javafx.geom.Vec2d;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -26,6 +25,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 //TODO Make sure there is no code left that is hardcoded to one player
 public class World {
@@ -51,8 +51,13 @@ public class World {
 	public int WorldDay = 1;
 
 	public boolean generating = false;
+	public boolean loaded = false;
 
 	public World( String name, EnumWorldSize size ) {
+		while(FileUtil.isThereWorldWithName(name)){
+			name += "-";
+		}
+
 		this.worldName = name;
 		this.worldSize = size;
 		resetValues();
@@ -83,13 +88,26 @@ public class World {
 	}
 
 	public void start() {
-		MainFile.game.getClient().setPlayer(new EntityPlayer(0,0, MainFile.game.getClient().playerId));
+		if(!loaded) {
+			MainFile.game.getClient().setPlayer(new EntityPlayer(0, 0, MainFile.game.getClient().playerId));
+		}else{
+			loadPlayer();
+		}
+
 		worldUpdateThread.start();
+		TimeTaker.startTimeTaker("worldTimePlayed:" + worldName);
 	}
 
 	public void resetValues() {
-		worldBlocks = new Block[ worldSize.xSize ][ worldSize.ySize ];
-		lightUnits = new LightUnit[worldSize.xSize][worldSize.ySize];
+		if(worldSize == null){
+			LoggerUtil.out.log(Level.SEVERE, "worldSize was null! Unable to resetValues in world! [" + worldName + "]");
+		}
+
+
+		if(worldSize != null) {
+			worldBlocks = new Block[ worldSize.xSize ][ worldSize.ySize ];
+			lightUnits = new LightUnit[ worldSize.xSize ][ worldSize.ySize ];
+		}
 
 		worldTimeOfDay = EnumWorldTime.MORNING;
 		WorldTime = worldTimeOfDay.timeBegin;
@@ -97,21 +115,24 @@ public class World {
 	}
 
 	public void generate() {
-		worldGenerationThread.start();
+		if(!loaded) {
+			saveWorld();
+			worldGenerationThread.start();
+		}
+
 		worldEntityUpdateThread.start();
 		worldLightUpdateThread.start();
-
-		//TODO Debug
-//		resetValues();
-//		loadWorld("test123");
 	}
 	public void doneGenerating() {
-		spawnPlayer(MainFile.game.getClient().getPlayer());
+		if(!loaded) {
+			spawnPlayer(MainFile.game.getClient().getPlayer());
+		}else{
+			loadPlayer();
+		}
 	}
 
 	public void stop() {
 		saveWorld();
-
 		MainFile.game.getClient().setPlayer(null);
 
 		worldUpdateThread.stop();
@@ -119,20 +140,18 @@ public class World {
 		worldLightUpdateThread.stop();
 	}
 
-	//TODO Add world saving and auto saving
+	//TODO Add auto saving (Save the world every 5 min or so)
 	public void saveWorld(){
 		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/world.data");
-		handlerSets.setObject("worldName", worldName);
 		handlerSets.setObject("worldSize", worldSize);
 		handlerSets.setObject("worldTimeOfDay", worldTimeOfDay);
 		handlerSets.setObject("worldTime", WorldTime);
 		handlerSets.setObject("dayNumber", WorldDay);
+		handlerSets.setObject("timeStart", TimeTaker.getTime("worldTimePlayed:" + worldName));
 
 		DataHandler handlerProperties = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/worldProperties.data");
 		handlerProperties.setObject("properties", worldProperties);
 
-		DataHandler handlerEntities = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/worldEntities.data");
-		handlerEntities.setObject("entities", Entities);
 
 		HashMap<Point, Block> blStore = new HashMap<>();
 		for(int x = 0; x < worldSize.xSize; x++){
@@ -145,14 +164,29 @@ public class World {
 		}
 
 		MainFile.game.saveUtil.saveObjectFile(blStore, "saves/" + worldName + "/worldBlocks.data");
+		MainFile.game.saveUtil.saveObjectFile(Entities, "saves/" + worldName + "/worldEntities.data");
+	}
+
+	public void loadPlayer(){
+		//TODO Make it where if it cant find the player in the world just add the one that was created before checking
+		for(Entity ent : Entities){
+			if(ent instanceof EntityPlayer){
+				EntityPlayer pl = (EntityPlayer)ent;
+
+				if(pl.name == MainFile.game.getClient().playerId){
+					MainFile.game.getClient().setPlayer(pl);
+					return;
+				}
+			}
+		}
 	}
 
 	public void loadWorld(String name){
 		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + name + "/world.data");
-//		worldName = handlerSets.getString("worldName");
 		worldName = name;
 		WorldTime = handlerSets.getInteger("worldTime");
 		WorldDay = handlerSets.getInteger("dayNumber");
+		TimeTaker.startTimeTaker("worldTimePlayed:" + worldName, System.currentTimeMillis() - handlerSets.getLong("timeStart"));
 
 		String t = handlerSets.getString("worldSize");
 		for(EnumWorldSize ee : EnumWorldSize.values()) {
@@ -169,6 +203,10 @@ public class World {
 			}
 		}
 
+		DataHandler handlerProperties = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/worldProperties.data");
+		worldProperties = (HashMap<String, Object>)handlerProperties.getObject("properties");
+
+
 		Object ob = MainFile.game.saveUtil.loadObjectFile("saves/" + name + "/worldBlocks.data");
 		HashMap<Point, Block> bl = (HashMap<Point, Block>)ob;
 
@@ -178,6 +216,10 @@ public class World {
 			}
 		}
 
+
+		Entities = (ArrayList<Entity>)MainFile.game.saveUtil.loadObjectFile("saves/" + worldName + "/worldEntities.data");
+
+		loaded = true;
 	}
 
 
@@ -501,5 +543,23 @@ public class World {
 		result = 31 * result + WorldDay;
 		result = 31 * result + (generating ? 1 : 0);
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		String t = TimeTaker.getText("worldTimePlayed:" + worldName, "<days><hours><mins><secs>", false);
+
+		return "World{" +
+				"worldName='" + worldName + '\'' +
+				", worldSize=" + worldSize +
+				", entities=" + (Entities != null ? Entities.size() : 0) +
+				", timePlayed= " + t.substring(0, t.length()-1) +
+				", properties=" + worldProperties +
+				", loaded=" + loaded +
+				", generating=" + generating +
+				", WorldDay=" + WorldDay +
+				", WorldTime=" + WorldTime +
+				", worldTimeOfDay=" + worldTimeOfDay +
+				'}';
 	}
 }
