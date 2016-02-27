@@ -39,6 +39,8 @@ public class World {
 	public ArrayList<Entity> Entities = new ArrayList<>();
 	public ArrayList<Entity> RemoveEntities = new ArrayList<>();
 
+
+	//TODO Add chunks? When unloading a chunk save it to disk and remove it from the list. And read it from disk when loading it
 	public Block[][] worldBlocks;
 	private LightUnit[][] lightUnits;
 	public ArrayList<Point> tickableBlocks = new ArrayList<>();
@@ -191,8 +193,14 @@ public class World {
 				}
 			}
 		}
+
+		//If player loading failed add created player
+		if(MainFile.game.getClient().getPlayer() != null){
+			Entities.add(MainFile.game.getClient().getPlayer());
+		}
 	}
 
+	//TODO Blocks are not being loaded!
 	public void loadWorld(String name){
 		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + name + "/world.data");
 		worldName = name;

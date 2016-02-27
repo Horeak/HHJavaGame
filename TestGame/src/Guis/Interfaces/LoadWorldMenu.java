@@ -31,6 +31,10 @@ public class LoadWorldMenu extends AbstractMainMenu {
 	public World selected = null;
 
 
+	//TODO Add delete and rename
+	//TODO Add scrollbar...
+
+
 	public LoadWorldMenu() {
 		super();
 		FileUtil.worlds = FileUtil.getSavedWorlds();
@@ -198,9 +202,9 @@ public class LoadWorldMenu extends AbstractMainMenu {
 		@Override
 		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			if(selected != null){
-				selected.loadWorld(selected.worldName);
-
 				MainFile.game.getServer().setWorld(selected);
+				MainFile.game.getServer().getWorld().loadWorld(MainFile.game.getServer().getWorld().worldName);
+
 				MainFile.game.getServer().getWorld().generate();
 				MainFile.game.getServer().getWorld().start();
 				MainFile.game.getServer().getWorld().loadPlayer();

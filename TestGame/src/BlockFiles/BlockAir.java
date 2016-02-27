@@ -22,4 +22,9 @@ public class BlockAir extends Block {
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
 		return null;
 	}
+
+	@Override
+	public void loadTextures() {
+
+	}
 }

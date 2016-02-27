@@ -9,12 +9,12 @@ import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
 
 public class BlockGrass extends Block implements ITickBlock {
-
-	public static Image topTexture =  MainFile.game.imageLoader.getImage("blocks","grassTop");
-	public static Image sideTexture =  MainFile.game.imageLoader.getImage("blocks","grassSide");
+	public static Image topTexture =  null;
+	public static Image sideTexture =  null;
 
 	public static boolean canGrassGrow( World world, int x, int y ) {
 		Block block = world.getBlock(x, y);
@@ -28,6 +28,12 @@ public class BlockGrass extends Block implements ITickBlock {
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
 		return side == EnumBlockSide.TOP ? topTexture : sideTexture;
+	}
+
+	@Override
+	public void loadTextures() {
+		topTexture =  MainFile.game.imageLoader.getImage("blocks","grassTop");
+		sideTexture =  MainFile.game.imageLoader.getImage("blocks","grassSide");
 	}
 
 	@Override

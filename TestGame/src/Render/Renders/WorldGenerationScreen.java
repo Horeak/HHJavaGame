@@ -16,6 +16,8 @@ import java.awt.*;
 
 public class WorldGenerationScreen extends AbstractWindowRender {
 
+
+	//TODO Find an alternative method to render the generation which is not as heavy as this one
 	public static String generationStatus = "";
 	String text = ".";
 	int tt = 0;

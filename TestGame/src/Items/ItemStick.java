@@ -17,9 +17,12 @@ public class ItemStick extends Item {
 
 	@Override
 	public Image getTexture() {
-		if(texture == null) texture =  MainFile.game.imageLoader.getImage("items","woodstick");
-
 		return texture;
+	}
+
+	@Override
+	public void loadTextures() {
+		texture =  MainFile.game.imageLoader.getImage("items","woodstick");
 	}
 
 	@Override

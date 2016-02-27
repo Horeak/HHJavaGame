@@ -11,8 +11,11 @@ import java.util.ArrayList;
 
 public abstract class Item implements IItem, Serializable {
 
+	//TODO Add item registry similar to the blocks
+
 	public abstract int getMaxItemDamage();
 	public abstract Image getTexture();
+	public abstract void loadTextures();
 
 	public ArrayList<String> getTooltips(ItemStack stack){
 		ArrayList<String> tt = new ArrayList<>();
@@ -49,6 +52,7 @@ public abstract class Item implements IItem, Serializable {
 	public IItemRenderer getRender() {
 		return ItemRendrerer.staticReferense;
 	}
+
 
 	@Override
 	public IItem clone() throws CloneNotSupportedException {

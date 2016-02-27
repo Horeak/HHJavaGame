@@ -26,11 +26,12 @@ public class BlockLeaves extends Block {
 
 	@Override
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if (texture == null) {
-			texture =  MainFile.game.imageLoader.getImage("blocks", "leaves");
-		}
-
 		return texture;
+	}
+
+	@Override
+	public void loadTextures() {
+		texture =  MainFile.game.imageLoader.getImage("blocks", "leaves");
 	}
 
 	@Override

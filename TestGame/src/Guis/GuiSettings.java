@@ -41,7 +41,8 @@ public class GuiSettings extends GuiGame {
 		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
 
 
-		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 2))));
+		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 3))));
+		guiObjects.add(new texturePack(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 4))));
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
 		for (ConfigOption option : MainFile.game.getConfig().getConfigOptions()) {
@@ -142,6 +143,18 @@ public class GuiSettings extends GuiGame {
 		@Override
 		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			MainFile.game.setCurrentMenu(new GuiIngameMenu(MainFile.game.gameContainer, ConfigValues.PAUSE_GAME_IN_GUI));
+		}
+	}
+
+	class texturePack extends MainMenuButton {
+
+		public texturePack( int y ) {
+			super(MainFile.game, renderStart, y, 190, 32, "Texturepacks", guiInst);
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new GuiTexturepacks(MainFile.game.gameContainer, false));
 		}
 	}
 }

@@ -9,8 +9,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 public class BlockSelectionRender extends AbstractWindowRender {
-	public static Image textureValid =  MainFile.game.imageLoader.getImage("textures", "blockSelectionValid");
-	public static Image textureInvalid =  MainFile.game.imageLoader.getImage("textures", "blockSelectionInvalid");
+
+	public void loadTextures(){
+		textureValid =  MainFile.game.imageLoader.getImage("textures", "blockSelectionValid");
+		textureInvalid =  MainFile.game.imageLoader.getImage("textures", "blockSelectionInvalid");
+	}
+
+	public static Image textureValid =  null;
+	public static Image textureInvalid =  null;
 
 	@Override
 	public void render( Graphics g2 ) {

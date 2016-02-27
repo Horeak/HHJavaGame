@@ -1,5 +1,6 @@
 package Guis.Interfaces;
 
+import Guis.GuiTexturepacks;
 import Guis.Objects.GuiButton;
 import Guis.Objects.MainMenuButton;
 import Interface.UIMenu;
@@ -33,7 +34,9 @@ public class SettingsMenu extends AbstractMainMenu {
 		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
 
 
-		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 2))));
+		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 3))));
+		guiObjects.add(new texturePack(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 4))));
+
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
 		for (ConfigOption option : MainFile.game.getConfig().getConfigOptions()) {
@@ -132,6 +135,18 @@ public class SettingsMenu extends AbstractMainMenu {
 		@Override
 		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			MainFile.game.setCurrentMenu(new MainMenu());
+		}
+	}
+
+	class texturePack extends MainMenuButton {
+
+		public texturePack( int y ) {
+			super(MainFile.game, renderStart, y, 190, 32, "Texturepacks", guiInst);
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			MainFile.game.setCurrentMenu(new TexturepacksInterface());
 		}
 	}
 }

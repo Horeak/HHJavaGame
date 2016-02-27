@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class EntityPlayer extends Entity implements IInventory {
 
 	//TODO Add proper player render
-	public static org.newdawn.slick.Image playerTexutre =  MainFile.game.imageLoader.getImage("textures", "player");
+	public static org.newdawn.slick.Image playerTexutre =  null;
 	/**
 	 * 1 = left
 	 * 2 = right
@@ -68,6 +68,11 @@ public class EntityPlayer extends Entity implements IInventory {
 			playerTexutre.draw(renderX, renderY - 64, 32, 64);
 		}
 
+	}
+
+	@Override
+	public void loadTextures() {
+		playerTexutre =  MainFile.game.imageLoader.getImage("textures", "player");
 	}
 
 	public Rectangle2D getPlayerBounds() {

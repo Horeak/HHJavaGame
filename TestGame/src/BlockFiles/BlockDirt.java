@@ -25,9 +25,12 @@ public class BlockDirt extends Block {
 		return true;
 	}
 
-	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if(texture == null) texture =  MainFile.game.imageLoader.getImage("blocks","dirt");
+	@Override
+	public void loadTextures() {
+		texture =  MainFile.game.imageLoader.getImage("blocks","dirt");
+	}
 
+	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
 		return texture;
 	}
 

@@ -80,6 +80,7 @@ public abstract class Block implements IItem, Serializable{
 	public boolean useBlockTexture() {
 		return true;
 	}
+	public abstract void loadTextures();
 
 	public int getMaxBlockDamage() {
 		return 10;

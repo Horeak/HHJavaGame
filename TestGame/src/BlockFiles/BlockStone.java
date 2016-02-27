@@ -23,9 +23,12 @@ public class BlockStone extends Block {
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if(texture == null) texture =  MainFile.game.imageLoader.getImage("blocks","stone");
-
 		return texture;
+	}
+
+	@Override
+	public void loadTextures() {
+		texture =  MainFile.game.imageLoader.getImage("blocks","stone");
 	}
 
 	public int getMaxBlockDamage() {

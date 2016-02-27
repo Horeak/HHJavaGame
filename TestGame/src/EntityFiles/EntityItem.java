@@ -67,6 +67,11 @@ public class EntityItem extends Entity {
 		g2.popTransform();
 	}
 
+	@Override
+	public void loadTextures() {
+
+	}
+
 	public void updateEntity() {
 		super.updateEntity();
 

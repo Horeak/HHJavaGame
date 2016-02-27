@@ -19,9 +19,12 @@ public class ItemPickaxe extends Item {
 
 	@Override
 	public Image getTexture() {
-		if(texture == null) texture =  MainFile.game.imageLoader.getImage("items","pickaxe");
-
 		return texture;
+	}
+
+	@Override
+	public void loadTextures() {
+		texture =  MainFile.game.imageLoader.getImage("items","pickaxe");
 	}
 
 	@Override

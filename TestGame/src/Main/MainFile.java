@@ -14,15 +14,13 @@ import Settings.Values.KeybindingAction;
 import Sided.Client;
 import Sided.Server;
 import Utils.*;
-import WorldFiles.World;
+import Utils.TexutrePackFiles.TextureLoader;
+import Utils.TexutrePackFiles.TexturePack;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.Rectangle;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.Font;
 import java.util.Random;
 import java.util.logging.Level;
@@ -44,6 +42,12 @@ public class MainFile extends BaseGame {
 	public static boolean hasDebugSize = false;
 	public static boolean hasScrolled = false;
 	public static int debugSize = 265;
+
+	public static TexturePack defaultTexturePack = null;
+
+	public TextureLoader imageLoader = new TextureLoader(this);
+	public TexturePack texturePack;
+
 	
 	private Client client;
 	private Server server;
@@ -53,6 +57,7 @@ public class MainFile extends BaseGame {
 	}
 
 
+	//TODO Add texutrepack menu. (Similar to load world?)
 	public static void main( String[] args ) {
 		try {
 
@@ -66,11 +71,25 @@ public class MainFile extends BaseGame {
 	}
 
 	@Override
+	public void init(GameContainer container) throws SlickException {
+		LoggerUtil.activate(title);
+		LoggerUtil.activateLogFile("log/", this);
+
+		super.init(container);
+	}
+
+	@Override
 	public void initGame( GameContainer container ) throws SlickException {
-		LoggerUtil.activateLogFile("output.log", this);
 		LoggerUtil.out.log(Level.INFO, "Log file activated.");
 
+		defaultTexturePack = new TexturePack("Default", getClass().getResource((game.getTextureLocation() + "/")).getPath().replace("%20", " "));
+		texturePack = defaultTexturePack;
+
 		FileUtil.worlds = FileUtil.getSavedWorlds();
+		FileUtil.texturePacks = FileUtil.getTexturePacks();
+
+
+
 
 		client = new Client(saveUtil.getDataHandler("config/settings.cfg").getStringDefault("playerName", "Player"));
 		server = new Server();
@@ -79,6 +98,8 @@ public class MainFile extends BaseGame {
 		
 		Registrations.registerGenerations();
 		CraftingRegister.registerRecipes();
+
+		imageLoader.reloadTextures();
 
 		setCurrentMenu(new MainMenu());
 

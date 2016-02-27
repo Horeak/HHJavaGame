@@ -11,11 +11,12 @@ public class BlockCrackedStone extends BlockStone {
 	public static Image texture;
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if (texture == null) {
-			texture =  MainFile.game.imageLoader.getImage("blocks","crackedStone");
-		}
-
 		return texture;
+	}
+
+	@Override
+	public void loadTextures() {
+		texture =  MainFile.game.imageLoader.getImage("blocks","crackedStone");
 	}
 
 	@Override

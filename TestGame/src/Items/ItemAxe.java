@@ -18,9 +18,12 @@ public class ItemAxe extends Item {
 
 	@Override
 	public Image getTexture() {
-		if(texture == null)  texture =  MainFile.game.imageLoader.getImage("items","axe");
-
 		return texture;
+	}
+
+	@Override
+	public void loadTextures() {
+		texture =  MainFile.game.imageLoader.getImage("items","axe");
 	}
 
 	@Override

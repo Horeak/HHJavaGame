@@ -67,8 +67,8 @@ public abstract class Entity implements Serializable{
 	public abstract boolean shouldDamage( DamageSource source );
 
 	public abstract void damageEntity( DamageSource source, DamageBase damage );
-
 	public abstract void renderEntity( org.newdawn.slick.Graphics g2, int renderX, int renderY );
+	public abstract void loadTextures();
 
 	public Block getBlockBelow() {
 		return MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);

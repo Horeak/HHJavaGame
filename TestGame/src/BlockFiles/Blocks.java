@@ -51,5 +51,5 @@ public class Blocks {
 	public static Block blockPlanks = addBlock(new BlockWoodenPlanks());
 	public static Block blockSapling = addBlock(new BlockSapling());
 
-	public static Block blockTorch = addBlock(new BlockLightCube());
+	public static Block blockTorch = addBlock(new BlockTorch());
 }

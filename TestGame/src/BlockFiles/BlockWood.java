@@ -8,8 +8,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
 public class BlockWood extends Block {
-	public static Image topTexture =  MainFile.game.imageLoader.getImage("blocks","woodTop");
-	public static Image sideTexture =  MainFile.game.imageLoader.getImage("blocks","woodSide");
+	public static Image topTexture =  null;
+	public static Image sideTexture =  null;
 
 	@Override
 	public String getBlockDisplayName() {
@@ -24,5 +24,11 @@ public class BlockWood extends Block {
 	@Override
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
 		return side == EnumBlockSide.TOP ? topTexture : sideTexture;
+	}
+
+	@Override
+	public void loadTextures() {
+		topTexture =  MainFile.game.imageLoader.getImage("blocks","woodTop");
+		sideTexture =  MainFile.game.imageLoader.getImage("blocks","woodSide");
 	}
 }

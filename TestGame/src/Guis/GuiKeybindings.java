@@ -25,7 +25,6 @@ public class GuiKeybindings extends GuiGame {
 	public GuiKeybindings guiInst = this;
 	public HashMap<String, ArrayList<Keybinding>> keyGroupss = new HashMap<>();
 	Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
-	int dd = 0;
 	boolean selecting = false;
 
 	public GuiKeybindings( GameContainer container, boolean b ) {
@@ -78,8 +77,6 @@ public class GuiKeybindings extends GuiGame {
 
 	@Override
 	public void render( Graphics g2 ) {
-		dd += 1;
-
 		g2.setColor(org.newdawn.slick.Color.black);
 		g2.drawLine(renderStart, BlockRendering.START_Y_POS, renderStart, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
 		g2.drawLine(renderStart + renderWidth, BlockRendering.START_Y_POS, renderStart + renderWidth, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
@@ -137,7 +134,6 @@ public class GuiKeybindings extends GuiGame {
 
 		@Override
 		public void onClicked( int button, int x, int y, UIMenu menu ) {
-			if (dd >= 10) {
 				selected ^= true;
 				selecting = true;
 
@@ -148,7 +144,6 @@ public class GuiKeybindings extends GuiGame {
 						}
 					}
 				}
-			}
 		}
 
 

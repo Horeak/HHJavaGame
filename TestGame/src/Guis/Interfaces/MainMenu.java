@@ -59,10 +59,6 @@ public class MainMenu extends AbstractMainMenu {
 		return true;
 	}
 
-	public void buttonPressed( GuiButton button ) {
-		System.out.println(button.text);
-	}
-
 	public class NewGameButton extends MainMenuButton {
 
 		public NewGameButton( int y ) {

@@ -13,8 +13,13 @@ import org.newdawn.slick.fills.GradientFill;
 
 public class BackgroundRender extends AbstractWindowRender {
 
-	public static Image sunImage =  MainFile.game.imageLoader.getImage("textures", "sun");
-	public static Image moonImage =  MainFile.game.imageLoader.getImage("textures", "moon");
+	public void loadTextures(){
+		sunImage =  MainFile.game.imageLoader.getImage("textures", "sun");
+		moonImage =  MainFile.game.imageLoader.getImage("textures", "moon");
+	}
+
+	public static Image sunImage =  null;
+	public static Image moonImage =  null;
 
 	public static void render( Graphics g2, World world ) {
 		Color temp = g2.getColor();

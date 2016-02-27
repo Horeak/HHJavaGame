@@ -8,12 +8,12 @@ import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockLightCube extends Block implements ILightSource {
+public class BlockTorch extends Block implements ILightSource {
 
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Light Cube";
+		return "Torch";
 	}
 
 	@Override
@@ -46,6 +46,11 @@ public class BlockLightCube extends Block implements ILightSource {
 
 	public boolean useBlockTexture() {
 		return false;
+	}
+
+	@Override
+	public void loadTextures() {
+
 	}
 
 }
