@@ -9,6 +9,7 @@ import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 
 public class Registrations {
@@ -23,5 +24,8 @@ public class Registrations {
 
 		generationBases.add(new TreeGeneration());
 		generationBases.add(new CrackedStoneGeneration());
+
+
+		LoggerUtil.out.log(Level.INFO, "World generations registered.");
 	}
 }

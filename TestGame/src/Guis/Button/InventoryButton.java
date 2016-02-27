@@ -7,6 +7,7 @@ import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.FontHandler;
+import Utils.LoggerUtil;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -86,10 +87,8 @@ public class InventoryButton extends GuiObject {
 					}
 
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.exception(e);
 				}
-
-//TODO Make right click with held item put one item from heldItem to empty slot
 
 			} else if (button == Input.MOUSE_RIGHT_BUTTON) {
 				if (gui.heldItem == null && MainFile.game.getClient().getPlayer().getItem(num) != null) {
@@ -124,7 +123,7 @@ public class InventoryButton extends GuiObject {
 			}
 
 		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
+			LoggerUtil.exception(e);
 		}
 	}
 

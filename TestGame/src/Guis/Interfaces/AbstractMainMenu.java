@@ -13,6 +13,7 @@ import Render.EnumRenderMode;
 import Render.Renders.BackgroundRender;
 import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
+import Utils.FileUtil;
 import WorldFiles.EnumWorldSize;
 import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
@@ -21,6 +22,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +34,9 @@ public class AbstractMainMenu extends UIMenu {
 	public static int renderWidth = 190;
 	public static World world;
 	BackgroundRender render = new BackgroundRender();
+
+	public boolean renderBar = true;
+	public boolean renderOverlayBlur = true;
 
 	public AbstractMainMenu() {
 		initWorld();
@@ -117,16 +122,19 @@ public class AbstractMainMenu extends UIMenu {
 
 		}
 
-		g2.setColor(org.newdawn.slick.Color.black);
-		g2.drawLine(renderStart, BlockRendering.START_Y_POS, renderStart, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
-		g2.drawLine(renderStart + renderWidth, BlockRendering.START_Y_POS, renderStart + renderWidth, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+		if(renderOverlayBlur){
+			g2.setColor(new Color(152, 152, 152, 96));
+			g2.fill(MainFile.blockRenderBounds);
+		}
 
-		g2.setColor(new Color(152, 152, 152, 96));
-		g2.fill(MainFile.blockRenderBounds);
+		if(renderBar) {
+			g2.setColor(org.newdawn.slick.Color.black);
+			g2.drawLine(renderStart, BlockRendering.START_Y_POS, renderStart, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+			g2.drawLine(renderStart + renderWidth, BlockRendering.START_Y_POS, renderStart + renderWidth, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
 
-		g2.setColor(new Color(95, 95, 95, 112));
-		g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
-
+			g2.setColor(new Color(95, 95, 95, 112));
+			g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
+		}
 	}
 
 

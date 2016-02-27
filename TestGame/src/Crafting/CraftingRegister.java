@@ -7,9 +7,11 @@ import Items.ItemShovel;
 import Items.ItemStick;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Utils.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 public class CraftingRegister {
 
@@ -33,7 +35,7 @@ public class CraftingRegister {
 
 			recipes.add(new CraftingRecipe(input, output));
 		} catch (Exception e) {
-			e.printStackTrace();
+		LoggerUtil.exception(e);
 		}
 	}
 
@@ -97,6 +99,9 @@ public class CraftingRegister {
 		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(Blocks.blockStone, 1)}, new ItemStack(new ItemShovel()));
 		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(Blocks.blockStone, 2)}, new ItemStack(new ItemAxe()));
 		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(Blocks.blockStone, 3)}, new ItemStack(new ItemPickaxe()));
+
+
+		LoggerUtil.out.log(Level.INFO, "Crafting recipes registered.");
 	}
 
 }

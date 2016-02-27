@@ -66,7 +66,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
 
 			g2.drawString(" - World name: '" + MainFile.game.getServer().getWorld().worldName + "'", textStartX, linePos += (lineLength));
-			g2.drawString(" - Time played: " + TimeTaker.getText("worldTimePlayed:" + MainFile.game.getServer().getWorld().worldName, "<days><hours><mins><secs>", false), textStartX, linePos += (lineLength));
+			g2.drawString(" - Time played: " + MainFile.game.getServer().getWorld().getTimePlayed(), textStartX, linePos += (lineLength));
 
 			g2.drawString(" - World time: " + MainFile.game.getServer().getWorld().WorldTime + " / " + MainFile.game.getServer().getWorld().WorldTimeDayEnd, textStartX, linePos += (lineLength * 2));
 			g2.drawString(" - Time to next phase (" + MainFile.game.getServer().getWorld().getNextWorldTime().name + "): " + ((MainFile.game.getServer().getWorld().getNextWorldTime() == EnumWorldTime.MORNING ? EnumWorldTime.NIGHT.timeEnd : MainFile.game.getServer().getWorld().getNextWorldTime().timeBegin) - MainFile.game.getServer().getWorld().WorldTime), textStartX, linePos += (lineLength));

@@ -25,7 +25,6 @@ public class CreateWorldMenu extends AbstractMainMenu {
 	createWorldButton createWorldButton;
 
 
-	//TODO Add world loading. (Make it its own menu and have load/create buttons in this one?)
 	public CreateWorldMenu() {
 		super();
 

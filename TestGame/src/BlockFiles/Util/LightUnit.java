@@ -4,7 +4,6 @@ import org.newdawn.slick.Color;
 
 public class LightUnit {
 
-//TODO See if it is possible to fix «Border»/«Grid» between blocks by changing light values
 	private Color lightColor;
 	private float lightValue;
 

@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class BlockRendering extends AbstractWindowRender {
 
-//TODO Look at the possibility of rendering block sides sepratly. (For example render top sides first, then right sides, then front. Would solve clipping issue with torch/leaves)
 	public static final int START_X_POS = 0; //23
 	public static final int START_Y_POS = 0; //23
 
@@ -59,7 +58,6 @@ public class BlockRendering extends AbstractWindowRender {
 				}
 			}
 
-			//TODO Fix overlay when a non-solid block is diagonally down to the left of a solid one. (Might be fixable with separate side renders)
 			//Non-solid block rendering is delayed to prevent overlay issues
 			for (Map.Entry<Point, Block> bb : b.entrySet()) {
 				float blockX = (float) (((bb.getKey().x) - plPos.x) + ConfigValues.renderRange);

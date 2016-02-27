@@ -18,7 +18,13 @@ public class Blocks {
 	}
 
 	public static int getId(Block bl){
-		return blockRegistry.get(bl);
+		for(Map.Entry<Block, Integer> ent :blockRegistry.entrySet()){
+			if(bl.getItemName() == ent.getKey().getItemName()){
+				return ent.getValue();
+			}
+		}
+
+		return -1;
 	}
 
 	public static Block getBlock(int i){
@@ -45,5 +51,5 @@ public class Blocks {
 	public static Block blockPlanks = addBlock(new BlockWoodenPlanks());
 	public static Block blockSapling = addBlock(new BlockSapling());
 
-	public static Block blockTorch = addBlock(new BlockTorch());
+	public static Block blockTorch = addBlock(new BlockLightCube());
 }

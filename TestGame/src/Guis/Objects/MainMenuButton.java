@@ -40,7 +40,7 @@ public abstract class MainMenuButton extends GuiButton {
 
 		FontHandler.resizeFont(g2, 22);
 		FontHandler.changeFontStyle(g2, Font.BOLD);
-		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), text, x, y, 185);
+		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), text, x, y, width);
 
 		FontHandler.resetFont(g2);
 

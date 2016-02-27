@@ -8,14 +8,12 @@ import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockTorch extends Block implements ILightSource {
+public class BlockLightCube extends Block implements ILightSource {
 
-//TODO Get a proper texture that always fits or just use a colored cube (current texture looks weird when in the air or on a wall)
-	public static Image texture;
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Torch";
+		return "Light Cube";
 	}
 
 	@Override
@@ -23,13 +21,6 @@ public class BlockTorch extends Block implements ILightSource {
 		return Color.yellow;
 	}
 
-
-	@Override
-	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		if(texture == null) texture =  MainFile.game.imageLoader.getImage("blocks","torch");
-
-		return texture;
-	}
 
 	@Override
 	public int getOutputStrength() {
@@ -46,6 +37,15 @@ public class BlockTorch extends Block implements ILightSource {
 
 	public boolean canPassThrough() {
 		return true;
+	}
+
+	@Override
+	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
+		return null;
+	}
+
+	public boolean useBlockTexture() {
+		return false;
 	}
 
 }

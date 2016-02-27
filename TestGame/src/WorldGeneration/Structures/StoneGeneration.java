@@ -4,6 +4,7 @@ package WorldGeneration.Structures;
 import BlockFiles.BlockStone;
 import BlockFiles.Blocks;
 import Render.SimplexNoise;
+import Utils.LoggerUtil;
 import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
@@ -35,7 +36,7 @@ public class StoneGeneration extends StructureGeneration {
 						}
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.exception(e);
 				}
 			}
 		}

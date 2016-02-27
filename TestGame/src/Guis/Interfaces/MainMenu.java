@@ -11,6 +11,7 @@ import Utils.FontHandler;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import javax.swing.*;
 import java.awt.*;
 
 
@@ -20,10 +21,7 @@ public class MainMenu extends AbstractMainMenu {
 
 	public MainMenu() {
 		super();
-
-		FileUtil.worlds = FileUtil.getSavedWorlds();
-
-		int buttonSize = 50, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2) + 20;
+		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2) + 40;
 
 		guiObjects.add(new NewGameButton(buttonPos += buttonSize));
 		guiObjects.add(new LoadGameButton(buttonPos += buttonSize));
@@ -86,8 +84,7 @@ public class MainMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, UIMenu menu ) {
-			//TODO Add load menu
-//			MainFile.game.setCurrentMenu(new CreateWorldMenu());
+			MainFile.game.setCurrentMenu(new LoadWorldMenu());
 		}
 
 	}
@@ -114,7 +111,6 @@ public class MainMenu extends AbstractMainMenu {
 
 		@Override
 		public void onClicked( int button, int x, int y, UIMenu menu ) {
-			//TODO Add proper exit with saving
 			if(MainFile.game.closeRequested())
 				System.exit(0);
 		}

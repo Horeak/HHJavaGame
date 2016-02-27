@@ -8,6 +8,7 @@ import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.FontHandler;
+import Utils.LoggerUtil;
 import Utils.RenderUtil;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -386,7 +387,7 @@ public class GuiCrafting extends GuiGame {
 					MainFile.game.getClient().getPlayer().addItem(new ItemStack(selectedRes.output));
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LoggerUtil.exception(e);
 			}
 		}
 

@@ -2,6 +2,7 @@ package Threads;
 
 import Main.MainFile;
 import Render.Renders.WorldGenerationScreen;
+import Utils.LoggerUtil;
 import Utils.Registrations;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
@@ -50,7 +51,7 @@ public class WorldGenerationThread extends Thread {
 
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.exception(e);
 		}
 
 		stop();

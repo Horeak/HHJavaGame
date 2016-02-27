@@ -30,8 +30,8 @@ public interface IBlockRenderer extends IItemRenderer {
 			boolean top = false, right = false;
 
 			if (world != null) {
-				right = world.getBlock(x + 1, y) == null || world.getBlock(x + 1, y) != null && !world.getBlock(x + 1, y).isBlockSolid() && block.isBlockSolid();
-				top = world.getBlock(x, y - 1) == null || world.getBlock(x, y - 1) != null && !world.getBlock(x, y - 1).isBlockSolid() && block.isBlockSolid();
+				right = world.getBlock(x + 1, y) == null || world.getBlock(x + 1, y) != null && !world.getBlock(x + 1, y).isBlockSolid();
+				top = world.getBlock(x, y - 1) == null || world.getBlock(x, y - 1) != null && !world.getBlock(x, y - 1).isBlockSolid();
 			}
 
 			renderBlock(g, rX, rY, renderMode, block, right, top, true, false, world, x, y, face);

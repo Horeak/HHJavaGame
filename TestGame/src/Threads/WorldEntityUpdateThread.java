@@ -2,6 +2,7 @@ package Threads;
 
 import EntityFiles.Entity;
 import Main.MainFile;
+import Utils.LoggerUtil;
 
 public class WorldEntityUpdateThread extends Thread {
 
@@ -29,7 +30,7 @@ public class WorldEntityUpdateThread extends Thread {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				LoggerUtil.exception(e);
 			}
 		}
 	}

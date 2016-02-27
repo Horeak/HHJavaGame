@@ -76,7 +76,7 @@ public class BlockAction {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.exception(e);
 		}
 	}
 

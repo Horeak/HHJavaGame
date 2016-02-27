@@ -18,8 +18,10 @@ import WorldFiles.World;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.Rectangle;
 
+import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.Font;
 import java.util.Random;
@@ -27,8 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MainFile extends BaseGame {
-
-	//TODO Add world saving
 	//TODO Add big map (fullscreen/gui) (similar to Terraria)
 
 	//TODO Start optimizing the game. Remove all unessecary creation of new veriables. (For example creating a new rectangle each rendering call)
@@ -65,27 +65,22 @@ public class MainFile extends BaseGame {
 		}
 	}
 
-
 	@Override
 	public void initGame( GameContainer container ) throws SlickException {
-		//TODO Should be easy to add ingame world loading now!
-//		FileUtil.worlds = FileUtil.getSavedWorlds();
+		LoggerUtil.activateLogFile("output.log", this);
+		LoggerUtil.out.log(Level.INFO, "Log file activated.");
+
+		FileUtil.worlds = FileUtil.getSavedWorlds();
 
 		client = new Client(saveUtil.getDataHandler("config/settings.cfg").getStringDefault("playerName", "Player"));
 		server = new Server();
+
+		LoggerUtil.out.log(Level.INFO, "Client and Server instance initiated.");
 		
 		Registrations.registerGenerations();
 		CraftingRegister.registerRecipes();
 
 		setCurrentMenu(new MainMenu());
-
-		if(FileUtil.worlds != null && FileUtil.worlds.size() > 0) {
-			LoggerUtil.out.log(Level.INFO, "Found saved worlds: ");
-
-			for (World w : FileUtil.worlds) {
-				LoggerUtil.out.log(Level.INFO, w.toString());
-			}
-		}
 
 		container.getInput().addMouseListener(new MouseListener() {
 			public void mouseWheelMoved( int change ) {
@@ -305,7 +300,7 @@ public class MainFile extends BaseGame {
 
 	@Override
 	public String getFilesSaveLocation() {
-		return FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/" + Title + "/";
+		return System.getProperty("user.home")+"/Documents/" + Title + "/";
 	}
 
 	public static AbstractWindowRender[] renders;

@@ -1,6 +1,7 @@
 package Threads;
 
 import Main.MainFile;
+import Utils.LoggerUtil;
 
 
 public class WorldUpdateThread extends Thread {
@@ -27,7 +28,7 @@ public class WorldUpdateThread extends Thread {
 
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				LoggerUtil.exception(e);
 			}
 		}
 	}

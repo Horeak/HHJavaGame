@@ -5,6 +5,7 @@ import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
 import EntityFiles.EntityItem;
+import Items.Utils.IArmor;
 import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
 import Main.MainFile;
@@ -18,7 +19,6 @@ import java.util.HashMap;
 public class EntityPlayer extends Entity implements IInventory {
 
 	//TODO Add proper player render
-
 	public static org.newdawn.slick.Image playerTexutre =  MainFile.game.imageLoader.getImage("textures", "player");
 	/**
 	 * 1 = left
@@ -26,8 +26,10 @@ public class EntityPlayer extends Entity implements IInventory {
 	 */
 	public int facing = 0;
 	public static int INV_SIZE = 50;
-//	public ItemStack[] inventoryItems = new ItemStack[ 50 ];
+
 	public HashMap<Integer, ItemStack> inventoryItems = new HashMap<>();
+	public IArmor[] armorInventory = new IArmor[4];
+
 	private int playerHealth = 100, playerMaxHealth = 100;
 	public String name;
 
@@ -147,7 +149,6 @@ public class EntityPlayer extends Entity implements IInventory {
 	}
 
 
-	//TODO Make sure fix worked. (Items were added twice when adding an item would make a full stack)
 	public boolean addItem( ItemStack item ) {
 		if(item == null)
 			return false;

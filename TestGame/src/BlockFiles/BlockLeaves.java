@@ -33,7 +33,6 @@ public class BlockLeaves extends Block {
 		return texture;
 	}
 
-	//TODO Add saplings
 	@Override
 	public ItemStack getItemDropped(World world, int x, int y) {
 		return rand.nextInt(10) == 1 ? new ItemStack(Blocks.blockSapling) : null;

@@ -3,11 +3,13 @@ package Items.Utils;
 import Items.Rendering.IItemRenderer;
 import Items.Rendering.ItemRendrerer;
 import Main.MainFile;
+import Utils.LoggerUtil;
 import org.newdawn.slick.Image;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Item implements IItem {
+public abstract class Item implements IItem, Serializable {
 
 	public abstract int getMaxItemDamage();
 	public abstract Image getTexture();
@@ -53,7 +55,7 @@ public abstract class Item implements IItem {
 		try {
 			return this.getClass().newInstance();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.exception(e);
 		}
 		return null;
 	}

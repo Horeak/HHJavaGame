@@ -50,8 +50,11 @@ public class World {
 	public int WorldTime = worldTimeOfDay.timeBegin, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
 	public int WorldDay = 1;
 
+	public long timePlayed;
+
 	public boolean generating = false;
 	public boolean loaded = false;
+	public boolean isLive = false;
 
 	public World( String name, EnumWorldSize size ) {
 		while(FileUtil.isThereWorldWithName(name)){
@@ -94,8 +97,12 @@ public class World {
 			loadPlayer();
 		}
 
+		worldUpdateThread = new WorldUpdateThread();
 		worldUpdateThread.start();
+
+
 		TimeTaker.startTimeTaker("worldTimePlayed:" + worldName);
+		isLive = true;
 	}
 
 	public void resetValues() {
@@ -117,8 +124,13 @@ public class World {
 	public void generate() {
 		if(!loaded) {
 			saveWorld();
+
+			worldGenerationThread = new WorldGenerationThread();
 			worldGenerationThread.start();
 		}
+
+		worldEntityUpdateThread = new WorldEntityUpdateThread();
+		worldLightUpdateThread = new WorldLightUpdateThread();
 
 		worldEntityUpdateThread.start();
 		worldLightUpdateThread.start();
@@ -173,7 +185,7 @@ public class World {
 			if(ent instanceof EntityPlayer){
 				EntityPlayer pl = (EntityPlayer)ent;
 
-				if(pl.name == MainFile.game.getClient().playerId){
+				if(pl.name.equalsIgnoreCase(MainFile.game.getClient().playerId)){
 					MainFile.game.getClient().setPlayer(pl);
 					return;
 				}
@@ -186,7 +198,8 @@ public class World {
 		worldName = name;
 		WorldTime = handlerSets.getInteger("worldTime");
 		WorldDay = handlerSets.getInteger("dayNumber");
-		TimeTaker.startTimeTaker("worldTimePlayed:" + worldName, System.currentTimeMillis() - handlerSets.getLong("timeStart"));
+		timePlayed = handlerSets.getLong("timeStart");
+		TimeTaker.startTimeTaker("worldTimePlayed:" + worldName, System.currentTimeMillis() - timePlayed);
 
 		String t = handlerSets.getString("worldSize");
 		for(EnumWorldSize ee : EnumWorldSize.values()) {
@@ -360,7 +373,7 @@ public class World {
 				}
 			}
 		}catch (Exception e){
-			e.printStackTrace();
+			LoggerUtil.exception(e);
 		}
 	}
 
@@ -530,6 +543,16 @@ public class World {
 
 	}
 
+	//TODO Getting tired of this... Still takes time when game is paused... Maybe is should just change to a tick system
+	public String getTimePlayed(){
+		if(isLive && !MainFile.game.gameContainer.isPaused()) {
+			timePlayed = System.currentTimeMillis() - TimeTaker.getStartTime("worldTimePlayed:" + worldName);
+		}
+		String t = TimeTaker.getText("worldTimePlayed:" + worldName, 0,(timePlayed), "<days><hours><mins><secs>", false);
+
+		return t;
+	}
+
 	@Override
 	public int hashCode() {
 		int result = worldName.hashCode();
@@ -547,13 +570,13 @@ public class World {
 
 	@Override
 	public String toString() {
-		String t = TimeTaker.getText("worldTimePlayed:" + worldName, "<days><hours><mins><secs>", false);
+		String t = getTimePlayed();
 
 		return "World{" +
 				"worldName='" + worldName + '\'' +
 				", worldSize=" + worldSize +
 				", entities=" + (Entities != null ? Entities.size() : 0) +
-				", timePlayed= " + t.substring(0, t.length()-1) +
+				", timePlayed= " + (t != null && t.length() > 0  ? t.substring(0, t.length()-1) : "") +
 				", properties=" + worldProperties +
 				", loaded=" + loaded +
 				", generating=" + generating +
