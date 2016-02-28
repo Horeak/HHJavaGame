@@ -75,9 +75,11 @@ public class DebugInfoRender extends AbstractWindowRender {
 
 			//MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY)
 			g2.drawString(" - Active chunks: " + MainFile.game.getServer().getWorld().worldChunks.size(), textStartX, linePos += (lineLength * 2));
-			g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkX + ", " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkY, textStartX, linePos += (lineLength));
-			g2.drawString(" - Chunk loaded: " + MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX / 16, BlockSelection.selectedY / 16)), textStartX, linePos += (lineLength));
-			g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).getBlock(BlockSelection.selectedX, BlockSelection.selectedY, false), textStartX, linePos += (lineLength));
+			if(MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY) != null) {
+				g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkX + ", " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkY, textStartX, linePos += (lineLength));
+				g2.drawString(" - Chunk loaded: " + MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX / 16, BlockSelection.selectedY / 16)), textStartX, linePos += (lineLength));
+				g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).getBlock(BlockSelection.selectedX, BlockSelection.selectedY, false), textStartX, linePos += (lineLength));
+			}
 
 
 			if(MainFile.game.getClient().getPlayer() != null && !MainFile.game.getServer().getWorld().generating) {

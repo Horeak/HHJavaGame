@@ -38,6 +38,21 @@ public interface IBlockRenderer extends IItemRenderer {
 		}
 	}
 
+	default void renderBlock(Graphics g, int rX, int rY, EnumRenderMode renderMode, ItemStack item, World world, int x, int y, int  face, boolean lightning){
+		if (item.isBlock()) {
+			Block block = item.getBlock();
+
+			boolean top = false, right = false;
+
+			if (world != null) {
+				right = world.getBlock(x + 1, y) == null || world.getBlock(x + 1, y) != null && !world.getBlock(x + 1, y).isBlockSolid() && world.getBlock(x + 1, y).getItemName() != block.getItemName();
+				top = world.getBlock(x, y - 1) == null || world.getBlock(x, y - 1) != null && !world.getBlock(x, y - 1).isBlockSolid() && world.getBlock(x, y - 1).getItemName() != block.getItemName();
+			}
+
+			renderBlock(g, rX, rY, renderMode, block, right, top, lightning, false, world, x, y, face);
+		}
+	}
+
 	@Deprecated
 	default void renderItem( Graphics g, int rX, int rY, EnumRenderMode renderMode, ItemStack item ) {}
 }

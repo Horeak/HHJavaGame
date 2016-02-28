@@ -34,25 +34,25 @@ public class BlockRendering extends AbstractWindowRender {
 
 			if (ConfigValues.renderChunks) {
 				if (MainFile.game.getServer().getWorld().worldChunks != null) {
-					for (Chunk cc : new ArrayList<Chunk>(MainFile.game.getServer().getWorld().worldChunks.values())) {
-						if (cc == null)
-							continue;
+					for (int x = 0; x < MainFile.game.getServer().getWorld().worldSize.xSize / Chunk.chunkSize; x++) {
+						for (int y = 0; y < MainFile.game.getServer().getWorld().worldSize.ySize / Chunk.chunkSize; y++) {
 
-						int xx = (int) ((cc.chunkX * Chunk.chunkSize));
-						int yy = (int) ((cc.chunkY * Chunk.chunkSize));
+							int xx = (int) ((x * Chunk.chunkSize));
+							int yy = (int) ((y * Chunk.chunkSize));
 
-						float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
-						float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
+							float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
+							float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
 
-						if (ConfigValues.debug) { //Render color based upon wether or not the chunk should be loaded
-							g2.setColor(cc.shouldBeLoaded() ? MainFile.game.getServer().getWorld().isChunkLoaded(cc.chunkX, cc.chunkY) ? Color.green : Color.yellow : Color.red);
-							g2.fill(new Rectangle((int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
+							if (ConfigValues.renderChunkColors) { //Render color based upon wether or not the chunk should be loaded
+								g2.setColor(MainFile.game.getServer().getWorld().isChunkLoaded(x, y) ? MainFile.game.getServer().getWorld().getChunk(x * Chunk.chunkSize, y * Chunk.chunkSize).shouldBeLoaded()  ? new Color(0,1.0f,0,0.5f) :new Color(1.0f,1.0f,0,0.5f) : new Color(1.0f,0,0,0.5f));
+								g2.fill(new Rectangle((int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
+							}
+
+
+							g2.setColor(Color.black);
+							g2.draw(new Rectangle((int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
+
 						}
-
-
-						g2.setColor(Color.black);
-						g2.draw(new Rectangle((int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
-
 					}
 				}
 			}

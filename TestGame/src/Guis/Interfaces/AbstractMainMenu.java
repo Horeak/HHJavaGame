@@ -47,6 +47,7 @@ public class AbstractMainMenu extends UIMenu {
 			world = new World("BackgroundWorld", EnumWorldSize.SMALL);
 			world.setTimeOfDay(EnumWorldTime.DAY);
 			world.WorldTime /= 2;
+			world.loading = true;
 
 			for (int x = 0; x < world.worldSize.xSize; x++) {
 				world.setBlock(Blocks.blockGrass, x, (ConfigValues.renderYSize - 6));

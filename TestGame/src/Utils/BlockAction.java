@@ -69,8 +69,12 @@ public class BlockAction {
 					}
 
 				} else if (button == Input.MOUSE_RIGHT_BUTTON) {
-					if (item != null) {
-						item.useItem(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
+					Block b = MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
+
+					if(b == null || b != null && !b.blockClicked(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item)) {
+						if (item != null) {
+							item.useItem(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
+						}
 					}
 				}
 			}

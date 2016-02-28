@@ -5,6 +5,8 @@ import BlockFiles.BlockRender.DefaultBlockRendering;
 import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import GameFiles.BaseGame;
+import Items.Items;
+import Items.Utils.Item;
 import Main.MainFile;
 import Rendering.AbstractWindowRender;
 import Utils.FileUtil;
@@ -87,6 +89,9 @@ public class TextureLoader extends ImageLoader {
 		for(Block bl : Blocks.blockRegistry.keySet()){
 			bl.loadTextures();
 		}
-		//TODO Add items when an item registry is made
+
+		for(Item im : Items.ItemRegistry.keySet()){
+			im.loadTextures();
+		}
 	}
 }

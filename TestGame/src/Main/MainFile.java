@@ -1,5 +1,7 @@
 package Main;
 
+import BlockFiles.BlockRender.DefaultBlockRendering;
+import BlockFiles.Util.Block;
 import Crafting.CraftingRegister;
 import GameFiles.BaseGame;
 import Guis.GuiCrafting;
@@ -7,6 +9,8 @@ import Guis.GuiIngameMenu;
 import Guis.GuiInventory;
 import Guis.Interfaces.MainMenu;
 import Interface.Gui;
+import Items.Utils.ItemStack;
+import Render.EnumRenderMode;
 import Render.Renders.*;
 import Rendering.AbstractWindowRender;
 import Settings.ConfigFile;
@@ -16,12 +20,18 @@ import Sided.Server;
 import Utils.*;
 import Utils.TexutrePackFiles.TextureLoader;
 import Utils.TexutrePackFiles.TexturePack;
+import WorldFiles.Chunk;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.imageout.ImageOut;
 
+import java.awt.*;
 import java.awt.Font;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,8 +66,7 @@ public class MainFile extends BaseGame {
 		super(title, xSize, ySize, fullscreen);
 	}
 
-
-	//TODO Add texutrepack menu. (Similar to load world?)
+//TODO Add key which generates an image which shows playerlocation and chunk colors similar to debug feature in BlockRendering. make it use same size as the world.
 	public static void main( String[] args ) {
 		try {
 
@@ -192,6 +201,139 @@ public class MainFile extends BaseGame {
 			public void performAction() {
 				if(MainFile.game.getServer().getWorld() != null && getCurrentMenu() == null)
 				setCurrentMenu(new GuiIngameMenu(gameContainer, ConfigValues.PAUSE_GAME_IN_GUI));
+			}
+		});
+
+
+		keybindingActions.add(new KeybindingAction(getConfig().getKeybindFromID("chunkRender")) {
+			@Override
+			public void performAction() {
+				if(!ConfigValues.debug) return;
+
+				ConfigValues.renderChunks ^= true;
+				ConfigValues.renderChunkColors ^= true;
+			}
+		});
+
+
+		keybindingActions.add(new KeybindingAction(getConfig().getKeybindFromID("worldMap")) {
+			@Override
+			public void performAction() {
+				if(!ConfigValues.debug) return;
+
+				float scale = getServer().getWorld().worldSize.xSize / 128;
+
+				try {
+					Image image = new Image((getServer().getWorld().worldSize.xSize * ConfigValues.size) / (int)scale,(getServer().getWorld().worldSize.ySize * ConfigValues.size) / (int)scale);
+					Graphics g2 = image.getGraphics();
+
+					g2.setBackground(getServer().getWorld().worldTimeOfDay.SkyColor);
+					g2.clear();
+
+					g2.pushTransform();
+					g2.scale(1 / scale, 1 / scale);
+
+					for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
+						HashMap<Point, Block> b = new HashMap<>();
+
+						for (int x = 0; x < (getServer().getWorld().worldSize.xSize); x++) {
+							for (int y = 0; y < (getServer().getWorld().worldSize.ySize); y++) {
+//								getServer().getWorld().loadChunk(x / Chunk.chunkSize, y / Chunk.chunkSize);
+
+								if (MainFile.game.getServer().getWorld().getBlock(x, y) != null) {
+									Block block = MainFile.game.getServer().getWorld().getBlock(x, y);
+									if (block != null)
+										if (block.isBlockSolid()) {
+											((DefaultBlockRendering) block.getRender()).renderBlock(g2, (int) ((x) * ConfigValues.size), (int) ((y) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.game.getServer().getWorld(), x, y, i, false);
+										} else {
+											b.put(new Point(x, y), block);
+										}
+								}
+							}
+						}
+
+						//Non-solid block rendering is delayed to prevent overlay issues
+						for (Map.Entry<Point, Block> bb : b.entrySet()) {
+							float blockX = (float) bb.getKey().x * ConfigValues.size;
+							float blockY = (float) bb.getKey().y * ConfigValues.size;
+
+							((DefaultBlockRendering) bb.getValue().getRender()).renderBlock(g2, (int) ((blockX)), (int) ((blockY)), bb.getValue().getRenderMode(), new ItemStack(bb.getValue()), MainFile.game.getServer().getWorld(), bb.getKey().x, bb.getKey().y, i, false);
+						}
+					}
+
+
+					if(ConfigValues.renderChunks){
+						for(int x = 0; x < (getServer().getWorld().worldSize.xSize / Chunk.chunkSize); x++){
+							for(int y = 0; y < (getServer().getWorld().worldSize.ySize / Chunk.chunkSize); y++){
+								g2.setColor(Color.black);
+								g2.draw(new Rectangle((x * Chunk.chunkSize) * ConfigValues.size, (y * Chunk.chunkSize) * ConfigValues.size, Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
+							}
+						}
+					}
+
+
+					g2.fill(new Rectangle(getClient().getPlayer().getEntityPostion().x - (ConfigValues.size / 2), getClient().getPlayer().getEntityPostion().y - (ConfigValues.size / 2), (ConfigValues.size), (ConfigValues.size)));
+
+					g2.popTransform();
+
+					g2.flush();
+
+					FileUtils.getFolder(getFilesSaveLocation() + "/maps/");
+					ImageOut.write(image, getFilesSaveLocation() + "/maps/worldMap_" + getServer().getWorld().worldName + ".png");
+
+				}catch (Exception e){
+					LoggerUtil.exception(e);
+				}
+			}
+		});
+
+		keybindingActions.add(new KeybindingAction(getConfig().getKeybindFromID("chunkMap")) {
+			@Override
+			public void performAction() {
+				if(!ConfigValues.debug) return;
+
+				try {
+					Image image = new Image(getServer().getWorld().worldSize.xSize, getServer().getWorld().worldSize.ySize);
+					Graphics g2 = image.getGraphics();
+
+					g2.setBackground(new Color(0,0,0,0));
+					g2.clear();
+
+					for(int x = 0; x < (getServer().getWorld().worldSize.xSize / Chunk.chunkSize); x++){
+						for(int y = 0; y < (getServer().getWorld().worldSize.ySize / Chunk.chunkSize); y++){
+
+							if(!getServer().getWorld().isChunkLoaded(x, y)){
+								g2.setColor(Color.red);
+							}
+
+							if(getServer().getWorld().isChunkLoaded(x, y)){
+								if(getServer().getWorld().getChunk(x * Chunk.chunkSize, y * Chunk.chunkSize) != null && getServer().getWorld().getChunk(x * Chunk.chunkSize, y * Chunk.chunkSize).shouldBeLoaded()){
+									g2.setColor(Color.green);
+								}else{
+									g2.setColor(Color.yellow);
+								}
+							}
+
+							g2.fill(new Rectangle(x * Chunk.chunkSize, y * Chunk.chunkSize, Chunk.chunkSize, Chunk.chunkSize));
+
+
+							g2.setColor(Color.black);
+							g2.draw(new Rectangle(x * Chunk.chunkSize, y * Chunk.chunkSize, Chunk.chunkSize, Chunk.chunkSize));
+						}
+					}
+
+
+					g2.fill(new Rectangle(getClient().getPlayer().getEntityPostion().x - 1, getClient().getPlayer().getEntityPostion().y - 1, 2, 2));
+
+					g2.flush();
+
+					FileUtils.getFolder(getFilesSaveLocation() + "/maps/");
+					ImageOut.write(image, getFilesSaveLocation() + "/maps/chunkMap_" + getServer().getWorld().worldName + ".png");
+
+
+				}catch (Exception e){
+					LoggerUtil.exception(e);
+				}
 			}
 		});
 	}

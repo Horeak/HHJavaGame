@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+//TODO Chunk 0,0 stays loaded!
+//TODO Use chunkMap to debug yellow chunks!
 public class Chunk implements Serializable{
 	public static int chunkSize = 16;
 
@@ -26,7 +28,6 @@ public class Chunk implements Serializable{
 	public Block[][] blocks = new Block[chunkSize][chunkSize];
 
 	public int chunkX, chunkY;
-
 	public transient World world;
 
 	//TODO Unload and save chunks when not in range
@@ -35,7 +36,6 @@ public class Chunk implements Serializable{
 
 		this.chunkX = chunkX;
 		this.chunkY = chunkY;
-
 	}
 
 	public Block getBlock( int x, int y, boolean allowAir ) {
@@ -66,11 +66,7 @@ public class Chunk implements Serializable{
 		int Uy = y - (chunkY * chunkSize);
 
 		if(world == null){
-			LoggerUtil.out.log(Level.SEVERE, "ERROR: Chunk has null world instance!");
-
 			world = MainFile.game.getServer().getWorld();
-
-//			return;
 		}
 
 		if(!world.generating) {
@@ -127,8 +123,20 @@ public class Chunk implements Serializable{
 		return new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0F);
 	}
 
+	public static boolean shouldRangeLoad(int chunkX, int chunkY){
+		return MainFile.game.getClient() != null && MainFile.game.getClient().getPlayer() != null && MainFile.game.getClient().getPlayer().getEntityPostion().distance((chunkX * chunkSize) + (chunkSize / 2), (chunkY * chunkSize) + (chunkSize / 2)) <= (chunkSize * 1.75F);
+	}
+
 	public boolean shouldBeLoaded(){
-		return MainFile.game.getClient().getPlayer().getEntityPostion().distance((chunkX * chunkSize) + (chunkSize / 2), (chunkY * chunkSize) + (chunkSize / 2)) <= (chunkSize * 1.75F);
+		for(Point p : tickableBlocks){
+			Block b = getBlock(p.x, p.y, false);
+
+			if(b instanceof ITickBlock){
+				if(((ITickBlock) b).shouldBlockLoadChunk(world, p.x * chunkSize, p.y * chunkSize)) return true;
+			}
+		}
+
+		return shouldRangeLoad(chunkX, chunkY);
 	}
 
 

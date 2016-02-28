@@ -44,7 +44,10 @@ public class GuiCrafting extends GuiGame {
 		int i = 0;
 		for (CraftingRecipe res : CraftingRegister.recipes) {
 			if(input != null && !input.isEmpty() && res.output.getStackName().toLowerCase().contains(input.toLowerCase()) || input == null || input.isEmpty()) {
-				guiObjects.add(new CraftingButton(this, startX + 10, startY + 25 + (i * (54)) - (int)(translate * 2), res));
+				float f1 = (float)translate / (247 - 27);
+				float f2 = (CraftingRegister.recipes.size() - 4.5F) * 54;
+
+				guiObjects.add(new CraftingButton(this, startX + 10, startY + 25 + (i * (54)) - (int)(f1 * f2), res));
 				i += 1;
 			}
 		}
@@ -434,16 +437,15 @@ public class GuiCrafting extends GuiGame {
 				trant = 0;
 			}
 
-			if (trant > 221) {
-				trant = 221;
+			if (trant > 247 - 27) {
+				trant = 247 - 27;
 			}
 
 			int am = 0;
 			for(GuiObject ob : guiObjects)
 			if(ob instanceof CraftingButton) am += 1;
 
-			float t = (float) trant / 221F;
-			translate = t * ((float) (am - (am > 4 ? 4F : am)) * 18F);
+			translate = trant;
 
 			Rectangle rect = new Rectangle(x, y, width, height);
 

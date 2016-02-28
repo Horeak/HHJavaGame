@@ -17,6 +17,8 @@ public interface ITickBlock {
 		return 1;
 	}
 
+	default boolean shouldBlockLoadChunk(World world, int x, int y){return false;}
+
 	int getTimeSinceUpdate();
 	void setTimeSinceUpdate(int i);
 

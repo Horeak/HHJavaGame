@@ -52,4 +52,6 @@ public class Blocks {
 	public static Block blockSapling = addBlock(new BlockSapling());
 
 	public static Block blockTorch = addBlock(new BlockTorch());
+
+	public static Block blockFurnace = addBlock(new BlockFurnace());
 }

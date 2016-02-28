@@ -59,7 +59,7 @@ public class ConfigFile extends Config{
 
 	private Keybinding[] keybindings = new Keybinding[]{
 			new Keybinding("Exit/menu", "exit", Input.KEY_ESCAPE, "Menus"),
-			new Keybinding("Open map", "map", Input.KEY_M, "Menus"),
+			new Keybinding("Open map", "openMap", Input.KEY_M, "Menus"),
 
 			new Keybinding("Jump", "jump.walk", Input.KEY_W, "Movement"),
 			new Keybinding("Walk right", "right.walk", Input.KEY_D, "Movement"),
@@ -68,7 +68,12 @@ public class ConfigFile extends Config{
 			new Keybinding("Open inventory", "inventory", Input.KEY_E, "Inventory"),
 			new Keybinding("Crafting Inventory", "crafting", Input.KEY_C, "Inventory"),
 
-			new Keybinding("Drop item", "drop", Input.KEY_Q, "Action")};
+			new Keybinding("Drop item", "drop", Input.KEY_Q, "Action"),
+
+			//TODO Remove when not debug
+			new Keybinding("Create chunk map", "chunkMap", Input.KEY_O, "Debug"),
+			new Keybinding("Create world map", "worldMap", Input.KEY_P, "Debug"),
+			new Keybinding("Toggle chunks", "chunkRender", Input.KEY_L, "Debug"),};
 
 
 	@Override

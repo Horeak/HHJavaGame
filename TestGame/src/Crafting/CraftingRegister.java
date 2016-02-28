@@ -1,10 +1,7 @@
 package Crafting;
 
 import BlockFiles.*;
-import Items.ItemAxe;
-import Items.ItemPickaxe;
-import Items.ItemShovel;
-import Items.ItemStick;
+import Items.*;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.LoggerUtil;
@@ -92,13 +89,15 @@ public class CraftingRegister {
 
 	public static void registerRecipes() {
 		addRecipe(new ItemStack[]{ new ItemStack(Blocks.blockWood)}, new ItemStack(Blocks.blockPlanks, 3));
-		addRecipe(new ItemStack[]{ new ItemStack(Blocks.blockPlanks, 2)}, new ItemStack(new ItemStick(), 4));
+		addRecipe(new ItemStack[]{ new ItemStack(Blocks.blockPlanks, 2)}, new ItemStack(Items.itemStick, 4));
 
-		addRecipe(new ItemStack[]{ new ItemStack(new ItemStick(), 1), new ItemStack(Blocks.blockPlanks)}, new ItemStack(Blocks.blockTorch, 5));
+		addRecipe(new ItemStack[]{ new ItemStack(Items.itemStick, 1), new ItemStack(Blocks.blockPlanks)}, new ItemStack(Blocks.blockTorch, 5));
 
-		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(Blocks.blockStone, 1)}, new ItemStack(new ItemShovel()));
-		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(Blocks.blockStone, 2)}, new ItemStack(new ItemAxe()));
-		addRecipe(new ItemStack[]{new ItemStack(new ItemStick(), 2), new ItemStack(Blocks.blockStone, 3)}, new ItemStack(new ItemPickaxe()));
+		addRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 1)}, new ItemStack(Items.itemShovel));
+		addRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 2)}, new ItemStack(Items.itemAxe));
+		addRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 3)}, new ItemStack(Items.itemPickaxe));
+
+		addRecipe(new ItemStack[]{new ItemStack(Blocks.blockWood), new ItemStack(Blocks.blockStone, 6)}, new ItemStack(Blocks.blockFurnace));
 
 
 		LoggerUtil.out.log(Level.INFO, "Crafting recipes registered.");

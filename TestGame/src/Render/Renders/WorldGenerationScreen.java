@@ -16,6 +16,8 @@ import java.awt.*;
 
 public class WorldGenerationScreen extends AbstractWindowRender {
 
+	//TODO Improve generation screen!
+	//TODO Worldgenerationscreen disabled as it might have been causing generation issues!
 
 	//TODO Find an alternative method to render the generation which is not as heavy as this one
 	public static String generationStatus = "";
@@ -32,27 +34,28 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 		float h = ((MainFile.game.getServer().getWorld().worldSize.xSize) * ConfigValues.size) / MainFile.xWindowSize;
 		World world = MainFile.game.getServer().getWorld();
 
-		g2.pushTransform();
-//		g2.scale(1 / h, 1 / h);
-		g2.translate(0, (MainFile.yWindowSize / 4));
-
-		float g = (1f / h);
-		int temP = world.worldSize == EnumWorldSize.LARGE ? 10 : world.worldSize == EnumWorldSize.MEDIUM ? 2 : 1;
-
-		for(int x = 0; x < MainFile.game.getServer().getWorld().worldSize.xSize; x += temP){
-			for(int y = 0; y < MainFile.game.getServer().getWorld().worldSize.ySize; y += temP){
-				Block bl = MainFile.game.getServer().getWorld().getBlock(x, y);
-
-				if(bl != null){
-//					((DefaultBlockRendering)bl.getRender()).renderBlock(g2, x * ConfigValues.size, y * ConfigValues.size, EnumRenderMode.render2D, bl, false, false, false, false, world, x, y);
-					float size = (g * ConfigValues.size);
-
-					g2.setColor(bl.getDefaultBlockColor());
-					g2.fill(new Rectangle((x * size), (y * size), size * temP, size * temP));
-				}
-			}
-		}
-		g2.popTransform();
+		//Disable Due to it loading chunks while generating causing ConcurrentModificationError and this render wont be possible with infinite worlds
+//		g2.pushTransform();
+////		g2.scale(1 / h, 1 / h);
+//		g2.translate(0, (MainFile.yWindowSize / 4));
+//
+//		float g = (1f / h);
+//		int temP = world.worldSize == EnumWorldSize.LARGE ? 10 : world.worldSize == EnumWorldSize.MEDIUM ? 2 : 1;
+//
+//		for(int x = 0; x < MainFile.game.getServer().getWorld().worldSize.xSize; x += temP){
+//			for(int y = 0; y < MainFile.game.getServer().getWorld().worldSize.ySize; y += temP){
+//				Block bl = MainFile.game.getServer().getWorld().getBlock(x, y);
+//
+//				if(bl != null){
+////					((DefaultBlockRendering)bl.getRender()).renderBlock(g2, x * ConfigValues.size, y * ConfigValues.size, EnumRenderMode.render2D, bl, false, false, false, false, world, x, y);
+//					float size = (g * ConfigValues.size);
+//
+//					g2.setColor(bl.getDefaultBlockColor());
+//					g2.fill(new Rectangle((x * size), (y * size), size * temP, size * temP));
+//				}
+//			}
+//		}
+//		g2.popTransform();
 
 		g2.setColor(new Color(0.2F, 0.2F, 0.2F, 0.5F));
 		g2.fill(new Rectangle(0, (MainFile.yWindowSize / 2) - 15, MainFile.xWindowSize, 85));
@@ -75,10 +78,10 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 			FontHandler.resetFont(g2);
 		}
 
-		g2.setColor(Color.white);
-		FontHandler.resizeFont(g2, 12);
-		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Displaying generation", 0, (MainFile.yWindowSize / 2) + 45, MainFile.xWindowSize, g2.getColor());
-		FontHandler.resetFont(g2);
+//		g2.setColor(Color.white);
+//		FontHandler.resizeFont(g2, 12);
+//		org.newdawn.slick.util.FontUtils.drawCenter(g2.getFont(), "Displaying generation", 0, (MainFile.yWindowSize / 2) + 45, MainFile.xWindowSize, g2.getColor());
+//		FontHandler.resetFont(g2);
 
 		if (tt >= 10) {
 			tt = 0;
@@ -95,7 +98,7 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 
 	@Override
 	public boolean canRender() {
-		return MainFile.game.getServer().getWorld() != null && MainFile.game.getServer().getWorld().generating;
+		return MainFile.game.getServer().getWorld() != null && MainFile.game.getServer().getWorld().generating && false;
 	}
 
 	@Override

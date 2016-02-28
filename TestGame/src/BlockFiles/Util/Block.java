@@ -5,6 +5,7 @@ package BlockFiles.Util;
 * Created: 26.07.2015
 */
 
+import BlockFiles.BlockAir;
 import BlockFiles.BlockRender.DefaultBlockRendering;
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Blocks;
@@ -78,6 +79,10 @@ public abstract class Block implements IItem, Serializable{
 	public void updateBlock( World world, int fromX, int fromY, int curX, int curY ) {
 	}
 
+	public boolean blockClicked(World world, int x, int y, ItemStack stack){
+		return false;
+	}
+
 
 	public abstract Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y );
 	public boolean useBlockTexture() {
@@ -134,7 +139,10 @@ public abstract class Block implements IItem, Serializable{
 		return Blocks.getBlock(Blocks.getId(this));
 	}
 
+	//TODO This is causing chunks to load! So this will most likely not be possible to do when adding infinite chunks
 	public boolean canBlockSeeSky(World world, int x, int y) {
+		if(world.getBlock(x, y, true) instanceof BlockAir) return false;
+
 		for (int g = y - 1; g > 0; g -= 1) {
 			Block cc = world.getBlock(x, g);
 			if(cc != null && cc.isBlockSolid()) return false;

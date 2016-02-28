@@ -24,6 +24,11 @@ import java.util.Map;
 import java.util.logging.Level;
 
 //TODO Make sure there is no code left that is hardcoded to one player
+//TODO World is generating holes
+
+//TODO Add biomes. (Could for example make it where it gets a random biome for a random range so for example: forest in chunks 1 to 5 and snow from 5 to 7 and desert from 7 to 10)
+//TODO Remove world limit and instead generate based on a seed
+
 public class World {
 	public WorldGenerationThread worldGenerationThread = new WorldGenerationThread();
 	public WorldUpdateThread worldUpdateThread = new WorldUpdateThread();
@@ -50,6 +55,7 @@ public class World {
 	public boolean generating = false;
 	public boolean loaded = false;
 	public boolean isLive = false;
+	public boolean loading = false;
 
 	public World( String name, EnumWorldSize size ) {
 		while(FileUtil.isThereWorldWithName(name)){
@@ -195,6 +201,8 @@ public class World {
 
 	//TODO Blocks are not being loaded!
 	public void loadWorld(String name){
+		loading = true;
+
 		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + name + "/world.data");
 		worldName = name;
 		WorldTime = handlerSets.getInteger("worldTime");
@@ -234,11 +242,9 @@ public class World {
 		Entities = (ArrayList<Entity>)MainFile.game.saveUtil.loadObjectFile("saves/" + worldName + "/worldEntities.data");
 		loadPlayer();
 
-		if(MainFile.game.getClient().getPlayer() != null) {
-			loadChunksNear((int) MainFile.game.getClient().getPlayer().getEntityPostion().x, (int) MainFile.game.getClient().getPlayer().getEntityPostion().y);
-		}
 
 		loaded = true;
+		loading = false;
 	}
 
 	public void loadChunksNear(int xx, int yy){
@@ -271,6 +277,10 @@ public class World {
 				createChunk(chunkX, chunkY);
 			}
 		}
+
+		if(getChunk_(chunkX, chunkY) != null) {
+			getChunk_(chunkX, chunkY).world = this;
+		}
 	}
 
 	public void createChunk(int chunkX, int chunkY){
@@ -279,16 +289,6 @@ public class World {
 
 
 	public void updateTime(){
-		if(MainFile.game.getClient().getPlayer() != null) {
-			loadChunksNear((int) MainFile.game.getClient().getPlayer().getEntityPostion().x, (int) MainFile.game.getClient().getPlayer().getEntityPostion().y);
-		}
-
-		for(Chunk chunk : new HashMap<Point, Chunk>(worldChunks).values()){
-			if(!chunk.shouldBeLoaded() && isChunkLoaded(chunk.chunkX, chunk.chunkY)){
-				unloadChunk(chunk.chunkX, chunk.chunkY);
-			}
-		}
-
 		for (EnumWorldTime en : EnumWorldTime.values()) {
 			if(WorldTime > en.timeBegin){
 				worldTimeOfDay = en;
@@ -304,20 +304,28 @@ public class World {
 	}
 
 
-	public Chunk getChunk(int x, int y){
-		int xx = (x / Chunk.chunkSize);
-		int yy = (y / Chunk.chunkSize);
+	public void deleteChunk(int chunkX, int chunkY){
+		worldChunks.put(new Point(chunkX, chunkY), null);
+	}
 
-		if(!isChunkLoaded(xx, yy))
-		loadChunk(xx, yy);
+	public Chunk getChunk_(int chunkX, int chunkY){
+		if(!isChunkLoaded(chunkX, chunkY)) {
+			if(generating || loading || Chunk.shouldRangeLoad(chunkX, chunkY)) {
+				loadChunk(chunkX, chunkY);
+			}
+		}
 
-		if(xx >= 0 && yy >= 0) {
-			if (xx < (worldSize.xSize / Chunk.chunkSize) && yy < (worldSize.ySize / Chunk.chunkSize)) {
-				return worldChunks.get(new Point(x / Chunk.chunkSize, y / Chunk.chunkSize));
+		if(chunkX >= 0 && chunkY >= 0) {
+			if (chunkX < (worldSize.xSize / Chunk.chunkSize) && chunkY < (worldSize.ySize / Chunk.chunkSize)) {
+				return worldChunks.get(new Point(chunkX, chunkY));
 			}
 		}
 
 		return null;
+	}
+
+	public Chunk getChunk(int x, int y){
+		return getChunk_(x / Chunk.chunkSize, y / Chunk.chunkSize);
 	}
 
 
@@ -326,15 +334,28 @@ public class World {
 	}
 
 	public Block getBlock( int x, int y, boolean allowAir ) {
-		if(getChunk(x, y) == null) return Blocks.blockAir;
-		Block b = getChunk(x, y).getBlock(x,y, allowAir);
+		try {
+			if (getChunk(x, y) == null) {
+				return allowAir ? Blocks.blockAir : null;
+			}
 
-		return b != null ? b : null;
+				Block b = getChunk(x, y).getBlock(x, y, allowAir);
+
+			return b != null ? b : null;
+		}catch (Exception e){
+			LoggerUtil.exception(e);
+		}
+
+		return null;
 	}
 
 	public void setBlock( Block block, int x, int y ) {
-		if(getChunk(x, y) != null) {
-			getChunk(x, y).setBlock(block, x, y);
+		try {
+			if (getChunk(x, y) != null) {
+				getChunk(x, y).setBlock(block, x, y);
+			}
+		}catch (Exception e){
+			LoggerUtil.exception(e);
 		}
 	}
 
@@ -378,7 +399,7 @@ public class World {
 		MainFile.game.getClient().hasSpawnedPlayer = true;
 	}
 
-	public void updateBlocks() {
+	public synchronized void updateBlocks() {
 		try {
 			if(worldChunks != null) {
 				for(Map.Entry<Point, Chunk> ent : new HashMap<Point, Chunk>(worldChunks).entrySet()) {
@@ -465,7 +486,7 @@ public class World {
 			}
 		}
 		
-		return new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, ILightSource.MAX_LIGHT_STRENGTH);
+		return new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
 	}
 
 	public void updateLightForBlock( int xx, int yy ) {
@@ -498,7 +519,7 @@ public class World {
 						}
 
 						if (block.getLightValue(this, xx, yy) < b.getLightValue(this, xPos, yPos)) {
-							getLightUnit(xx,yy).setLightValue(b.getLightValue(this, xPos, yPos) - 1);
+							getLightUnit(xx,yy).setLightValue(b.getLightValue(this, xPos, yPos) - 1F);
 							if (getLightUnit(xx,yy).getLightColor() != getLightUnit(xx,yy).getLightColor()) {
 								getLightUnit(xx,yy).setLightColor(getLightUnit(xx,yy).getLightColor());
 							}
@@ -517,6 +538,19 @@ public class World {
 	}
 
 	public void updateLightForBlocks() {
+		for(Chunk chunk : new HashMap<Point, Chunk>(worldChunks).values()){
+			if(chunk == null || chunk != null && chunk.shouldBeLoaded()) continue;
+
+			if(!chunk.shouldBeLoaded() && isChunkLoaded(chunk.chunkX, chunk.chunkY)){
+				unloadChunk(chunk.chunkX, chunk.chunkY);
+			}
+		}
+
+		if(MainFile.game.getClient().getPlayer() != null) {
+			loadChunksNear((int) MainFile.game.getClient().getPlayer().getEntityPostion().x, (int) MainFile.game.getClient().getPlayer().getEntityPostion().y);
+		}
+
+
 		updateLightForBlocks(MainFile.game.getClient().getPlayer() != null);
 	}
 
