@@ -73,6 +73,12 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString(" - Time of day: " + MainFile.game.getServer().getWorld().worldTimeOfDay.name, textStartX, linePos += (lineLength));
 			g2.drawString(" - Day number: " + MainFile.game.getServer().getWorld().WorldDay, textStartX, linePos += (lineLength));
 
+			//MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY)
+			g2.drawString(" - Active chunks: " + MainFile.game.getServer().getWorld().worldChunks.size(), textStartX, linePos += (lineLength * 2));
+			g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkX + ", " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkY, textStartX, linePos += (lineLength));
+			g2.drawString(" - Chunk loaded: " + MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX / 16, BlockSelection.selectedY / 16)), textStartX, linePos += (lineLength));
+			g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).getBlock(BlockSelection.selectedX, BlockSelection.selectedY, false), textStartX, linePos += (lineLength));
+
 
 			if(MainFile.game.getClient().getPlayer() != null && !MainFile.game.getServer().getWorld().generating) {
 				g2.drawString("Player info:", textStartX, linePos += (lineLength * 2));

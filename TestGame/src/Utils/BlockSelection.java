@@ -23,7 +23,7 @@ public class BlockSelection {
 				if (mousePoint.getX() > BlockRendering.START_X_POS && mousePoint.getX() < (ConfigValues.renderXSize * ConfigValues.size) + BlockRendering.START_X_POS) {
 					if (mousePoint.getY() > (BlockRendering.START_Y_POS) && mousePoint.getY() < (ConfigValues.renderYSize * ConfigValues.size) + BlockRendering.START_Y_POS) {
 
-						int mouseX = (int) ((mousePoint.getX()) - (BlockRendering.START_X_POS) + 16) / (ConfigValues.size);
+						int mouseX = (int) ((mousePoint.getX()) - (BlockRendering.START_X_POS)) / (ConfigValues.size);
 						int mouseY = (int) ((mousePoint.getY()) - (BlockRendering.START_Y_POS)) / (ConfigValues.size);
 
 						int blockX = (mouseX + (int) plPos.x) - ConfigValues.renderRange;

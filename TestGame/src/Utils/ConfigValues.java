@@ -30,6 +30,7 @@ public class ConfigValues {
 
 	public static boolean debug = false;
 	public static boolean simpleBlockRender = false;
+	public static boolean renderChunks = false;
 
 	public static EnumRenderMode renderMod = EnumRenderMode.render2_5D;
 

@@ -86,8 +86,7 @@ public class AbstractMainMenu extends UIMenu {
 
 		render.render(g2, world);
 
-		if (world != null && world.worldBlocks != null) {
-
+		if (world != null && world.worldChunks != null) {
 			for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
 				HashMap<Point, Block> bbb = new HashMap<>();
 

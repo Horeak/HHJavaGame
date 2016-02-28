@@ -27,4 +27,8 @@ public class BlockAir extends Block {
 	public void loadTextures() {
 
 	}
+
+	public int getMaxBlockDamage() {
+		return Integer.MAX_VALUE;
+	}
 }

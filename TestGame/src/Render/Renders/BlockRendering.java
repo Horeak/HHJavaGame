@@ -7,9 +7,13 @@ import Main.MainFile;
 import Render.EnumRenderMode;
 import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
+import WorldFiles.Chunk;
 import com.sun.javafx.geom.Vec2d;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +30,35 @@ public class BlockRendering extends AbstractWindowRender {
 		org.newdawn.slick.geom.Rectangle c = g2.getClip();
 		g2.setClip(MainFile.blockRenderBounds);
 
+		try {
 
+			if (ConfigValues.renderChunks) {
+				if (MainFile.game.getServer().getWorld().worldChunks != null) {
+					for (Chunk cc : new ArrayList<Chunk>(MainFile.game.getServer().getWorld().worldChunks.values())) {
+						if (cc == null)
+							continue;
+
+						int xx = (int) ((cc.chunkX * Chunk.chunkSize));
+						int yy = (int) ((cc.chunkY * Chunk.chunkSize));
+
+						float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
+						float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
+
+						if (ConfigValues.debug) { //Render color based upon wether or not the chunk should be loaded
+							g2.setColor(cc.shouldBeLoaded() ? MainFile.game.getServer().getWorld().isChunkLoaded(cc.chunkX, cc.chunkY) ? Color.green : Color.yellow : Color.red);
+							g2.fill(new Rectangle((int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
+						}
+
+
+						g2.setColor(Color.black);
+						g2.draw(new Rectangle((int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
+
+					}
+				}
+			}
+		}catch (Exception e){
+			
+		}
 
 		for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
 		HashMap<Point, Block> b = new HashMap<>();
@@ -41,20 +73,23 @@ public class BlockRendering extends AbstractWindowRender {
 					int xx = (int) (x + plPos.x);
 					int yy = (int) (y + plPos.y);
 
-					float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
-					float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
+					if(MainFile.game.getServer().getWorld().isChunkLoaded(xx / Chunk.chunkSize, yy / Chunk.chunkSize)) {
 
-					if (MainFile.game.getServer().getWorld().getBlock(xx, yy) != null) {
-						Block block = MainFile.game.getServer().getWorld().getBlock(xx, yy);
+						float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
+						float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
 
-						if (block != null)
-							if (block.isBlockSolid()) {
-								((DefaultBlockRendering) block.getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.game.getServer().getWorld(), xx, yy, i);
-							} else {
-								b.put(new Point(xx, yy), block);
-							}
+						if (MainFile.game.getServer().getWorld().getBlock(xx, yy) != null) {
+							Block block = MainFile.game.getServer().getWorld().getBlock(xx, yy);
+
+							if (block != null)
+								if (block.isBlockSolid()) {
+									((DefaultBlockRendering) block.getRender()).renderBlock(g2, START_X_POS + (int) ((blockX) * ConfigValues.size), START_Y_POS + (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.game.getServer().getWorld(), xx, yy, i);
+								} else {
+									b.put(new Point(xx, yy), block);
+								}
+						}
+
 					}
-
 				}
 			}
 

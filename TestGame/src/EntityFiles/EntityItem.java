@@ -61,6 +61,7 @@ public class EntityItem extends Entity {
 		g2.scale(0.5F, 0.5F);
 		g2.translate(renderX + 16, renderY - (48 + renderOff) + 8);
 
+		if(stack != null && stack.getItem() != null)
 		RenderUtil.renderItem(g2, stack, renderX, renderY, stack.getItem().getRenderMode());
 
 		g2.scale(2, 2);

@@ -50,7 +50,7 @@ public class BlockAction {
 								timeSince = 0;
 
 								if(blockBreakDelay >= blockBreakDelay){
-									blockDamage += 1;
+									blockDamage += item != null && item.getItem() != null ? item.getItem().getBlockDamageValue( MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item) : 1;
 									blockBreakDelay = 0;
 								}else{
 									blockBreakDelay += speed;

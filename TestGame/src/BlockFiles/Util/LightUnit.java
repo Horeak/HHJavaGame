@@ -2,7 +2,9 @@ package BlockFiles.Util;
 
 import org.newdawn.slick.Color;
 
-public class LightUnit {
+import java.io.Serializable;
+
+public class LightUnit implements Serializable{
 
 	private Color lightColor;
 	private float lightValue;

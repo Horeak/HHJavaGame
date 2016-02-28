@@ -1,6 +1,5 @@
 package WorldFiles;
 
-import BlockFiles.BlockAir;
 import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ILightSource;
@@ -17,9 +16,6 @@ import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
 import Threads.WorldUpdateThread;
 import Utils.*;
-import com.sun.javafx.geom.Vec2d;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -40,10 +36,7 @@ public class World {
 	public ArrayList<Entity> RemoveEntities = new ArrayList<>();
 
 
-	//TODO Add chunks? When unloading a chunk save it to disk and remove it from the list. And read it from disk when loading it
-	public Block[][] worldBlocks;
-	private LightUnit[][] lightUnits;
-	public ArrayList<Point> tickableBlocks = new ArrayList<>();
+	public HashMap<Point, Chunk> worldChunks;
 
 	public String worldName;
 	public EnumWorldSize worldSize;
@@ -114,8 +107,7 @@ public class World {
 
 
 		if(worldSize != null) {
-			worldBlocks = new Block[ worldSize.xSize ][ worldSize.ySize ];
-			lightUnits = new LightUnit[ worldSize.xSize ][ worldSize.ySize ];
+			worldChunks = new HashMap<>();
 		}
 
 		worldTimeOfDay = EnumWorldTime.MORNING;
@@ -152,6 +144,8 @@ public class World {
 		worldUpdateThread.stop();
 		worldEntityUpdateThread.stop();
 		worldLightUpdateThread.stop();
+
+		worldChunks.clear();
 	}
 
 	//TODO Add auto saving (Save the world every 5 min or so)
@@ -167,17 +161,16 @@ public class World {
 		handlerProperties.setObject("properties", worldProperties);
 
 
-		HashMap<Point, Block> blStore = new HashMap<>();
-		for(int x = 0; x < worldSize.xSize; x++){
-			for(int y = 0; y < worldSize.ySize; y++){
-				if(getBlock(x, y) != null){
-					Block b = getBlock(x, y);
-					blStore.put(new Point(x, y), b);
-				}
+
+		//TODO For some reason only one chunk is saved?
+		//TODO Save chunks sepratly
+		HashMap<Point, Chunk> blStore = new HashMap<>();
+		for(int x = 0; x < (worldSize.xSize / Chunk.chunkSize); x += 1){
+			for(int y = 0; y < (worldSize.ySize / Chunk.chunkSize); y += 1){
+				MainFile.game.saveUtil.saveObjectFile(worldChunks.get(new Point(x, y)), "saves/" + worldName + "/chunks/" + "chunk_" + x + "_" + y + ".data");
 			}
 		}
 
-		MainFile.game.saveUtil.saveObjectFile(blStore, "saves/" + worldName + "/worldBlocks.data");
 		MainFile.game.saveUtil.saveObjectFile(Entities, "saves/" + worldName + "/worldEntities.data");
 	}
 
@@ -228,23 +221,74 @@ public class World {
 		worldProperties = (HashMap<String, Object>)handlerProperties.getObject("properties");
 
 
-		Object ob = MainFile.game.saveUtil.loadObjectFile("saves/" + name + "/worldBlocks.data");
-		HashMap<Point, Block> bl = (HashMap<Point, Block>)ob;
-
-		if(bl != null && bl.size() > 0) {
-			for (Map.Entry<Point, Block> ent : bl.entrySet()) {
-				setBlock(ent.getValue(), ent.getKey().x, ent.getKey().y);
-			}
-		}
-
-
+//		Object ob = MainFile.game.saveUtil.loadObjectFile("saves/" + name + "/worldBlocks.data");
+//		HashMap<Point, Chunk> bl = (HashMap<Point, Chunk>)ob;
+//
+//		if(bl != null && bl.size() > 0) {
+//			for (Map.Entry<Point, Chunk> ent : bl.entrySet()) {
+////				ent.getValue().loadTextures();
+////				setBlock(ent.getValue(), ent.getKey().x, ent.getKey().y);
+//				worldChunks[ent.getKey().x][ent.getKey().y] = ent.getValue();
+//			}
+//		}
 		Entities = (ArrayList<Entity>)MainFile.game.saveUtil.loadObjectFile("saves/" + worldName + "/worldEntities.data");
+		loadPlayer();
+
+		if(MainFile.game.getClient().getPlayer() != null) {
+			loadChunksNear((int) MainFile.game.getClient().getPlayer().getEntityPostion().x, (int) MainFile.game.getClient().getPlayer().getEntityPostion().y);
+		}
 
 		loaded = true;
 	}
 
+	public void loadChunksNear(int xx, int yy){
+		for(int x = -1; x < 2; x++){
+			for(int y = -1; y < 2; y++){
+				loadChunk((xx / 16) + (x), (yy / 16) + (y));
+			}
+		}
+	}
+
+	public void unloadChunk(int chunkX, int chunkY){
+		if(worldChunks.containsKey(new Point(chunkX, chunkY))){
+			MainFile.game.saveUtil.saveObjectFile(worldChunks.get(new Point(chunkX, chunkY)), "saves/" + worldName + "/chunks/" + "chunk_" + chunkX + "_" + chunkY + ".data");
+			worldChunks.remove(new Point(chunkX, chunkY));
+		}
+	}
+
+	public boolean isChunkLoaded(int chunkX, int chunkY){
+		return worldChunks.containsKey(new Point(chunkX, chunkY));
+	}
+
+
+	public void loadChunk(int chunkX, int chunkY){
+		if(!isChunkLoaded(chunkX, chunkY)){
+			Chunk chunk = (Chunk)MainFile.game.saveUtil.loadObjectFile("saves/" + worldName + "/chunks/" + "chunk_" + chunkX + "_" + chunkY + ".data");
+
+			if(chunk != null){
+				worldChunks.put(new Point(chunkX, chunkY), chunk);
+			}else{
+				createChunk(chunkX, chunkY);
+			}
+		}
+	}
+
+	public void createChunk(int chunkX, int chunkY){
+		worldChunks.put(new Point(chunkX, chunkY), new Chunk(this, chunkX, chunkY));
+	}
+
 
 	public void updateTime(){
+		if(MainFile.game.getClient().getPlayer() != null) {
+			loadChunksNear((int) MainFile.game.getClient().getPlayer().getEntityPostion().x, (int) MainFile.game.getClient().getPlayer().getEntityPostion().y);
+		}
+
+		for(Chunk chunk : new HashMap<Point, Chunk>(worldChunks).values()){
+			if(!chunk.shouldBeLoaded() && isChunkLoaded(chunk.chunkX, chunk.chunkY)){
+				unloadChunk(chunk.chunkX, chunk.chunkY);
+			}
+		}
+
 		for (EnumWorldTime en : EnumWorldTime.values()) {
 			if(WorldTime > en.timeBegin){
 				worldTimeOfDay = en;
@@ -259,12 +303,21 @@ public class World {
 		}
 	}
 
-	public boolean isAirBlock( int x, int y ) {
-		if (getBlock(x, y, true) instanceof BlockAir) {
-			return true;
+
+	public Chunk getChunk(int x, int y){
+		int xx = (x / Chunk.chunkSize);
+		int yy = (y / Chunk.chunkSize);
+
+		if(!isChunkLoaded(xx, yy))
+		loadChunk(xx, yy);
+
+		if(xx >= 0 && yy >= 0) {
+			if (xx < (worldSize.xSize / Chunk.chunkSize) && yy < (worldSize.ySize / Chunk.chunkSize)) {
+				return worldChunks.get(new Point(x / Chunk.chunkSize, y / Chunk.chunkSize));
+			}
 		}
 
-		return false;
+		return null;
 	}
 
 
@@ -273,51 +326,23 @@ public class World {
 	}
 
 	public Block getBlock( int x, int y, boolean allowAir ) {
-		if (worldBlocks != null) {
-			if (x >= 0 && y >= 0 && x < worldSize.xSize && y < worldSize.ySize) {
-				if (!allowAir && worldBlocks[ x ][ y ] == Blocks.blockAir) {
-					return null;
-				}
-				return worldBlocks[ x ][ y ];
-			}
-		}
-		return null;
-	}
+		if(getChunk(x, y) == null) return Blocks.blockAir;
+		Block b = getChunk(x, y).getBlock(x,y, allowAir);
 
-	public void removeTickBlock(int x, int y){
-		tickableBlocks.remove(new Point(x, y));
+		return b != null ? b : null;
 	}
 
 	public void setBlock( Block block, int x, int y ) {
-		if(!generating)
-		removeTickBlock(x, y);
-
-		if (worldBlocks != null) {
-			if (x >= 0 && y >= 0) {
-				if (x < worldSize.xSize && y < worldSize.ySize) {
-
-					if (x >= 0 && y >= 0) {
-						if (block != null) {
-							worldBlocks[ x ][ y ] = block;
-
-							if(block instanceof ITickBlock){
-								tickableBlocks.add(new Point(x,y));
-							}
-						} else {
-							worldBlocks[ x ][ y ] = Blocks.blockAir;
-						}
-
-						if(!generating) {
-							getBlock(x, y, true).updateBlock(this, x, y, x, y);
-							updateNearbyBlocks(x, y);
-						}
-
-						lightUnits[x][y] = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
-					}
-				}
-			}
+		if(getChunk(x, y) != null) {
+			getChunk(x, y).setBlock(block, x, y);
 		}
 	}
+
+	public void removeTickBlock(int x, int y){
+		if(getChunk(x, y) != null)
+		getChunk(x, y).removeTickBlock(x, y);
+	}
+
 
 	public void breakBlock(int x, int y){
 		if(getBlock(x, y) != null){
@@ -355,24 +380,30 @@ public class World {
 
 	public void updateBlocks() {
 		try {
-			if(tickableBlocks != null) {
-				//TODO ConcurrentModificationError
-				for (Point p : new ArrayList<Point>(tickableBlocks)) {
-					Block block = getBlock(p.x, p.y);
+			if(worldChunks != null) {
+				for(Map.Entry<Point, Chunk> ent : new HashMap<Point, Chunk>(worldChunks).entrySet()) {
 
-					if(block != null) {
-						if (block instanceof ITickBlock) {
-							ITickBlock up = (ITickBlock) block;
+					if(ent.getValue() == null || ent.getValue().tickableBlocks == null)
+						continue;
 
-							int x = p.x, y = p.y;
+					//TODO ConcurrentModificationError
+					for (Point p : new ArrayList<Point>(ent.getValue().tickableBlocks)) {
+						Block block = getBlock(p.x, p.y);
 
-							if (MainFile.game.getClient().getPlayer().getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
-								if (up.shouldupdate(this, x, y)) {
-									if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
-										up.updateBlock(this, x, y);
-										up.setTimeSinceUpdate(0);
-									} else {
-										up.setTimeSinceUpdate(up.getTimeSinceUpdate() + 1);
+						if (block != null) {
+							if (block instanceof ITickBlock) {
+								ITickBlock up = (ITickBlock) block;
+
+								int x = p.x, y = p.y;
+
+								if (MainFile.game.getClient().getPlayer().getEntityPostion().distance(x, y) <= (ConfigValues.renderDistance * 2) || up.updateOutofBounds()) {
+									if (up.shouldupdate(this, x, y)) {
+										if (up.getTimeSinceUpdate() == up.blockupdateDelay()) {
+											up.updateBlock(this, x, y);
+											up.setTimeSinceUpdate(0);
+										} else {
+											up.setTimeSinceUpdate(up.getTimeSinceUpdate() + 1);
+										}
 									}
 								}
 							}
@@ -428,11 +459,13 @@ public class World {
 	public LightUnit getLightUnit( int x, int y){
 		if(x >= 0 && y >= 0){
 			if(x < worldSize.xSize && y < worldSize.ySize){
-				return lightUnits[x][y];
+				if(getChunk(x, y) != null) {
+					return getChunk(x, y).getLightUnit(x, y);
+				}
 			}
 		}
 		
-		return null;
+		return new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, ILightSource.MAX_LIGHT_STRENGTH);
 	}
 
 	public void updateLightForBlock( int xx, int yy ) {
@@ -544,9 +577,6 @@ public class World {
 		if (worldProperties != null ? !worldProperties.equals(world.worldProperties) : world.worldProperties != null) {
 			return false;
 		}
-		if (!worldBlocks.equals(world.worldBlocks)) {
-			return false;
-		}
 		return worldTimeOfDay == world.worldTimeOfDay;
 
 	}
@@ -567,7 +597,6 @@ public class World {
 		result = 31 * result + worldSize.hashCode();
 		result = 31 * result + (worldProperties != null ? worldProperties.hashCode() : 0);
 		result = 31 * result + (Entities != null ? Entities.hashCode() : 0);
-		result = 31 * result + worldBlocks.hashCode();
 		result = 31 * result + WorldTime;
 		result = 31 * result + WorldTimeDayEnd;
 		result = 31 * result + (worldTimeOfDay != null ? worldTimeOfDay.hashCode() : 0);

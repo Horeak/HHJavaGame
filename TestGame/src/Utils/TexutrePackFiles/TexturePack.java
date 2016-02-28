@@ -6,6 +6,7 @@ import org.newdawn.slick.Image;
 
 public class TexturePack {
 
+	//TODO Save/load texturepack selected
 	public String name;
 	public String fileLocation;
 	public Image image;

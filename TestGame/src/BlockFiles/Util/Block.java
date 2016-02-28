@@ -13,6 +13,7 @@ import Items.Utils.IItem;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.BlockUtils;
+import WorldFiles.Chunk;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -59,6 +60,8 @@ public abstract class Block implements IItem, Serializable{
 	}
 
 	public float getLightValue(World world, int x, int y) {
+		if(!world.isChunkLoaded(x / Chunk.chunkSize, y / Chunk.chunkSize)) return 0F;
+
 		float tt = world.getLightUnit(x,y).getLightValue();
 
 		//TODO Find a way to achieve smooth transition between the light multipliers of to time periods
