@@ -1,45 +1,54 @@
 package WorldGeneration.Structures;
 
 
-import BlockFiles.BlockStone;
 import BlockFiles.Blocks;
-import Render.SimplexNoise;
 import Utils.LoggerUtil;
+import WorldFiles.Chunk;
 import WorldFiles.World;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
 
 public class StoneGeneration extends StructureGeneration {
+//	@Override
+//	public boolean canGenerate( World world ) {
+//		return true;
+//	}
+//
+//	@Override
+//	public void generate( World world ) {
+//		SimplexNoise noise = new SimplexNoise();
+//
+//		int frequency = (world.worldSize.ySize) / world.worldSize.div;
+//
+//		for (int x = 0; x < world.worldSize.xSize; x++) {
+//			float h = (noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
+//			for (int y = world.worldSize.ySize - 1; y > 0; y--) {
+//
+//				try {
+//					if (world.getBlock(x, y - 1) != null && world.getBlock(x, y - 2) != null && world.getBlock(x, y - 3) != null && world.getBlock(x, y - 4) != null && world.getBlock(x, y - 5) != null) {
+//
+//						int ySize = (world.worldSize.ySize) / 4;
+//
+//						float current = (float) (ySize - y) / ySize;
+//						if (current <= h) {
+//							world.setBlock(Blocks.blockStone, x, y);
+//						}
+//					}
+//				} catch (Exception e) {
+//					LoggerUtil.exception(e);
+//				}
+//			}
+//		}
+//	}
+//
 	@Override
-	public boolean canGenerate( World world ) {
-		return true;
+	public boolean canGenerate( Chunk chunk ) {
+		return false;
 	}
 
 	@Override
-	public void generate( World world ) {
-		SimplexNoise noise = new SimplexNoise();
+	public void generate( Chunk chunk ) {
 
-		int frequency = (world.worldSize.ySize) / world.worldSize.div;
-
-		for (int x = 0; x < world.worldSize.xSize; x++) {
-			float h = (noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
-			for (int y = world.worldSize.ySize - 1; y > 0; y--) {
-
-				try {
-					if (world.getBlock(x, y - 1) != null && world.getBlock(x, y - 2) != null && world.getBlock(x, y - 3) != null && world.getBlock(x, y - 4) != null && world.getBlock(x, y - 5) != null) {
-
-						int ySize = (world.worldSize.ySize) / 4;
-
-						float current = (float) (ySize - y) / ySize;
-						if (current <= h) {
-							world.setBlock(Blocks.blockStone, x, y);
-						}
-					}
-				} catch (Exception e) {
-					LoggerUtil.exception(e);
-				}
-			}
-		}
 	}
 
 	@Override

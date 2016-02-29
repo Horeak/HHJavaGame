@@ -35,17 +35,8 @@ public class FileUtil {
 							DataHandler handler = MainFile.game.saveUtil.getDataHandler("saves/" + fe.getName() + "/world.data");
 
 							String name = fe.getName();
-							EnumWorldSize size = null;
 
-							String t = handler.getString("worldSize");
-							for (EnumWorldSize ee : EnumWorldSize.values()) {
-								if (ee.name().equals(t)) {
-									size = ee;
-									break;
-								}
-							}
-
-							World world = new World(name, size);
+							World world = new World(name);
 							world.worldName = name;
 
 //							world.loadWorld(world.worldName);

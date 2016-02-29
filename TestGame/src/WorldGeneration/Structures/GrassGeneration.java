@@ -1,41 +1,47 @@
 package WorldGeneration.Structures;
 
-import BlockFiles.BlockDirt;
-import BlockFiles.BlockGrass;
 import BlockFiles.Blocks;
-import Render.SimplexNoise;
-import WorldFiles.World;
+import WorldFiles.Biome;
+import WorldFiles.Chunk;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
 
 public class GrassGeneration extends StructureGeneration {
+
 	@Override
-	public boolean canGenerate( World world ) {
+	public boolean canGenerate( Chunk chunk ) {
 		return true;
 	}
 
 	@Override
-	public void generate( World world ) {
-		SimplexNoise noise = new SimplexNoise();
-
-		int frequency = (world.worldSize.ySize) / world.worldSize.div;
-
-		for (int x = 0; x < world.worldSize.xSize; x++) {
-			float h = (noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
-			for (int y = 0; y < (world.worldSize.ySize); y++) {
-
-				int ySize = (world.worldSize.ySize) / 4;
-				float current = (float) (ySize - y) / ySize;
-
-				if (current < h) {
-					if(world.getBlock(x, y - 1) != null){
-						world.setBlock(Blocks.blockDirt, x, y);
-					}else {
-						world.setBlock(Blocks.blockGrass, x, y);
-					}
-				}
+	public void generate( Chunk chunk ) {
+		for(int x = 0; x < Chunk.chunkSize; x++){
+			for(int y = 0; y < Chunk.chunkSize; y++){
+				chunk.setBlock_(Blocks.blockGrass, x, y);
 			}
 		}
+
+//		SimplexNoiseGenerator noise = new SimplexNoiseGenerator(chunk.world.worldSeed);
+//
+//		int frequency = (chunk.chunkY) / 2;
+//
+//		for (int x = 0; x < Chunk.chunkSize; x++) {
+//			float h = ((float)noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
+//			for (int y = 0; y < Chunk.chunkSize; y++) {
+//
+//				int ySize = (chunk.chunkY * Chunk.chunkSize) / 4;
+//				float current = (float) (ySize - y) / ySize;
+//				current = -10000;
+//
+//				if (current < h) {
+//					if(chunk.getBlock(x, y - 1) != null){
+//						chunk.setBlock_(Blocks.blockDirt, x, y);
+//					}else {
+//						chunk.setBlock_(Blocks.blockGrass, x, y);
+//					}
+//				}
+//			}
+//		}
 	}
 
 	@Override

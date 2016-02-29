@@ -10,7 +10,6 @@ import Render.Renders.BlockRendering;
 import Utils.FileUtil;
 import Utils.FontHandler;
 import Utils.TimeTaker;
-import WorldFiles.EnumWorldSize;
 import WorldFiles.World;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Color;

@@ -31,8 +31,8 @@ public class WorldGenerationScreen extends AbstractWindowRender {
 		g2.setColor(MainFile.game.getServer().getWorld().worldTimeOfDay.SkyColor);
 		g2.fill(MainFile.blockRenderBounds);
 
-		float h = ((MainFile.game.getServer().getWorld().worldSize.xSize) * ConfigValues.size) / MainFile.xWindowSize;
-		World world = MainFile.game.getServer().getWorld();
+//		float h = ((MainFile.game.getServer().getWorld().worldSize.xSize) * ConfigValues.size) / MainFile.xWindowSize;
+//		World world = MainFile.game.getServer().getWorld();
 
 		//Disable Due to it loading chunks while generating causing ConcurrentModificationError and this render wont be possible with infinite worlds
 //		g2.pushTransform();

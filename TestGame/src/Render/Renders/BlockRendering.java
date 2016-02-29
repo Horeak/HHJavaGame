@@ -30,12 +30,30 @@ public class BlockRendering extends AbstractWindowRender {
 		org.newdawn.slick.geom.Rectangle c = g2.getClip();
 		g2.setClip(MainFile.blockRenderBounds);
 
+		int xMin = Integer.MAX_VALUE, xMax = Integer.MIN_VALUE;
+		int yMin = Integer.MAX_VALUE, yMax = Integer.MIN_VALUE;
+
+		//TODO Make sure this works!
+		for(String t : new ArrayList<>(MainFile.game.getServer().getWorld().generatedChunks)){
+			String[] g = t.split("\\|");
+
+			int x = Integer.parseInt(g[0]);
+			int y = Integer.parseInt(g[1]);
+
+			if(x < xMin) xMin = x;
+			if(x > xMax) xMax = x;
+
+			if(y < yMin) yMin = y;
+			if(y > yMax) yMax = y;
+
+		}
+
 		try {
 
 			if (ConfigValues.renderChunks) {
 				if (MainFile.game.getServer().getWorld().worldChunks != null) {
-					for (int x = 0; x < MainFile.game.getServer().getWorld().worldSize.xSize / Chunk.chunkSize; x++) {
-						for (int y = 0; y < MainFile.game.getServer().getWorld().worldSize.ySize / Chunk.chunkSize; y++) {
+					for (int x = xMin; x < xMax; x++) {
+						for (int y = yMin; y < yMax; y++) {
 
 							int xx = (int) ((x * Chunk.chunkSize));
 							int yy = (int) ((y * Chunk.chunkSize));
@@ -57,7 +75,7 @@ public class BlockRendering extends AbstractWindowRender {
 				}
 			}
 		}catch (Exception e){
-			
+
 		}
 
 		for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {

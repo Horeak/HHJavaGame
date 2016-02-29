@@ -43,7 +43,7 @@ public class BlockSapling extends Block implements ITickBlock{
 
 	@Override
 	public boolean shouldupdate( World world, int x, int y) {
-		return treeGeneration.canGenerate(world, x, y+1);
+		return treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1);
 	}
 
 	public int blockupdateDelay() {
@@ -64,8 +64,8 @@ public class BlockSapling extends Block implements ITickBlock{
 	@Override
 	public void updateBlock(World world, int x, int y) {
 		if(rand.nextInt(20) == 2){
-			if(treeGeneration.canGenerate(world, x, y+1)){
-				treeGeneration.generate(world, x, y+1);
+			if(treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1)){
+				treeGeneration.generate(world.getChunk(x, y+1), x, y+1);
 			}
 		}
 	}

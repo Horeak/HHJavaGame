@@ -1,9 +1,4 @@
 package BlockFiles.Util;
-/*
-* Project: Random Java Creations
-* Package: BlockFiles
-* Created: 26.07.2015
-*/
 
 import BlockFiles.BlockAir;
 import BlockFiles.BlockRender.DefaultBlockRendering;

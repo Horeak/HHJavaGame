@@ -25,13 +25,13 @@ public class BlockUtils {
 	}
 
 	public static boolean canPlaceBlockAt( Block block, int x, int y ) {
-		if (x != -1 && y != -1 && x < MainFile.game.getServer().getWorld().worldSize.xSize && y < MainFile.game.getServer().getWorld().worldSize.ySize) {
+//		if (x != -1 && y != -1 && x < MainFile.game.getServer().getWorld().worldSize.xSize && y < MainFile.game.getServer().getWorld().worldSize.ySize) {
 			boolean t = (int) MainFile.game.getClient().getPlayer().getEntityPostion().x != x || (int) MainFile.game.getClient().getPlayer().getEntityPostion().y != y;
 
 			if (!MainFile.game.getClient().getPlayer().getPlayerBounds().contains(x, y) && t || block == null) {
 				return MainFile.game.getServer().getWorld().getBlock(x, y) == null;
 			}
-		}
+//		}
 
 		return false;
 	}

@@ -10,9 +10,7 @@ import EntityFiles.Entity;
 import EntityFiles.EntityItem;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Render.Renders.MinimapRender;
 import Threads.WorldEntityUpdateThread;
-import Threads.WorldGenerationThread;
 import Threads.WorldLightUpdateThread;
 import Threads.WorldUpdateThread;
 import Utils.*;
@@ -21,7 +19,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 //TODO Make sure there is no code left that is hardcoded to one player
 //TODO World is generating holes
@@ -30,7 +27,6 @@ import java.util.logging.Level;
 //TODO Remove world limit and instead generate based on a seed
 
 public class World {
-	public WorldGenerationThread worldGenerationThread = new WorldGenerationThread();
 	public WorldUpdateThread worldUpdateThread = new WorldUpdateThread();
 	public WorldEntityUpdateThread worldEntityUpdateThread = new WorldEntityUpdateThread();
 	public WorldLightUpdateThread worldLightUpdateThread = new WorldLightUpdateThread();
@@ -40,12 +36,18 @@ public class World {
 	public ArrayList<Entity> Entities = new ArrayList<>();
 	public ArrayList<Entity> RemoveEntities = new ArrayList<>();
 
+	//TODO Add Biomes
+	//TODO Store a heightMap in the biome with the ground height for each x-value in the chunks which is generated when the biome is generated
+	public HashMap<Point, Biome> biomes = new HashMap<>();
 
+	//TODO Save generated
 	public HashMap<Point, Chunk> worldChunks;
+	public ArrayList<String> generatedChunks = new ArrayList<>();
 
 	public String worldName;
-	public EnumWorldSize worldSize;
 	public EnumWorldTime worldTimeOfDay = EnumWorldTime.DAY;
+
+	public long worldSeed = MainFile.random.nextLong();
 
 	public int WorldTime = worldTimeOfDay.timeBegin, WorldTimeDayEnd = EnumWorldTime.NIGHT.timeEnd;
 	public int WorldDay = 1;
@@ -57,13 +59,12 @@ public class World {
 	public boolean isLive = false;
 	public boolean loading = false;
 
-	public World( String name, EnumWorldSize size ) {
+	public World( String name) {
 		while(FileUtil.isThereWorldWithName(name)){
 			name += "-";
 		}
 
 		this.worldName = name;
-		this.worldSize = size;
 		resetValues();
 	}
 
@@ -107,15 +108,7 @@ public class World {
 	}
 
 	public void resetValues() {
-		if(worldSize == null){
-			LoggerUtil.out.log(Level.SEVERE, "worldSize was null! Unable to resetValues in world! [" + worldName + "]");
-		}
-
-
-		if(worldSize != null) {
-			worldChunks = new HashMap<>();
-		}
-
+		worldChunks = new HashMap<>();
 		worldTimeOfDay = EnumWorldTime.MORNING;
 		WorldTime = worldTimeOfDay.timeBegin;
 		WorldDay = 1;
@@ -125,8 +118,6 @@ public class World {
 		if(!loaded) {
 			saveWorld();
 
-			worldGenerationThread = new WorldGenerationThread();
-			worldGenerationThread.start();
 		}
 
 		worldEntityUpdateThread = new WorldEntityUpdateThread();
@@ -157,7 +148,8 @@ public class World {
 	//TODO Add auto saving (Save the world every 5 min or so)
 	public void saveWorld(){
 		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/world.data");
-		handlerSets.setObject("worldSize", worldSize);
+
+		handlerSets.setObject("worldSeed", worldSeed);
 		handlerSets.setObject("worldTimeOfDay", worldTimeOfDay);
 		handlerSets.setObject("worldTime", WorldTime);
 		handlerSets.setObject("dayNumber", WorldDay);
@@ -167,16 +159,15 @@ public class World {
 		handlerProperties.setObject("properties", worldProperties);
 
 
+		for(String t : generatedChunks){
+			String[] g = t.split("\\|");
 
-		//TODO For some reason only one chunk is saved?
-		//TODO Save chunks sepratly
-		HashMap<Point, Chunk> blStore = new HashMap<>();
-		for(int x = 0; x < (worldSize.xSize / Chunk.chunkSize); x += 1){
-			for(int y = 0; y < (worldSize.ySize / Chunk.chunkSize); y += 1){
-				MainFile.game.saveUtil.saveObjectFile(worldChunks.get(new Point(x, y)), "saves/" + worldName + "/chunks/" + "chunk_" + x + "_" + y + ".data");
-			}
+			int x = Integer.parseInt(g[0]);
+			int y = Integer.parseInt(g[1]);
+
+			loadChunk(x, y);
+			MainFile.game.saveUtil.saveObjectFile(worldChunks.get(new Point(x, y)), "saves/" + worldName + "/chunks/" + "chunk_" + x + "_" + y + ".data");
 		}
-
 		MainFile.game.saveUtil.saveObjectFile(Entities, "saves/" + worldName + "/worldEntities.data");
 	}
 
@@ -205,18 +196,12 @@ public class World {
 
 		DataHandler handlerSets = MainFile.game.saveUtil.getDataHandler("saves/" + name + "/world.data");
 		worldName = name;
+		worldSeed = handlerSets.getLong("worldSeed");
 		WorldTime = handlerSets.getInteger("worldTime");
 		WorldDay = handlerSets.getInteger("dayNumber");
 		timePlayed = handlerSets.getLong("timeStart");
 		TimeTaker.startTimeTaker("worldTimePlayed:" + worldName, System.currentTimeMillis() - timePlayed);
 
-		String t = handlerSets.getString("worldSize");
-		for(EnumWorldSize ee : EnumWorldSize.values()) {
-			if (ee.name().equals(t)) {
-				worldSize = ee;
-				break;
-			}
-		}
 		String tt = handlerSets.getString("worldTimeOfDay");
 		for(EnumWorldTime ee : EnumWorldTime.values()) {
 			if (ee.name().equals(tt)) {
@@ -227,18 +212,6 @@ public class World {
 
 		DataHandler handlerProperties = MainFile.game.saveUtil.getDataHandler("saves/" + worldName + "/worldProperties.data");
 		worldProperties = (HashMap<String, Object>)handlerProperties.getObject("properties");
-
-
-//		Object ob = MainFile.game.saveUtil.loadObjectFile("saves/" + name + "/worldBlocks.data");
-//		HashMap<Point, Chunk> bl = (HashMap<Point, Chunk>)ob;
-//
-//		if(bl != null && bl.size() > 0) {
-//			for (Map.Entry<Point, Chunk> ent : bl.entrySet()) {
-////				ent.getValue().loadTextures();
-////				setBlock(ent.getValue(), ent.getKey().x, ent.getKey().y);
-//				worldChunks[ent.getKey().x][ent.getKey().y] = ent.getValue();
-//			}
-//		}
 		Entities = (ArrayList<Entity>)MainFile.game.saveUtil.loadObjectFile("saves/" + worldName + "/worldEntities.data");
 		loadPlayer();
 
@@ -283,8 +256,34 @@ public class World {
 		}
 	}
 
+	public Biome getBiome(int x){
+		if(biomes != null && biomes.size() > 0) {
+			for (Map.Entry<Point, Biome> ent : biomes.entrySet()) {
+				if (x >= (ent.getKey().x * Chunk.chunkSize) && x <= (ent.getKey().y * Chunk.chunkSize)) {
+					return ent.getValue();
+				}
+			}
+		}
+		return null;
+	}
+
 	public void createChunk(int chunkX, int chunkY){
-		worldChunks.put(new Point(chunkX, chunkY), new Chunk(this, chunkX, chunkY));
+		Chunk chunk = new Chunk(this, chunkX, chunkY);
+		chunk.world = this;
+
+		chunk.generateChunk();
+
+		Biome biome = Biome.getInstanceOf("plainsBiome");
+
+		if(getBiome(chunkX) == null && getBiome(chunkX + 1) == null){
+			biomes.put(new Point(chunkX, chunkX + MainFile.random.nextInt(10)), biome);
+
+		}else if(getBiome(chunkX) == null && getBiome(chunkX - 1) == null){
+			biomes.put(new Point(chunkX - MainFile.random.nextInt(10), chunkX), biome);
+		}
+
+		generatedChunks.add(chunkX + "|" + chunkY);
+		worldChunks.put(new Point(chunkX, chunkY), chunk);
 	}
 
 
@@ -310,18 +309,12 @@ public class World {
 
 	public Chunk getChunk_(int chunkX, int chunkY){
 		if(!isChunkLoaded(chunkX, chunkY)) {
-			if(generating || loading || Chunk.shouldRangeLoad(chunkX, chunkY)) {
+			if(Chunk.shouldRangeLoad(chunkX, chunkY)) {
 				loadChunk(chunkX, chunkY);
 			}
 		}
 
-		if(chunkX >= 0 && chunkY >= 0) {
-			if (chunkX < (worldSize.xSize / Chunk.chunkSize) && chunkY < (worldSize.ySize / Chunk.chunkSize)) {
-				return worldChunks.get(new Point(chunkX, chunkY));
-			}
-		}
-
-		return null;
+	return worldChunks.get(new Point(chunkX, chunkY));
 	}
 
 	public Chunk getChunk(int x, int y){
@@ -339,9 +332,9 @@ public class World {
 				return allowAir ? Blocks.blockAir : null;
 			}
 
-				Block b = getChunk(x, y).getBlock(x, y, allowAir);
-
+			Block b = getChunk(x, y).getBlock(x, y, allowAir);
 			return b != null ? b : null;
+
 		}catch (Exception e){
 			LoggerUtil.exception(e);
 		}
@@ -379,22 +372,22 @@ public class World {
 	}
 
 	public void spawnPlayer(EntityPlayer player) {
-		int xx = 1 + MainFile.random.nextInt(worldSize.xSize - 1), yy = 0;
+		int xx = 0, yy = -1;
 
-		for (int y = 0; y < worldSize.ySize; y++) {
-			Block block = getBlock(xx, y);
-
-			if (block != null) {
-				yy = y - 1;
-				break;
-			}
-		}
+		//TODO Re add
+//		for (int y = -Chunk.chunkSize; y < 0; y++) {
+//			Block block = getBlock(xx, y);
+//
+//			if (block != null) {
+//				yy = y - 1;
+//				break;
+//			}
+//		}
 
 		player.setEntityPosition(xx, yy);
 
 		if(!Entities.contains(player))
 		Entities.add(player);
-		MinimapRender.reset();
 
 		MainFile.game.getClient().hasSpawnedPlayer = true;
 	}
@@ -478,12 +471,8 @@ public class World {
 	}
 	
 	public LightUnit getLightUnit( int x, int y){
-		if(x >= 0 && y >= 0){
-			if(x < worldSize.xSize && y < worldSize.ySize){
-				if(getChunk(x, y) != null) {
-					return getChunk(x, y).getLightUnit(x, y);
-				}
-			}
+		if(getChunk(x, y) != null) {
+			return getChunk(x, y).getLightUnit(x, y);
 		}
 		
 		return new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
@@ -570,14 +559,17 @@ public class World {
 			}
 
 		} else {
-			for(int x = 0; x < worldSize.xSize; x++){
-				for(int y = 0; y < worldSize.ySize; y++){
-					Block b = getBlock(x, y);
-					if (b != null) {
-						updateLightForBlock(x, y);
+			for(Chunk chunk : new ArrayList<Chunk>(worldChunks.values())){
+				for(int x = 0; x < Chunk.chunkSize; x++){
+					for(int y = 0; y < Chunk.chunkSize; y++){
+						Block b = chunk.getBlock_(x, y);
+						if(b != null){
+							updateLightForBlock(x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize));
+						}
 					}
 				}
 			}
+
 		}
 	}
 
@@ -605,9 +597,6 @@ public class World {
 		if (!worldName.equals(world.worldName)) {
 			return false;
 		}
-		if (worldSize != world.worldSize) {
-			return false;
-		}
 		if (worldProperties != null ? !worldProperties.equals(world.worldProperties) : world.worldProperties != null) {
 			return false;
 		}
@@ -628,7 +617,6 @@ public class World {
 	@Override
 	public int hashCode() {
 		int result = worldName.hashCode();
-		result = 31 * result + worldSize.hashCode();
 		result = 31 * result + (worldProperties != null ? worldProperties.hashCode() : 0);
 		result = 31 * result + (Entities != null ? Entities.hashCode() : 0);
 		result = 31 * result + WorldTime;
@@ -645,7 +633,6 @@ public class World {
 
 		return "World{" +
 				"worldName='" + worldName + '\'' +
-				", worldSize=" + worldSize +
 				", entities=" + (Entities != null ? Entities.size() : 0) +
 				", timePlayed= " + (t != null && t.length() > 0  ? t.substring(0, t.length()-1) : "") +
 				", properties=" + worldProperties +

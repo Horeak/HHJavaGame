@@ -30,6 +30,7 @@ import org.newdawn.slick.imageout.ImageOut;
 
 import java.awt.*;
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -216,28 +217,59 @@ public class MainFile extends BaseGame {
 		});
 
 
+		//TODO Not working
 		keybindingActions.add(new KeybindingAction(getConfig().getKeybindFromID("worldMap")) {
 			@Override
 			public void performAction() {
 				if(!ConfigValues.debug) return;
 
-				float scale = getServer().getWorld().worldSize.xSize / 128;
+				int xMin = Integer.MAX_VALUE, xMax = Integer.MIN_VALUE;
+				int yMin = Integer.MAX_VALUE, yMax = Integer.MIN_VALUE;
+
+				//TODO Make sure this works!
+				for(String t : new ArrayList<>(getServer().getWorld().generatedChunks)){
+					String[] g = t.split("\\|");
+
+					int x = Integer.parseInt(g[0]);
+					int y = Integer.parseInt(g[1]);
+
+					if(x < xMin) xMin = x;
+					if(x > xMax) xMax = x;
+
+					if(y < yMin) yMin = y;
+					if(y > yMax) yMax = y;
+
+				}
+
+				xMax *= Chunk.chunkSize;
+				xMin *= Chunk.chunkSize;
+
+				yMax *= Chunk.chunkSize;
+				yMin *= Chunk.chunkSize;
+
+				int xLength = (xMax - xMin);
+				int yLength = (yMax - yMin);
+
+				if(xLength <= 0 || yLength <= 0) return;
+
+				float fX = (xLength * Chunk.chunkSize) / 128F;
+				float fY = (yLength * Chunk.chunkSize) / 128F;
 
 				try {
-					Image image = new Image((getServer().getWorld().worldSize.xSize * ConfigValues.size) / (int)scale,(getServer().getWorld().worldSize.ySize * ConfigValues.size) / (int)scale);
+					Image image = new Image((int)(((xLength) * ConfigValues.size) / fX),(int)(((yLength) * ConfigValues.size) / fY));
 					Graphics g2 = image.getGraphics();
 
 					g2.setBackground(getServer().getWorld().worldTimeOfDay.SkyColor);
 					g2.clear();
 
 					g2.pushTransform();
-					g2.scale(1 / scale, 1 / scale);
+					g2.scale(1 / (xLength / 128), 1 / (yLength / 64));
 
 					for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
 						HashMap<Point, Block> b = new HashMap<>();
 
-						for (int x = 0; x < (getServer().getWorld().worldSize.xSize); x++) {
-							for (int y = 0; y < (getServer().getWorld().worldSize.ySize); y++) {
+						for (int x = xMin; x < xMax + (Chunk.chunkSize - 1); x++) {
+							for (int y = yMin; y < yMax + (Chunk.chunkSize - 1); y++) {
 //								getServer().getWorld().loadChunk(x / Chunk.chunkSize, y / Chunk.chunkSize);
 
 								if (MainFile.game.getServer().getWorld().getBlock(x, y) != null) {
@@ -263,8 +295,8 @@ public class MainFile extends BaseGame {
 
 
 					if(ConfigValues.renderChunks){
-						for(int x = 0; x < (getServer().getWorld().worldSize.xSize / Chunk.chunkSize); x++){
-							for(int y = 0; y < (getServer().getWorld().worldSize.ySize / Chunk.chunkSize); y++){
+						for(int x = xMin; x < xMax; x++){
+							for(int y = yMin; y < yMax; y++){
 								g2.setColor(Color.black);
 								g2.draw(new Rectangle((x * Chunk.chunkSize) * ConfigValues.size, (y * Chunk.chunkSize) * ConfigValues.size, Chunk.chunkSize * ConfigValues.size, Chunk.chunkSize * ConfigValues.size));
 							}
@@ -275,7 +307,6 @@ public class MainFile extends BaseGame {
 					g2.fill(new Rectangle(getClient().getPlayer().getEntityPostion().x - (ConfigValues.size / 2), getClient().getPlayer().getEntityPostion().y - (ConfigValues.size / 2), (ConfigValues.size), (ConfigValues.size)));
 
 					g2.popTransform();
-
 					g2.flush();
 
 					FileUtils.getFolder(getFilesSaveLocation() + "/maps/");
@@ -287,20 +318,44 @@ public class MainFile extends BaseGame {
 			}
 		});
 
+		//TODO Not drawing chunks
 		keybindingActions.add(new KeybindingAction(getConfig().getKeybindFromID("chunkMap")) {
 			@Override
 			public void performAction() {
 				if(!ConfigValues.debug) return;
 
+				int xMin = Integer.MAX_VALUE, xMax = Integer.MIN_VALUE;
+				int yMin = Integer.MAX_VALUE, yMax = Integer.MIN_VALUE;
+
+				//TODO Make sure this works!
+				for(String t : new ArrayList<>(getServer().getWorld().generatedChunks)){
+					String[] g = t.split("\\|");
+
+					int x = Integer.parseInt(g[0]);
+					int y = Integer.parseInt(g[1]);
+
+					if(x < xMin) xMin = x;
+					if(x > xMax) xMax = x;
+
+					if(y < yMin) yMin = y;
+					if(y > yMax) yMax = y;
+
+				}
+
+				int xLength = (xMax - xMin);
+				int yLength = (yMax - yMin);
+
+				if(xLength <= 0 || yLength <= 0) return;
+
 				try {
-					Image image = new Image(getServer().getWorld().worldSize.xSize, getServer().getWorld().worldSize.ySize);
+					Image image = new Image((int)((xLength * Chunk.chunkSize)),(int)((yLength * Chunk.chunkSize)));
 					Graphics g2 = image.getGraphics();
 
 					g2.setBackground(new Color(0,0,0,0));
 					g2.clear();
 
-					for(int x = 0; x < (getServer().getWorld().worldSize.xSize / Chunk.chunkSize); x++){
-						for(int y = 0; y < (getServer().getWorld().worldSize.ySize / Chunk.chunkSize); y++){
+					for(int x = xMin; x < xMax; x++){
+						for(int y = yMin; y < yMax; y++){
 
 							if(!getServer().getWorld().isChunkLoaded(x, y)){
 								g2.setColor(Color.red);
@@ -308,7 +363,7 @@ public class MainFile extends BaseGame {
 
 							if(getServer().getWorld().isChunkLoaded(x, y)){
 								if(getServer().getWorld().getChunk(x * Chunk.chunkSize, y * Chunk.chunkSize) != null && getServer().getWorld().getChunk(x * Chunk.chunkSize, y * Chunk.chunkSize).shouldBeLoaded()){
-									g2.setColor(Color.green);
+//									g2.setColor(Color.green);
 								}else{
 									g2.setColor(Color.yellow);
 								}
@@ -473,8 +528,8 @@ public class MainFile extends BaseGame {
 		if(renders == null){
 			renders = new AbstractWindowRender[]{
 					new BackgroundRender(), new BlockRendering(), new EntityRendering(),
-					new BlockSelectionRender(), new HotbarRender(), new MinimapRender(),
-					new DebugInfoRender(), new WorldGenerationScreen()};
+					new BlockSelectionRender(), new HotbarRender(), new DebugInfoRender(),
+					new WorldGenerationScreen()};
 		}
 
 		return renders;

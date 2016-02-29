@@ -9,7 +9,12 @@ import BlockFiles.Util.LightUnit;
 import EntityFiles.EntityItem;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Render.Renders.WorldGenerationScreen;
 import Utils.LoggerUtil;
+import Utils.Registrations;
+import WorldGeneration.Util.GenerationBase;
+import WorldGeneration.Util.StructureGeneration;
+import WorldGeneration.Util.WorldGenPriority;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -17,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-//TODO Chunk 0,0 stays loaded!
 //TODO Use chunkMap to debug yellow chunks!
 public class Chunk implements Serializable{
 	public static int chunkSize = 16;
@@ -38,6 +42,45 @@ public class Chunk implements Serializable{
 		this.chunkY = chunkY;
 	}
 
+	public void generateChunk(){
+		if(world == null) LoggerUtil.exception(new Exception("ERROR: Null world before generation"));
+
+		for (WorldGenPriority priority : WorldGenPriority.values()) {
+			world.generating = true;
+
+			for (StructureGeneration gen : Registrations.structureGenerations) {
+				if (gen.generationPriority().equals(priority)) {
+					if(MainFile.game.getServer().getWorld() != null)
+						if (gen.canGenerate(this)) {
+							WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
+							gen.generate(this);
+						}
+				}
+			}
+
+			for (GenerationBase gen : Registrations.generationBases) {
+				if (gen.generationPriority().equals(priority)) {
+					if(MainFile.game.getServer().getWorld() != null)
+						for (int x = 0; x < chunkSize; x++) {
+							for (int y = 0; y < chunkSize; y++) {
+								if (gen.canGenerate(this, x, y)) {
+									WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
+									gen.generate(this, x, y);
+								}
+							}
+						}
+				}
+			}
+
+		}
+
+		world.generating = false;
+	}
+
+	public Block getBlock( int x, int y ) {
+		return getBlock(x, y, false);
+	}
+
 	public Block getBlock( int x, int y, boolean allowAir ) {
 		int Ux = x - (chunkX * chunkSize);
 		int Uy = y - (chunkY * chunkSize);
@@ -54,6 +97,26 @@ public class Chunk implements Serializable{
 		return null;
 	}
 
+	public Block getBlock_( int x, int y ) {
+		return getBlock_(x, y, false);
+	}
+
+	public Block getBlock_( int x, int y, boolean allowAir ) {
+		if(x < 0) x *= -1;
+		if(y < 0) y *= -1;
+
+		if (blocks != null) {
+			if (x >= 0 && y >= 0 && x < chunkSize && y < chunkSize) {
+				if (!allowAir && blocks[ x ][ y ] instanceof BlockAir) {
+					return null;
+				}
+
+				return blocks[ x ][ y ];
+			}
+		}
+		return null;
+	}
+
 	public void removeTickBlock(int x, int y){
 		int Ux = x - (chunkX * chunkSize);
 		int Uy = y - (chunkY * chunkSize);
@@ -61,43 +124,46 @@ public class Chunk implements Serializable{
 		tickableBlocks.remove(new Point(Ux, Uy));
 	}
 
-	public void setBlock( Block block, int x, int y ) {
-		int Ux = x - (chunkX * chunkSize);
-		int Uy = y - (chunkY * chunkSize);
-
-		if(world == null){
-			world = MainFile.game.getServer().getWorld();
-		}
+	public void setBlock_( Block block, int xPos, int yPos ) {
+		int wX = xPos + (chunkX * chunkSize), wY = yPos + (chunkY * chunkSize);
+		if(xPos < 0) xPos *= -1;
+		if(yPos < 0) yPos *= -1;
 
 		if(!world.generating) {
-			removeTickBlock(x, y);
+			removeTickBlock(wX, wY);
 		}
 
 		if (blocks != null) {
-			if (Ux >= 0 && Uy >= 0) {
-				if (Ux < chunkSize && Uy < chunkSize) {
+			if (xPos >= 0 && yPos >= 0) {
+				if (xPos < chunkSize && yPos < chunkSize) {
 
 					if (block != null) {
-						blocks[ Ux ][ Uy ] = block;
+						blocks[ xPos ][ yPos ] = block;
 
 						if(block instanceof ITickBlock){
-							tickableBlocks.add(new Point(Ux,Uy));
+							tickableBlocks.add(new Point(xPos,yPos));
 						}
 
 					} else {
-						blocks[ Ux ][ Uy ] = Blocks.blockAir;
+						blocks[ xPos ][ yPos ] = Blocks.blockAir;
 					}
 
 					if(!world.generating) {
-						getBlock(x, y, true).updateBlock(world, x, y, x, y);
-						world.updateNearbyBlocks(x, y);
+						getBlock(wX, wY, true).updateBlock(world, wX, wY, wX, wY);
+						world.updateNearbyBlocks(wX, wY);
 					}
 
 
-					lightUnits[Ux][Uy] = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
+					lightUnits[xPos][yPos] = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
 				}
 			}
 		}
+	}
+
+	public void setBlock( Block block, int x, int y ) {
+		int Ux = x - (chunkX * chunkSize);
+		int Uy = y - (chunkY * chunkSize);
+		setBlock_(block, Ux, Uy);
 	}
 
 	public boolean isAirBlock( int x, int y ) {

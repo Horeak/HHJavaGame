@@ -28,18 +28,6 @@ public class ConfigFile extends Config{
 			ConfigValues.debug = (Boolean)ob;
 		}
 
-	}, new ConfigOption("Render minimap", new Boolean[]{true, false}, ConfigValues.RENDER_MINIMAP) {
-		@Override
-		public void setValue( Object ob ) {
-			ConfigValues.RENDER_MINIMAP = (Boolean)ob;
-		}
-
-	}, new ConfigOption("Minimap size", new String[]{"Normal", "Large", "Small"}, ConfigValues.MinimapSize) {
-		@Override
-		public void setValue( Object ob ) {
-			ConfigValues.MinimapSize = (String)ob;
-		}
-
 	}, new ConfigOption("Vsync", new Boolean[]{true, false}, MainFile.game.gameContainer.isVSyncRequested()) {
 		@Override
 		public void setValue(Object ob) {

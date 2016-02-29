@@ -26,13 +26,14 @@ public class BlockSelectionRender extends AbstractWindowRender {
 		float mouseBlockX = (float) (BlockSelection.selectedX - plPos.x) + ConfigValues.renderRange;
 		float mouseBlockY = (float) (BlockSelection.selectedY - plPos.y) + ConfigValues.renderRange;
 
-		boolean valid = BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0 && BlockSelection.selectedX < MainFile.game.getServer().getWorld().worldSize.xSize && BlockSelection.selectedY < MainFile.game.getServer().getWorld().worldSize.ySize;
+		//TODO Is this needed?
+//		boolean valid = BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0 && BlockSelection.selectedX < MainFile.game.getServer().getWorld().worldSize.xSize && BlockSelection.selectedY < MainFile.game.getServer().getWorld().worldSize.ySize;
 
-		if (valid) {
+//		if (valid) {
 			textureValid.draw(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
-		} else {
-			textureInvalid.draw(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
-		}
+//		} else {
+//			textureInvalid.draw(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
+//		}
 
 		g2.setColor(temp);
 	}

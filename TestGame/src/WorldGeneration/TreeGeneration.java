@@ -6,6 +6,7 @@ import BlockFiles.BlockWood;
 import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import Main.MainFile;
+import WorldFiles.Chunk;
 import WorldFiles.World;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.WorldGenPriority;
@@ -17,15 +18,21 @@ public class TreeGeneration extends GenerationBase {
 
 	public boolean useRandom = true;
 
-	@Override
-	public boolean canGenerate( World world, int x, int y ) {
-		if (world.getBlock(x, y) instanceof BlockGrass) {
-			Block b = world.getBlock(x, y);
 
-			if (b.canBlockSeeSky(world, x, y)) {
+
+	@Override
+	public boolean canGenerate( Chunk chunk, int x, int y ) {
+		if(true) return false;
+
+		if(chunk == null || chunk.world == null) return false;
+
+		if (chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize)) instanceof BlockGrass) {
+			Block b = chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize));
+
+			if (b.canBlockSeeSky(chunk.world, x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize))) {
 				for (int xx = -1; xx < 2; xx++) {
 					for (int yy = -6; yy < 0; yy++) {
-						Block bg = world.getBlock(x + xx, y + yy);
+						Block bg = chunk.getBlock(x + xx, y + yy);
 						if (bg != null && bg.isBlockSolid() || bg != null && !bg.canPassThrough()) {
 							return false;
 						}
@@ -40,11 +47,14 @@ public class TreeGeneration extends GenerationBase {
 	}
 
 	@Override
-	public void generate( World world, int x, int y ) {
+	public void generate( Chunk chunk, int x, int y ) {
+		if(true)
+			return;
+
 		int height = 3 + MainFile.random.nextInt(4);
 
 		for (int i = 0; i < height; i++) {
-			world.setBlock(Blocks.blockWood, x, y - (i + 1));
+			chunk.world.setBlock(Blocks.blockWood, x  + (chunk.chunkX * Chunk.chunkSize), y - (i + 1)+ (chunk.chunkY * Chunk.chunkSize));
 		}
 
 		Point p = new Point(x, y - height);
@@ -62,15 +72,16 @@ public class TreeGeneration extends GenerationBase {
 				int xPos = x + xx;
 				int yPos = y + yy;
 
-				if (world.getBlock(xPos, yPos) == null) {
+				if (chunk.getBlock(xPos, yPos) == null) {
 
 					if (p.distance(xPos, yPos) <= 3) {
-						world.setBlock(Blocks.blockLeaves, xPos, yPos);
+
+						int gxx = xPos + (chunk.chunkX * Chunk.chunkSize);
+						chunk.world.setBlock(Blocks.blockLeaves, xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize));
 					}
 				}
 			}
 		}
-
 	}
 
 	@Override

@@ -14,7 +14,6 @@ import Render.Renders.BackgroundRender;
 import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
 import Utils.FileUtil;
-import WorldFiles.EnumWorldSize;
 import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
 import WorldGeneration.TreeGeneration;
@@ -37,6 +36,8 @@ public class AbstractMainMenu extends UIMenu {
 
 	public boolean renderBar = true;
 	public boolean renderOverlayBlur = true;
+	
+	public static int length = 64;
 
 	public AbstractMainMenu() {
 		initWorld();
@@ -44,20 +45,20 @@ public class AbstractMainMenu extends UIMenu {
 
 	public static void initWorld() {
 		if (world == null) {
-			world = new World("BackgroundWorld", EnumWorldSize.SMALL);
+			world = new World("BackgroundWorld");
 			world.setTimeOfDay(EnumWorldTime.DAY);
 			world.WorldTime /= 2;
 			world.loading = true;
 
-			for (int x = 0; x < world.worldSize.xSize; x++) {
+			for (int x = 0; x < length; x++) {
 				world.setBlock(Blocks.blockGrass, x, (ConfigValues.renderYSize - 6));
 			}
 			for (int y = (ConfigValues.renderYSize - 5); y < ConfigValues.renderYSize; y++) {
-				for (int x = 0; x < world.worldSize.xSize; x++) {
+				for (int x = 0; x < length; x++) {
 					world.setBlock(Blocks.blockDirt, x, y);
 				}
 			}
-			for (int x = 0; x < world.worldSize.xSize; x++) {
+			for (int x = 0; x < length; x++) {
 				for(int y = (ConfigValues.renderYSize - 3); y < (ConfigValues.renderYSize); y++) {
 					if (MainFile.random.nextInt(3) == 1) {
 						world.setBlock(Blocks.blockStone, x, y);
@@ -67,15 +68,15 @@ public class AbstractMainMenu extends UIMenu {
 				}
 			}
 
-			for(int y = (ConfigValues.renderYSize); y < world.worldSize.ySize; y++) {
-				for (int x = 0; x < world.worldSize.xSize; x++) {
+			for(int y = (ConfigValues.renderYSize); y < 5; y++) {
+				for (int x = 0; x < length; x++) {
 					world.setBlock(Blocks.blockStone, x, y);
 				}
 			}
 
-			for(int x = 0; x < world.worldSize.xSize; x+= 5){
+			for(int x = 0; x < length; x+= 5){
 				if(MainFile.random.nextInt(5) == 0)
-				new TreeGeneration().generate(world, x, ConfigValues.renderYSize - 6);
+				new TreeGeneration().generate(world.getChunk(x, ConfigValues.renderYSize - 6), x, ConfigValues.renderYSize - 6);
 			}
 		}
 		world.updateLightForBlocks(false);
@@ -91,8 +92,8 @@ public class AbstractMainMenu extends UIMenu {
 			for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
 				HashMap<Point, Block> bbb = new HashMap<>();
 
-				for (int x = 0; x < (world.worldSize.xSize); x++) {
-					for (int y = 0; y < world.worldSize.ySize; y++) {
+				for (int x = 0; x < (length); x++) {
+					for (int y = 0; y < 5; y++) {
 						Block b = world.getBlock(x, y);
 
 						if (x > ((MainFile.game.gameContainer.getScreenWidth() / ConfigValues.size) + 1) || y > ((MainFile.game.gameContainer.getScreenHeight() / ConfigValues.size) + 1))

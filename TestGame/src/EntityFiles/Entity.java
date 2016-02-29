@@ -74,27 +74,23 @@ public abstract class Entity implements Serializable{
 		return MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);
 	}
 
+	//TODO For some reason going from positive to negative numbers is slow(trying to move from 0 to -1)
 	public boolean canMoveTo( float x, float y ) {
-		if (x >= 0 && (Math.round(x) < MainFile.game.getServer().getWorld().worldSize.xSize) && y < MainFile.game.getServer().getWorld().worldSize.ySize) {
-			float f = 0.38F;
+		float f = 0.38F;
 
-			Block b1 = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y)), b2 = MainFile.game.getServer().getWorld().getBlock(Math.round(x - f), Math.round(y)), b3 = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y) - 1);
-			Block b4 = MainFile.game.getServer().getWorld().getBlock(Math.round(x + f), Math.round(y));
+		Block b1 = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y)), b2 = MainFile.game.getServer().getWorld().getBlock(Math.round(x - f), Math.round(y)), b3 = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y) - 1);
+		Block b4 = MainFile.game.getServer().getWorld().getBlock(Math.round(x + f), Math.round(y));
 
-			boolean t1 = b1 == null || b1 != null && b1.canPassThrough();
-			boolean t2 = b2 == null || b2 != null && b2.canPassThrough();
-			boolean t3 = b3 == null || b3 != null && b3.canPassThrough();
-			boolean t4 = b4 == null || b4 != null && b4.canPassThrough();
+		boolean t1 = b1 == null || b1 != null && b1.canPassThrough();
+		boolean t2 = b2 == null || b2 != null && b2.canPassThrough();
+		boolean t3 = b3 == null || b3 != null && b3.canPassThrough();
+		boolean t4 = b4 == null || b4 != null && b4.canPassThrough();
 
-			return t1 && t2 && t3 && t4;
-		}
-		return false;
+		return t1 && t2 && t3 && t4;
 	}
 
 	public boolean moveTo( float x, float y ) {
 		Block targetBlock = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y));
-
-		if (x < MainFile.game.getServer().getWorld().worldSize.xSize && x >= 0 && y < MainFile.game.getServer().getWorld().worldSize.ySize)
 			if (targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
 				if (canMoveTo(x, y)) {
 					setEntityPosition(x, y);
