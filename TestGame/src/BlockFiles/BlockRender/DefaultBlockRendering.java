@@ -21,12 +21,12 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 	public static Image[] breakImages = new Image[]{  MainFile.game.imageLoader.getImage("textures/breakBlock", "break1"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break2"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break3"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break4"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break5") };
 
-	private static void drawFront( Graphics g, int xStart, int yStart, Color c) {
+	public static void drawFront( Graphics g, int xStart, int yStart, Color c) {
 		g.setColor(c);
 		g.fill(new Rectangle(xStart, yStart, ConfigValues.size, ConfigValues.size));
 	}
 
-	private static void drawSide( Graphics g, int xStart, int yStart, Color c) {
+	public static void drawSide( Graphics g, int xStart, int yStart, Color c) {
 		xStart += ConfigValues.size;
 
 		Path path = new Path(xStart, yStart);
@@ -40,7 +40,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 		g.fill(path);
 	}
 
-	private static void drawTop( Graphics g, int xStart, int yStart, Color c) {
+	public static void drawTop( Graphics g, int xStart, int yStart, Color c) {
 		Path path = new Path(xStart, yStart);
 		path.lineTo(xStart + (ConfigValues.size / 2), yStart - (ConfigValues.size / 2));
 		path.lineTo(xStart + ((ConfigValues.size * 1.5F)), yStart - (ConfigValues.size / 2));
@@ -53,7 +53,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 
 
-	private static void drawShadowFront( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
+	public static void drawShadowFront( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
 		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
 		Color temp = world.getLightUnit(x,y).getLightColor();
@@ -72,7 +72,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 	}
 
-	private static void drawShadowSide( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
+	public static void drawShadowSide( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
 		float t = (float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH;
 
 		Color temp = world.getLightUnit(x,y).getLightColor();
@@ -96,7 +96,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 	}
 
-	private static void drawShadowTop( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
+	public static void drawShadowTop( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
 		float t = ((float)block.getLightValue(world, x, y) / (float)ILightSource.MAX_LIGHT_STRENGTH);
 
 		Color temp = world.getLightUnit(x,y).getLightColor();
@@ -263,7 +263,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 						if(renderLighting) {
 							drawShadowTop(g, xStart, yStart, block, world, x, y);
-							drawTop(g, xStart, yStart, new Color(1, 1, 1, 0.05F));
+							drawTop(g, xStart, yStart, new Color(1, 1, 1, 0.075F));
 							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.1F));
 						} else if (isItem) {
 							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.3F));

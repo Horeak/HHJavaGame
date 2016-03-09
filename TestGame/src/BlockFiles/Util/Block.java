@@ -57,6 +57,7 @@ public abstract class Block implements IItem, Serializable{
 
 	public float getLightValue(World world, int x, int y) {
 		if(!world.isChunkLoaded(x / Chunk.chunkSize, y / Chunk.chunkSize)) return 0F;
+		if(world.getLightUnit(x,y) == null) return 0F;
 
 		float tt = world.getLightUnit(x,y).getLightValue();
 
@@ -110,6 +111,9 @@ public abstract class Block implements IItem, Serializable{
 			if (BlockUtils.canPlaceBlockAt(this, x, y)) {
 				MainFile.game.getServer().getWorld().setBlock(this, x, y);
 
+				boolean used = MainFile.game.getServer().getWorld().getBlock(x, y) == this;
+
+				if(!used) return false;
 
 				if (MainFile.game.getClient().getPlayer().getItem(stack.slot) != null && MainFile.game.getClient().getPlayer().getItem(stack.slot).getStackSize() > 1) {
 					MainFile.game.getClient().getPlayer().getItem(stack.slot).decreaseStackSize(1);

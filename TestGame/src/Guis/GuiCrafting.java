@@ -22,6 +22,8 @@ import java.awt.geom.AffineTransform;
 
 public class GuiCrafting extends GuiGame {
 
+
+	//TODO Improve! Maybe add categories or something similar to make it easier to navigate
 	public GuiCrafting inst = this;
 
 	public int startX = 140, startY = 150;

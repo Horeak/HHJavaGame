@@ -17,19 +17,17 @@ import java.util.Random;
 public class TreeGeneration extends GenerationBase {
 
 	public boolean useRandom = true;
-
-
-
+	//TODO Fix
 	@Override
 	public boolean canGenerate( Chunk chunk, int x, int y ) {
-		if(true) return false;
+		if(true)return false;
 
 		if(chunk == null || chunk.world == null) return false;
 
-		if (chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize)) instanceof BlockGrass) {
-			Block b = chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize));
+		if (chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y  + (chunk.chunkY * Chunk.chunkSize), true) instanceof BlockGrass) {
+			Block b = chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y  + (chunk.chunkY * Chunk.chunkSize));
 
-			if (b.canBlockSeeSky(chunk.world, x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize))) {
+			if (b.canBlockSeeSky(chunk.world, x, y)) {
 				for (int xx = -1; xx < 2; xx++) {
 					for (int yy = -6; yy < 0; yy++) {
 						Block bg = chunk.getBlock(x + xx, y + yy);
@@ -48,19 +46,19 @@ public class TreeGeneration extends GenerationBase {
 
 	@Override
 	public void generate( Chunk chunk, int x, int y ) {
-		if(true)
-			return;
+		if(chunk == null || chunk.world == null) return;
 
+		//TODO This will be receaving chunk cordinates so convert!
 		int height = 3 + MainFile.random.nextInt(4);
 
 		for (int i = 0; i < height; i++) {
-			chunk.world.setBlock(Blocks.blockWood, x  + (chunk.chunkX * Chunk.chunkSize), y - (i + 1)+ (chunk.chunkY * Chunk.chunkSize));
+			chunk.world.setBlock(Blocks.blockWood, x + (chunk.chunkX * Chunk.chunkSize), y - (i + 1) + (chunk.chunkY * Chunk.chunkSize));
 		}
 
-		Point p = new Point(x, y - height);
+		Point p = new Point(x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize) - height);
 
 		for (int xx = -5; xx < 5; xx++) {
-			for (int yy = -(height + 2); yy < -(height - 2); yy++) {
+			for (int yy = -(height + 2); yy <= -(height - 1); yy++) {
 
 				if (xx == -2 && yy == -(height + 2)) {
 					continue;
@@ -69,18 +67,20 @@ public class TreeGeneration extends GenerationBase {
 					continue;
 				}
 
-				int xPos = x + xx;
-				int yPos = y + yy;
+				int xPos = (x + xx) + (chunk.chunkX * Chunk.chunkSize);
+				int yPos = (y + yy) + (chunk.chunkY * Chunk.chunkSize);
 
 				if (chunk.getBlock(xPos, yPos) == null) {
 
 					if (p.distance(xPos, yPos) <= 3) {
-
-						int gxx = xPos + (chunk.chunkX * Chunk.chunkSize);
-						chunk.world.setBlock(Blocks.blockLeaves, xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize));
+						chunk.world.setBlock(Blocks.blockLeaves, xPos, yPos);
 					}
 				}
 			}
+		}
+
+		for (int i = 0; i < height; i++) {
+			chunk.world.setBlock(Blocks.blockWood, x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize) - (i + 1));
 		}
 	}
 

@@ -71,7 +71,13 @@ public abstract class Entity implements Serializable{
 	public abstract void loadTextures();
 
 	public Block getBlockBelow() {
-		return MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);
+		Block bl = MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);;
+
+		if(bl == null){
+			bl = MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), (int)(getEntityPostion().y) + 1);
+		}
+
+		return bl;
 	}
 
 	//TODO For some reason going from positive to negative numbers is slow(trying to move from 0 to -1)
@@ -113,6 +119,10 @@ public abstract class Entity implements Serializable{
 				isOnGround = true;
 			}
 
+			if(!canMoveTo(pos.x, Math.round(pos.y + (blocksFallen > 2 ? 2 : 1)))) {
+				isOnGround = true;
+			}
+
 			if (!isOnGround && bl == null || !isOnGround && bl != null && bl.canPassThrough()) {
 				float x = pos.x;
 				float y = Math.round(pos.y + (blocksFallen > 2 ? 2 : 1));
@@ -123,10 +133,10 @@ public abstract class Entity implements Serializable{
 					moveTo(x, y - 1);
 				}
 
-				blocksFallen += 1;
+				blocksFallen += (blocksFallen > 2 ? 2 : 1);
 			}
 
-			if (isOnGround && getBlockBelow() != null && !getBlockBelow().canPassThrough()) {
+			if (isOnGround) {
 				blocksFallen = 0;
 			}
 		}

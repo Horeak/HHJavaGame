@@ -137,7 +137,7 @@ public class GuiTexturepacks  extends GuiGame {
 	class backButton extends MainMenuButton {
 
 		public backButton( int y ) {
-			super(MainFile.game, renderStart, y, 190, 32, "Back", guiInst);
+			super(MainFile.game, renderStart - (renderWidth - 1), y, 190 + (renderWidth * 2) - 1, 32, "Back", guiInst);
 		}
 
 		@Override

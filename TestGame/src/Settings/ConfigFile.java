@@ -1,11 +1,19 @@
 package Settings;
 
+import GameFiles.BaseGame;
 import Main.MainFile;
 import Render.EnumRenderMode;
 import Settings.Values.ConfigOption;
 import Settings.Values.Keybinding;
 import Utils.ConfigValues;
+import Utils.DataHandler;
+import Utils.FileUtil;
+import Utils.LoggerUtil;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.newdawn.slick.Input;
+
+import java.util.logging.Level;
 
 public class ConfigFile extends Config{
 
@@ -59,8 +67,6 @@ public class ConfigFile extends Config{
 			new Keybinding("Drop item", "drop", Input.KEY_Q, "Action"),
 
 			//TODO Remove when not debug
-			new Keybinding("Create chunk map", "chunkMap", Input.KEY_O, "Debug"),
-			new Keybinding("Create world map", "worldMap", Input.KEY_P, "Debug"),
 			new Keybinding("Toggle chunks", "chunkRender", Input.KEY_L, "Debug"),};
 
 
@@ -74,4 +80,24 @@ public class ConfigFile extends Config{
 		return configOptions;
 	}
 
+
+	public void saveConfig( BaseGame game, String fileLoc){
+		super.saveConfig(game, fileLoc);
+
+		DataHandler handlerOptions = game.saveUtil.getDataHandler(fileLoc + "data.cfg");
+		handlerOptions.setObject("texturePackName", MainFile.game.texturePack.name);
+	}
+
+	public void loadConfig( BaseGame game, String fileLoc){
+		super.loadConfig(game,fileLoc);
+
+		DataHandler handlerOptions = game.saveUtil.getDataHandler(fileLoc + "data.cfg");
+		String t = (String)handlerOptions.getString("texturePackName");
+
+		if(FileUtil.getTexturePackByName(t) != null){
+			MainFile.game.texturePack = FileUtil.getTexturePackByName(t);
+		}
+	}
+
 }
+

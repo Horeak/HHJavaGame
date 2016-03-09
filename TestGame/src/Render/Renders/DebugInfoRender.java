@@ -1,11 +1,13 @@
 package Render.Renders;
 
+import BlockFiles.BlockRender.EnumBlockSide;
 import Main.MainFile;
 import Rendering.AbstractWindowRender;
 import Utils.BlockSelection;
 import Utils.ConfigValues;
 import Utils.FontHandler;
 import Utils.TimeTaker;
+import WorldFiles.Biome;
 import WorldFiles.EnumWorldTime;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -50,13 +52,12 @@ public class DebugInfoRender extends AbstractWindowRender {
 		FontHandler.resetFont(g2);
 
 		FontHandler.changeFontName(g2, "Arial");
-		FontHandler.resizeFont(g2, 13);
+		FontHandler.resizeFont(g2, 12);
 		FontHandler.changeFontStyle(g2, Font.BOLD);
 
 		g2.drawString("FPS: " + MainFile.game.gameContainer.getFPS(), textStartX, linePos += (lineLength * 2));
 
 		if (MainFile.game.getServer().getWorld() != null) {
-			FontHandler.changeFontStyle(g2, Font.BOLD);
 
 			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
 
@@ -74,10 +75,14 @@ public class DebugInfoRender extends AbstractWindowRender {
 				g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkX + ", " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkY, textStartX, linePos += (lineLength));
 				g2.drawString(" - Chunk loaded: " + MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX / 16, BlockSelection.selectedY / 16)), textStartX, linePos += (lineLength));
 				g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).getBlock(BlockSelection.selectedX, BlockSelection.selectedY, false), textStartX, linePos += (lineLength));
+				g2.drawString(" - Chunk generated: " + (MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).generated), textStartX, linePos += (lineLength));
 			}
+
+			g2.drawString(" - ChunkIsNull: " + (MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY) == null), textStartX, linePos += (lineLength));
 
 			if(MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX) != null){
 				g2.drawString(" - Biome: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).name, textStartX, linePos += (lineLength));
+				g2.drawString(" - Height: " + Biome.heightMap.get(BlockSelection.selectedX), textStartX, linePos += (lineLength));
 			}
 
 
@@ -95,14 +100,16 @@ public class DebugInfoRender extends AbstractWindowRender {
 		g2.drawString("Block render size: " + ConfigValues.size, textStartX, linePos += (lineLength * 2));
 
 		if (MainFile.game.getServer().getWorld() != null) {
-			FontHandler.changeFontStyle(g2, Font.BOLD);
 			g2.drawString("Currently selected block: " + (BlockSelection.selectedBlock != null ? BlockSelection.selectedBlock.getItemName() : "None"), textStartX, linePos += (lineLength * 2));
 
 			if (BlockSelection.selectedBlock != null) {
 				g2.setColor(Color.black);
 				g2.drawString("Block cords: " + "[" + BlockSelection.selectedX + ", " + BlockSelection.selectedY + "]", textStartX, linePos += (lineLength));
+
+				g2.drawString("Render:" + BlockSelection.selectedBlock.getRender(), textStartX, linePos += (lineLength * 2));
+
 				if (BlockSelection.selectedBlock.blockInfoList.size() > 0) {
-					g2.drawString("Blockinfo: ", textStartX, linePos += (lineLength));
+					g2.drawString("Blockinfo: ", textStartX, linePos += (lineLength * 2));
 					for (String t : BlockSelection.selectedBlock.blockInfoList) {
 						g2.drawString((!t.isEmpty() ? " - " : "") + t, textStartX, linePos += (lineLength));
 					}

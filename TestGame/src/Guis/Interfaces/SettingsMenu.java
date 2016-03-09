@@ -40,6 +40,7 @@ public class SettingsMenu extends AbstractMainMenu {
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
 		for (ConfigOption option : MainFile.game.getConfig().getConfigOptions()) {
+			if(option.showOption())
 			guiObjects.add(new configButton(buttonPos += buttonSize, option));
 		}
 

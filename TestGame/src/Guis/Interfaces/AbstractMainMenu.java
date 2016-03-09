@@ -14,6 +14,7 @@ import Render.Renders.BackgroundRender;
 import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
 import Utils.FileUtil;
+import WorldFiles.Chunk;
 import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
 import WorldGeneration.TreeGeneration;
@@ -49,17 +50,24 @@ public class AbstractMainMenu extends UIMenu {
 			world.setTimeOfDay(EnumWorldTime.DAY);
 			world.WorldTime /= 2;
 			world.loading = true;
+			world.generateChunks = false;
+
+			for(int x = 0; x < length; x++){
+				for(int y = 0; y < ConfigValues.renderYSize - 25; y++){
+					world.setBlock(Blocks.blockAir, x, y);
+				}
+			}
 
 			for (int x = 0; x < length; x++) {
-				world.setBlock(Blocks.blockGrass, x, (ConfigValues.renderYSize - 6));
+				world.setBlock(Blocks.blockGrass, x, (ConfigValues.renderYSize - 4));
 			}
-			for (int y = (ConfigValues.renderYSize - 5); y < ConfigValues.renderYSize; y++) {
+			for (int y = (ConfigValues.renderYSize - 3); y < ConfigValues.renderYSize; y++) {
 				for (int x = 0; x < length; x++) {
 					world.setBlock(Blocks.blockDirt, x, y);
 				}
 			}
 			for (int x = 0; x < length; x++) {
-				for(int y = (ConfigValues.renderYSize - 3); y < (ConfigValues.renderYSize); y++) {
+				for(int y = (ConfigValues.renderYSize - 1); y < (ConfigValues.renderYSize); y++) {
 					if (MainFile.random.nextInt(3) == 1) {
 						world.setBlock(Blocks.blockStone, x, y);
 					}else{
@@ -75,8 +83,14 @@ public class AbstractMainMenu extends UIMenu {
 			}
 
 			for(int x = 0; x < length; x+= 5){
-				if(MainFile.random.nextInt(5) == 0)
-				new TreeGeneration().generate(world.getChunk(x, ConfigValues.renderYSize - 6), x, ConfigValues.renderYSize - 6);
+				if(MainFile.random.nextInt(5) == 0) {
+					if(world.getChunk(x, ConfigValues.renderYSize - 5) != null) {
+						Chunk ch = world.getChunk(x, ConfigValues.renderYSize - 5);
+						ch.world = world;
+
+						new TreeGeneration().generate(ch, x - (ch.chunkX * Chunk.chunkSize), (ConfigValues.renderYSize - 4) - (ch.chunkY * Chunk.chunkSize));
+					}
+				}
 			}
 		}
 		world.updateLightForBlocks(false);
@@ -93,7 +107,7 @@ public class AbstractMainMenu extends UIMenu {
 				HashMap<Point, Block> bbb = new HashMap<>();
 
 				for (int x = 0; x < (length); x++) {
-					for (int y = 0; y < 5; y++) {
+					for (int y = 0; y < 25; y++) {
 						Block b = world.getBlock(x, y);
 
 						if (x > ((MainFile.game.gameContainer.getScreenWidth() / ConfigValues.size) + 1) || y > ((MainFile.game.gameContainer.getScreenHeight() / ConfigValues.size) + 1))

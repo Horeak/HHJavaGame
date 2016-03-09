@@ -1,6 +1,9 @@
 package WorldGeneration.Structures;
 
+import BlockFiles.BlockDirt;
+import BlockFiles.BlockGrass;
 import BlockFiles.Blocks;
+import Main.MainFile;
 import WorldFiles.Biome;
 import WorldFiles.Chunk;
 import WorldGeneration.Util.StructureGeneration;
@@ -13,35 +16,28 @@ public class GrassGeneration extends StructureGeneration {
 		return true;
 	}
 
+
+	//TODO Seems to sometimes ignore heightMap?
 	@Override
 	public void generate( Chunk chunk ) {
 		for(int x = 0; x < Chunk.chunkSize; x++){
 			for(int y = 0; y < Chunk.chunkSize; y++){
-				chunk.setBlock_(Blocks.blockGrass, x, y);
+				int dx = x + (chunk.chunkX * Chunk.chunkSize);
+				int dy = y + (chunk.chunkY * Chunk.chunkSize);
+
+				//TODO Improve dirt/grass. Dirt is generating above grass?
+				if(Biome.heightMap.get(dx) != null){
+					int h = Biome.heightMap.get(dx); //TODO Does it load the wrong value from the heightMap?
+
+					if(dy == h)
+					chunk.setBlock(Blocks.blockGrass, x, y);
+
+					if((dy < (h + 7)) && dy > h){
+						chunk.setBlock(Blocks.blockDirt, x, y);
+					}
+				}
 			}
 		}
-
-//		SimplexNoiseGenerator noise = new SimplexNoiseGenerator(chunk.world.worldSeed);
-//
-//		int frequency = (chunk.chunkY) / 2;
-//
-//		for (int x = 0; x < Chunk.chunkSize; x++) {
-//			float h = ((float)noise.noise((float) x / frequency, 0) + 1) / 2; // make noise 0 to 1
-//			for (int y = 0; y < Chunk.chunkSize; y++) {
-//
-//				int ySize = (chunk.chunkY * Chunk.chunkSize) / 4;
-//				float current = (float) (ySize - y) / ySize;
-//				current = -10000;
-//
-//				if (current < h) {
-//					if(chunk.getBlock(x, y - 1) != null){
-//						chunk.setBlock_(Blocks.blockDirt, x, y);
-//					}else {
-//						chunk.setBlock_(Blocks.blockGrass, x, y);
-//					}
-//				}
-//			}
-//		}
 	}
 
 	@Override

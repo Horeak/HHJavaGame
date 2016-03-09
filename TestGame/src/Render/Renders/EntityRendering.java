@@ -6,6 +6,8 @@ import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
 import com.sun.javafx.geom.Vec2d;
 
+import java.util.ArrayList;
+
 
 public class EntityRendering extends AbstractWindowRender {
 
@@ -13,7 +15,7 @@ public class EntityRendering extends AbstractWindowRender {
 	@Override
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Vec2d plPos = new Vec2d(MainFile.game.getClient().getPlayer().getEntityPostion().x, MainFile.game.getClient().getPlayer().getEntityPostion().y);
-		for (Entity ent : MainFile.game.getServer().getWorld().Entities) {
+		for (Entity ent : new ArrayList<>(MainFile.game.getServer().getWorld().Entities)) {
 
 			if (ent.getEntityPostion().distance(MainFile.game.getClient().getPlayer().getEntityPostion()) <= ConfigValues.renderDistance) {
 

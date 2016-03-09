@@ -13,7 +13,7 @@ public class CrackedStoneGeneration extends GenerationBase {
 
 	@Override
 	public boolean canGenerate( Chunk chunk, int x, int y ) {
-		return chunk.getBlock(x, y) != null && chunk.getBlock(x, y) instanceof BlockStone && MainFile.random.nextInt(150) == 10;
+		return chunk.getBlock(x, y) != null && chunk.getBlock(x, y) instanceof BlockStone && (y + (chunk.chunkY * Chunk.chunkSize)) > 25 && MainFile.random.nextInt(150) == 10;
 	}
 
 	@Override

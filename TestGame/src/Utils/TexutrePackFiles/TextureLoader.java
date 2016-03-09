@@ -73,7 +73,9 @@ public class TextureLoader extends ImageLoader {
 		}
 
 		for(TexturePack pack : FileUtil.texturePacks){
-			pack.loadImage();
+			if(pack != null) {
+				pack.loadImage();
+			}
 		}
 
 		if(MainFile.game.getClient() != null && MainFile.game.getClient().getPlayer() != null)

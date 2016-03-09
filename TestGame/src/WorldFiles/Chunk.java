@@ -6,10 +6,7 @@ import BlockFiles.Util.Block;
 import BlockFiles.Util.ILightSource;
 import BlockFiles.Util.ITickBlock;
 import BlockFiles.Util.LightUnit;
-import EntityFiles.EntityItem;
-import Items.Utils.ItemStack;
 import Main.MainFile;
-import Render.Renders.WorldGenerationScreen;
 import Utils.LoggerUtil;
 import Utils.Registrations;
 import WorldGeneration.Util.GenerationBase;
@@ -20,9 +17,8 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
 
-//TODO Use chunkMap to debug yellow chunks!
+
 public class Chunk implements Serializable{
 	public static int chunkSize = 16;
 
@@ -34,12 +30,16 @@ public class Chunk implements Serializable{
 	public int chunkX, chunkY;
 	public transient World world;
 
-	//TODO Unload and save chunks when not in range
+	public boolean generated = false;
+
+	//TODO Why isnt grass on other chunks then the first one becoming dirt? Make sure TickBlocks work in other chunks!
 	public Chunk(World world, int chunkX, int chunkY){
 		this.world = world;
 
 		this.chunkX = chunkX;
 		this.chunkY = chunkY;
+
+		if(world.getBiome(chunkX * chunkSize) == null) world.createBiome(chunkX);
 	}
 
 	public void generateChunk(){
@@ -47,12 +47,13 @@ public class Chunk implements Serializable{
 
 		for (WorldGenPriority priority : WorldGenPriority.values()) {
 			world.generating = true;
+			generated = false;
 
-			for (StructureGeneration gen : Registrations.structureGenerations) {
+			if(world.getBiome(chunkX * chunkSize) != null)
+			for (StructureGeneration gen : world.getBiome(chunkX * chunkSize).worldGens) {
 				if (gen.generationPriority().equals(priority)) {
 					if(MainFile.game.getServer().getWorld() != null)
 						if (gen.canGenerate(this)) {
-							WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
 							gen.generate(this);
 						}
 				}
@@ -64,7 +65,6 @@ public class Chunk implements Serializable{
 						for (int x = 0; x < chunkSize; x++) {
 							for (int y = 0; y < chunkSize; y++) {
 								if (gen.canGenerate(this, x, y)) {
-									WorldGenerationScreen.generationStatus = priority.name() + "-|-" + gen.getGenerationName();
 									gen.generate(this, x, y);
 								}
 							}
@@ -74,34 +74,16 @@ public class Chunk implements Serializable{
 
 		}
 
+		generated = true;
 		world.generating = false;
 	}
+
 
 	public Block getBlock( int x, int y ) {
 		return getBlock(x, y, false);
 	}
 
 	public Block getBlock( int x, int y, boolean allowAir ) {
-		int Ux = x - (chunkX * chunkSize);
-		int Uy = y - (chunkY * chunkSize);
-
-		if (blocks != null) {
-			if (Ux >= 0 && Uy >= 0 && Ux < chunkSize && Uy < chunkSize) {
-				if (!allowAir && blocks[ Ux ][ Uy ] instanceof BlockAir) {
-					return null;
-				}
-
-				return blocks[ Ux ][ Uy ];
-			}
-		}
-		return null;
-	}
-
-	public Block getBlock_( int x, int y ) {
-		return getBlock_(x, y, false);
-	}
-
-	public Block getBlock_( int x, int y, boolean allowAir ) {
 		if(x < 0) x *= -1;
 		if(y < 0) y *= -1;
 
@@ -114,20 +96,18 @@ public class Chunk implements Serializable{
 				return blocks[ x ][ y ];
 			}
 		}
-		return null;
+		return allowAir ? Blocks.blockAir : null;
 	}
 
-	public void removeTickBlock(int x, int y){
-		int Ux = x - (chunkX * chunkSize);
-		int Uy = y - (chunkY * chunkSize);
-
-		tickableBlocks.remove(new Point(Ux, Uy));
+	public void removeTickBlock(int xPos, int yPos){
+		tickableBlocks.remove(new Point(xPos, yPos));
 	}
 
-	public void setBlock_( Block block, int xPos, int yPos ) {
+	public void setBlock( Block block, int xPos, int yPos ) {
 		int wX = xPos + (chunkX * chunkSize), wY = yPos + (chunkY * chunkSize);
-		if(xPos < 0) xPos *= -1;
-		if(yPos < 0) yPos *= -1;
+		if(wX < 0) wX *= -1;
+		if(wY < 0) wY *= -1;
+
 
 		if(!world.generating) {
 			removeTickBlock(wX, wY);
@@ -136,20 +116,19 @@ public class Chunk implements Serializable{
 		if (blocks != null) {
 			if (xPos >= 0 && yPos >= 0) {
 				if (xPos < chunkSize && yPos < chunkSize) {
+					blocks[ xPos ][ yPos ] = block;
 
 					if (block != null) {
-						blocks[ xPos ][ yPos ] = block;
-
 						if(block instanceof ITickBlock){
 							tickableBlocks.add(new Point(xPos,yPos));
 						}
-
-					} else {
-						blocks[ xPos ][ yPos ] = Blocks.blockAir;
 					}
 
 					if(!world.generating) {
-						getBlock(wX, wY, true).updateBlock(world, wX, wY, wX, wY);
+						if(getBlock(xPos, yPos, true) != null) {
+							getBlock(xPos, yPos, true).updateBlock(world, wX, wY, wX, wY);
+						}
+
 						world.updateNearbyBlocks(wX, wY);
 					}
 
@@ -160,12 +139,6 @@ public class Chunk implements Serializable{
 		}
 	}
 
-	public void setBlock( Block block, int x, int y ) {
-		int Ux = x - (chunkX * chunkSize);
-		int Uy = y - (chunkY * chunkSize);
-		setBlock_(block, Ux, Uy);
-	}
-
 	public boolean isAirBlock( int x, int y ) {
 		if (getBlock(x, y, true) instanceof BlockAir) {
 			return true;
@@ -174,14 +147,11 @@ public class Chunk implements Serializable{
 		return false;
 	}
 
-	public LightUnit getLightUnit(int x, int y){
-		x -= (chunkX * chunkSize);
-		y -= (chunkY * chunkSize);
-
+	public LightUnit getLightUnit(int xPos, int yPos){
 		if(lightUnits != null){
-			if(x >= 0 && y >= 0){
-				if(x < chunkSize && y < chunkSize){
-					return lightUnits[x][y];
+			if(xPos >= 0 && yPos >= 0){
+				if(xPos < chunkSize && yPos < chunkSize){
+					return lightUnits[xPos][yPos];
 				}
 			}
 		}
@@ -190,11 +160,14 @@ public class Chunk implements Serializable{
 	}
 
 	public static boolean shouldRangeLoad(int chunkX, int chunkY){
-		return MainFile.game.getClient() != null && MainFile.game.getClient().getPlayer() != null && MainFile.game.getClient().getPlayer().getEntityPostion().distance((chunkX * chunkSize) + (chunkSize / 2), (chunkY * chunkSize) + (chunkSize / 2)) <= (chunkSize * 1.75F);
+		return MainFile.game.getClient() != null && MainFile.game.getClient().getPlayer() != null && MainFile.game.getClient().getPlayer().getEntityPostion().distance((chunkX * chunkSize) , (chunkY * chunkSize)) <= (chunkSize * 2.3F);
 	}
 
 	public boolean shouldBeLoaded(){
-		for(Point p : tickableBlocks){
+		if(tickableBlocks != null && tickableBlocks.size() > 0)
+		for(Point p : new ArrayList<>(tickableBlocks)){
+			if(p == null)continue;
+
 			Block b = getBlock(p.x, p.y, false);
 
 			if(b instanceof ITickBlock){

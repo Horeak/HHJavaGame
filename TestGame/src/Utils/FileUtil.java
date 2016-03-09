@@ -72,8 +72,8 @@ public class FileUtil {
 			texturePacks = new ArrayList<>(FileUtil.texturePacks);
 		}
 
-		if(!texturePacks.contains(MainFile.defaultTexturePack))
-		texturePacks.add(MainFile.defaultTexturePack);
+//		if(!texturePacks.contains(MainFile.defaultTexturePack))
+//		texturePacks.add(MainFile.defaultTexturePack);
 
 		try {
 

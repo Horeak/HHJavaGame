@@ -23,6 +23,7 @@ public class BlockSelection {
 				if (mousePoint.getX() > BlockRendering.START_X_POS && mousePoint.getX() < (ConfigValues.renderXSize * ConfigValues.size) + BlockRendering.START_X_POS) {
 					if (mousePoint.getY() > (BlockRendering.START_Y_POS) && mousePoint.getY() < (ConfigValues.renderYSize * ConfigValues.size) + BlockRendering.START_Y_POS) {
 
+						//TODO This is still offset for some reason under certain circumstances
 						int mouseX = (int) ((mousePoint.getX()) - (BlockRendering.START_X_POS)) / (ConfigValues.size);
 						int mouseY = (int) ((mousePoint.getY()) - (BlockRendering.START_Y_POS)) / (ConfigValues.size);
 
