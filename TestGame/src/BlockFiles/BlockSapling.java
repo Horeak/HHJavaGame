@@ -11,7 +11,7 @@ import org.newdawn.slick.Image;
 
 import java.util.Random;
 
-public class BlockSapling extends Block implements ITickBlock{
+public class BlockSapling extends Block{
 
 	private static TreeGeneration treeGeneration = new TreeGeneration();
 	private static Random rand = new Random();
@@ -42,35 +42,6 @@ public class BlockSapling extends Block implements ITickBlock{
 	}
 
 	@Override
-	public boolean shouldupdate( World world, int x, int y) {
-		return treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1);
-	}
-
-	public int blockupdateDelay() {
-		return 60;
-	}
-
-	int time = 0;
-	@Override
-	public int getTimeSinceUpdate() {
-		return time;
-	}
-
-	@Override
-	public void setTimeSinceUpdate( int i ) {
-		time = i;
-	}
-
-	@Override
-	public void updateBlock(World world, int x, int y) {
-		if(rand.nextInt(20) == 2){
-			if(treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1)){
-				treeGeneration.generate(world.getChunk(x, y+1), x, y+1);
-			}
-		}
-	}
-
-	@Override
 	public boolean isBlockSolid() {
 		return false;
 	}
@@ -84,4 +55,41 @@ public class BlockSapling extends Block implements ITickBlock{
 	public int getMaxBlockDamage() {
 		return 1;
 	}
+
+	public ITickBlock getTickBlock(){
+		return new saplingTickBlock();
+	}
+
+
+	class saplingTickBlock implements ITickBlock{
+		@Override
+		public boolean shouldUpdate( World world, int x, int y) {
+			return treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1);
+		}
+
+		public int blockUpdateDelay() {
+			return 60;
+		}
+
+		int time = 0;
+		@Override
+		public int getTimeSinceUpdate(World world, int x, int y) {
+			return time;
+		}
+
+		@Override
+		public void setTimeSinceUpdate( World world, int x, int y,int i ) {
+			time = i;
+		}
+
+		@Override
+		public void tickBlock( World world, int x, int y) {
+			if(rand.nextInt(20) == 2){
+				if(treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1)){
+					treeGeneration.generate(world.getChunk(x, y+1), x, y+1);
+				}
+			}
+		}
+	}
+
 }

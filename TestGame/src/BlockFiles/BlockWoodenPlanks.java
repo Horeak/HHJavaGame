@@ -2,12 +2,13 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
+import BlockFiles.Util.IFuel;
 import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockWoodenPlanks extends Block {
+public class BlockWoodenPlanks extends Block implements IFuel {
 
 	public static Image texture;
 
@@ -29,5 +30,10 @@ public class BlockWoodenPlanks extends Block {
 	@Override
 	public void loadTextures() {
 		texture = MainFile.game.imageLoader.getImage("blocks","woodenplanks");
+	}
+
+	@Override
+	public int getFuelValue() {
+		return 2;
 	}
 }

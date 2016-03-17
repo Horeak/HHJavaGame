@@ -22,7 +22,7 @@ public class EntityRendering extends AbstractWindowRender {
 				float entX = ((float) (ent.getEntityPostion().x - plPos.x) + ConfigValues.renderRange);
 				float entY = ((float) (ent.getEntityPostion().y - plPos.y) + ConfigValues.renderRange) + 1;
 
-				ent.renderEntity(g2, BlockRendering.START_X_POS + (int) ((entX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((entY) * ConfigValues.size));
+				ent.renderEntity(g2, (int) ((entX) * ConfigValues.size), (int) ((entY) * ConfigValues.size));
 			}
 		}
 	}

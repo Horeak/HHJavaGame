@@ -31,7 +31,7 @@ public class SettingsMenu extends AbstractMainMenu {
 		Color temp = g2.getColor();
 
 		guiObjects.clear();
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2);
+		int buttonSize = 40, buttonPos =  (buttonSize * 2);
 
 
 		guiObjects.add(new keyBinds(buttonPos + (buttonSize * (MainFile.game.getConfig().getConfigOptions().length + 3))));

@@ -8,7 +8,7 @@ import WorldFiles.World;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public interface IItem extends Cloneable{
+public interface IItem extends Cloneable, Serializable{
 	int getItemMaxStackSize();
 	String getItemName();
 

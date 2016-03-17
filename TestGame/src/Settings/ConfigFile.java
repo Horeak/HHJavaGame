@@ -36,6 +36,8 @@ public class ConfigFile extends Config{
 			ConfigValues.debug = (Boolean)ob;
 		}
 
+		public boolean showOption(){return MainFile.inDebugMode;}
+
 	}, new ConfigOption("Vsync", new Boolean[]{true, false}, MainFile.game.gameContainer.isVSyncRequested()) {
 		@Override
 		public void setValue(Object ob) {
@@ -66,8 +68,13 @@ public class ConfigFile extends Config{
 
 			new Keybinding("Drop item", "drop", Input.KEY_Q, "Action"),
 
-			//TODO Remove when not debug
-			new Keybinding("Toggle chunks", "chunkRender", Input.KEY_L, "Debug"),};
+			new Keybinding("Toggle chunks", "chunkRender", Input.KEY_L, "Debug"){
+				@Override
+				public boolean isEnabled() {
+					return MainFile.inDebugMode;
+				}
+			},
+	};
 
 
 	@Override

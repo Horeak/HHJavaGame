@@ -26,7 +26,7 @@ public class CreateWorldMenu extends AbstractMainMenu {
 	public CreateWorldMenu() {
 		super();
 
-		int buttonSize = 50, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize);
+		int buttonSize = 50, buttonPos =  (buttonSize);
 
 		createWorldButton = new createWorldButton(buttonPos * 4);
 		createWorldButton.enabled = false;

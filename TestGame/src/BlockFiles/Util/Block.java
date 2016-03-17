@@ -5,6 +5,7 @@ import BlockFiles.BlockRender.DefaultBlockRendering;
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Blocks;
 import Items.Rendering.IItemRenderer;
+import Items.Utils.IInventory;
 import Items.Utils.IItem;
 import Items.Utils.ItemStack;
 import Main.MainFile;
@@ -15,10 +16,10 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
 import java.awt.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Block implements IItem, Serializable{
+public abstract class Block implements IItem{
+
 	public static int DEFAULT_MAX_STACK_SIZE = 64;
 	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
 
@@ -39,11 +40,11 @@ public abstract class Block implements IItem, Serializable{
 	}
 
 	public void addInfo(World world, int x, int y) {
-		if(this instanceof ITickBlock){
+		if(getTickBlock() != null){
 			blockInfoList.add("Block is Tickable");
-			blockInfoList.add("Should tick: " + ((ITickBlock)this).shouldupdate(world, x, y));
-			blockInfoList.add("Block ticks every: " + ((ITickBlock)this).blockupdateDelay() + "s");
-			blockInfoList.add("Time until update: " + (((ITickBlock)this).blockupdateDelay() - ((ITickBlock)this).getTimeSinceUpdate()) + "s");
+			blockInfoList.add("Should tick: " + getTickBlock().shouldUpdate(world, x, y));
+			blockInfoList.add("Block ticks every: " + getTickBlock().blockUpdateDelay() + "s");
+			blockInfoList.add("Time until update: " + (getTickBlock().blockUpdateDelay() - getTickBlock().getTimeSinceUpdate(world, x, y)) + "s");
 			blockInfoList.add("");
 		}
 
@@ -55,11 +56,16 @@ public abstract class Block implements IItem, Serializable{
 		return new Rectangle(x, y, 1, 1);
 	}
 
+
 	public float getLightValue(World world, int x, int y) {
 		if(!world.isChunkLoaded(x / Chunk.chunkSize, y / Chunk.chunkSize)) return 0F;
-		if(world.getLightUnit(x,y) == null) return 0F;
 
-		float tt = world.getLightUnit(x,y).getLightValue();
+		LightUnit unit = world.getLightUnit(x, y);
+
+		if(unit == null) return 0F;
+		if(!world.ingnoreLightingHeight && y > Chunk.chunkSize) return unit.getLightValue();
+
+		float tt = unit.getLightValue();
 
 		//TODO Find a way to achieve smooth transition between the light multipliers of to time periods
 		float g = (int) ((canBlockSeeSky(world, x, y) ? (ILightSource.MAX_LIGHT_STRENGTH * (world.worldTimeOfDay.lightMultiplier)) : 0));
@@ -68,8 +74,10 @@ public abstract class Block implements IItem, Serializable{
 			tt += g;
 		}
 
-		if (tt > ILightSource.MAX_LIGHT_STRENGTH) tt = ILightSource.MAX_LIGHT_STRENGTH;
+		if (tt > ILightSource.MAX_LIGHT_STRENGTH)
+			tt = ILightSource.MAX_LIGHT_STRENGTH;
 		return tt;
+
 	}
 
 	public void updateBlock( World world, int fromX, int fromY, int curX, int curY ) {
@@ -138,17 +146,25 @@ public abstract class Block implements IItem, Serializable{
 		return Blocks.getBlock(Blocks.getId(this));
 	}
 
-	//TODO This is causing chunks to load! So this will most likely not be possible to do when adding infinite chunks
+
 	public boolean canBlockSeeSky(World world, int x, int y) {
 		if(world.getBlock(x, y, true) instanceof BlockAir) return false;
 
-		for (int g = y - 1; g > 0; g -= 1) {
+		//TODO Make sure this goes from bottom up and not top down!
+		for (int g = y - 1; g > (y - (Chunk.chunkSize / 2)); g -= 1) {
 			Block cc = world.getBlock(x, g);
 			if(cc != null && cc.isBlockSolid()) return false;
 			if(cc != null && !cc.canPassThrough()) return false;
 		}
 
-		return true;
+		int h = world.getBiome(x) != null ? world.getBiome(x).getHeight(x) : 0;
+
+		return world.ingnoreLightingHeight ? true : (y - (Chunk.chunkSize)) <= h;
 	}
+
+	public IInventory getInventory(){
+		return null;
+	}
+	public ITickBlock getTickBlock(){return null;}
 
 }

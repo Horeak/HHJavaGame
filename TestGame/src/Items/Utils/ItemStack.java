@@ -8,13 +8,16 @@ import java.util.ArrayList;
 
 public class ItemStack implements Serializable{
 
-	private IItem itemStored;
+	private String itemStored;
+	//TODO Change to id based system. Have an IItem register that gets from block/item registries depending on id (for example have item ids be 4000+ and block ids be 0-3999)
 
 	private int stackSize;
 	private int stackDamage;
 
 	private String stackName;
 	private String source = "DEFAULT";
+
+	//TODO Add HashMap to allow data storage in ItemStack
 
 	public int slot;
 
@@ -31,7 +34,7 @@ public class ItemStack implements Serializable{
 	}
 
 	public ItemStack(IItem item, int stackSize, int damage){
-		this.itemStored = item;
+		this.itemStored = IItemRegistry.getID(item);
 		this.stackSize = stackSize;
 		this.stackDamage = damage;
 		this.stackName = item.getItemName();
@@ -39,16 +42,16 @@ public class ItemStack implements Serializable{
 	}
 
 	public IItem getItem(){
-		return itemStored;
+		return IItemRegistry.getFromID(itemStored);
 	}
 
 	public Block getBlock(){
-		return isBlock() ? ((Block)itemStored) : null;
+		return isBlock() ? (Block)getItem() : null;
 	}
 
 
 	public boolean isBlock(){
-		return itemStored instanceof Block;
+		return getItem() instanceof Block;
 	}
 
 	public String getStackID(){
@@ -60,7 +63,7 @@ public class ItemStack implements Serializable{
 	}
 
 	public int getMaxStackSize(){
-		return itemStored.getItemMaxStackSize();
+		return getItem().getItemMaxStackSize();
 	}
 
 	public void setStackSize(int i ){
@@ -95,8 +98,8 @@ public class ItemStack implements Serializable{
 	}
 
 	public ArrayList<String> getTooltips(){
-		if(itemStored.getTooltips(this) != null){
-			return itemStored.getTooltips(this);
+		if(getItem().getTooltips(this) != null){
+			return getItem().getTooltips(this);
 		}else{
 			return null;
 		}
@@ -122,5 +125,15 @@ public class ItemStack implements Serializable{
 		boolean t2 = stackSize ? this.stackSize == item.stackSize : true;
 
 		return getItem().equals(item.getItem()) && t1 && t2;
+	}
+
+	@Override
+	public String toString() {
+		return "ItemStack{" +
+				"stackName='" + stackName + '\'' +
+				", stackDamage=" + stackDamage +
+				", stackSize=" + stackSize +
+				", itemStored=" + itemStored +
+				'}';
 	}
 }

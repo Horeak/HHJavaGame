@@ -1,4 +1,4 @@
 package Items.Utils;
 
-public interface IArmor extends IItem {
+public interface IArmor {
 }

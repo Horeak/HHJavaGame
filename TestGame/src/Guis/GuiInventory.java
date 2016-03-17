@@ -1,5 +1,6 @@
 package Guis;
 
+import Guis.Button.ArmorInventoryButton;
 import Guis.Button.InventoryButton;
 import Main.MainFile;
 import Render.Renders.BlockRendering;
@@ -26,15 +27,21 @@ public class GuiInventory extends GuiGame {
 
 	public void init() {
 		for (int i = 0; i < 10; i++) {
-			guiObjects.add(new InventoryButton(this, startX + 10 + (i * (50)), startY + 30, true, i));
+			guiObjects.add(new InventoryButton(this, startX + 10 + (i * (50)), startY + 30, true, i, MainFile.game.getClient().getPlayer()));
 		}
 
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 4; y++) {
-				guiObjects.add(new InventoryButton(this, startX + 10 + ((x) * (50)), startY + 40 + ((y + 1) * (50)), false, 10 + (x + (y * 10))));
+				guiObjects.add(new InventoryButton(this, startX + 10 + ((x) * (50)), startY + 40 + ((y + 1) * (50)), false, 10 + (x + (y * 10)), MainFile.game.getClient().getPlayer()));
 			}
 		}
+
+		for (int i = 0; i < 4; i++) {
+			guiObjects.add(new ArmorInventoryButton(this, (int)rectangle.getMaxX() + 10, (int)rectangle.getY() + (i * 50), i));
+		}
 	}
+
+	final Rectangle rectangle = new Rectangle(startX + 10, startY + (50 * 6), 120, 190);
 
 	@Override
 	public void render( Graphics g2 ) {
@@ -62,7 +69,6 @@ public class GuiInventory extends GuiGame {
 
 		renderInventoryButtons();
 
-		Rectangle rectangle = new Rectangle(startX + 10, startY + (50 * 6), 120, 190);
 
 		g2.setColor(Color.gray.darker(0.25F));
 		g2.fill(rectangle);
@@ -72,17 +78,30 @@ public class GuiInventory extends GuiGame {
 
 		MainFile.game.getClient().getPlayer().renderEntity(g2, (int)rectangle.getCenterX() - (int)((float)MainFile.game.getClient().getPlayer().getEntityBounds().getWidth() * (ConfigValues.size / 2)), (int)rectangle.getCenterY() + (int)((float)MainFile.game.getClient().getPlayer().getEntityBounds().getHeight() * (ConfigValues.size / 2)));
 
+		Rectangle tg = new Rectangle(rectangle.getMaxX() + 55, rectangle.getY(), 325, rectangle.getHeight());
+
+		g2.setColor(Color.lightGray);
+		g2.fill(tg);
+
+		g2.setColor(Color.darkGray);
+		g2.draw(tg);
+
+		g2.setClip(tg);
 
 		g2.setColor(Color.black);
-		g2.fill(new Rectangle(rectangle.getMaxX() + 10, rectangle.getY(), 40, 40));
-		g2.fill(new Rectangle(rectangle.getMaxX() + 10, rectangle.getY() + 50, 40, 40));
-		g2.fill(new Rectangle(rectangle.getMaxX() + 10, rectangle.getY() + 100, 40, 40));
-		g2.fill(new Rectangle(rectangle.getMaxX() + 10, rectangle.getY() + 150, 40, 40));
-
 		FontHandler.resizeFont(g2, 16);
-		g2.drawString("Add Armor inventory here!", rectangle.getMaxX() + 70, rectangle.getY());
-		g2.drawString("Other stats here aswell? Health\nand things like that", rectangle.getMaxX() + 70, rectangle.getY() + 20);
+
+		FontHandler.changeFontStyle(g2, Font.BOLD);
+		g2.drawString("Player: '" + MainFile.game.getClient().getPlayer().getEntityDisplayName() + "'", rectangle.getMaxX() + 60, rectangle.getY() + 5);
+
+		FontHandler.changeFontStyle(g2, Font.PLAIN);
+		g2.drawString("Health: " + MainFile.game.getClient().getPlayer().getEntityHealth() + "/" + MainFile.game.getClient().getPlayer().getPlayerMaxHealth() + " (100) (Base health(without effects from armor))"
+				+ "\n" + "Armor: (0/0)(TODO)"
+				+ "\n" + "Deaths: " + "0", rectangle.getMaxX() + 60, rectangle.getY() + 32);
+
 		FontHandler.resetFont(g2);
+
+		g2.setClip(null);
 
 	}
 

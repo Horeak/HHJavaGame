@@ -31,12 +31,12 @@ public class GuiTexturepacks  extends GuiGame {
 
 	float translate = 0;
 	public GuiTexturepacks guiInst = this;
-	Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
+	Rectangle rectangle = new Rectangle(0, 0, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
 
 	public GuiTexturepacks( GameContainer container, boolean b ) {
 		super(container, b);
 
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 3);
+		int buttonSize = 40, buttonPos = (buttonSize * 3);
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 		guiObjects.add(new scrollBar(renderStart + (int)(renderWidth * 1.65F), 140, 50, 500, this));
 
@@ -102,16 +102,16 @@ public class GuiTexturepacks  extends GuiGame {
 		}
 
 		g2.setColor(org.newdawn.slick.Color.black);
-		g2.drawLine(renderStart - (renderWidth), BlockRendering.START_Y_POS, renderStart - (renderWidth), (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
-		g2.drawLine(renderStart + (renderWidth  * 2), BlockRendering.START_Y_POS, renderStart + (renderWidth  * 2), (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+		g2.drawLine(renderStart - (renderWidth), 0, renderStart - (renderWidth), (ConfigValues.renderYSize * ConfigValues.size));
+		g2.drawLine(renderStart + (renderWidth  * 2), 0, renderStart + (renderWidth  * 2), (ConfigValues.renderYSize * ConfigValues.size));
 
 		g2.setColor(new Color(152, 152, 152, 60));
 		g2.fill(rectangle);
 
 		g2.setColor(new Color(95, 95, 95, 112));
-		g2.fill(new Rectangle(renderStart - (renderWidth), BlockRendering.START_Y_POS, renderWidth + (renderWidth * 2), (ConfigValues.renderYSize * ConfigValues.size)));
+		g2.fill(new Rectangle(renderStart - (renderWidth), 0, renderWidth + (renderWidth * 2), (ConfigValues.renderYSize * ConfigValues.size)));
 
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 3);
+		int buttonSize = 40, buttonPos = (buttonSize * 3);
 
 		g2.setColor(g2.getColor().darker());
 		g2.fill(new Rectangle(renderStart - renderWidth, 70, renderWidth * 3, 60));

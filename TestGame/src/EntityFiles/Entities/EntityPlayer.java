@@ -27,11 +27,14 @@ public class EntityPlayer extends Entity implements IInventory {
 	public int facing = 0;
 	public static int INV_SIZE = 50;
 
+	//TODO And why did i decide to use a hashmap here?
 	public HashMap<Integer, ItemStack> inventoryItems = new HashMap<>();
-	public IArmor[] armorInventory = new IArmor[4];
+	public ArmorInventory armorInventory = new ArmorInventory();
 
 	private int playerHealth = 100, playerMaxHealth = 100;
 	public String name;
+
+	//TODO Add veriables for speed, defence, jump height, damage and similar and make sure all has a static start value. This will make it possible to change these values with for example armor (RPG like)
 
 	public EntityPlayer( float x, float y, String name ) {
 		super(x, y);
@@ -48,6 +51,10 @@ public class EntityPlayer extends Entity implements IInventory {
 		return playerHealth;
 	}
 
+	public int getPlayerMaxHealth() {
+		return playerMaxHealth;
+	}
+
 	@Override
 	public boolean shouldDamage( DamageSource source ) {
 		return true;
@@ -56,7 +63,11 @@ public class EntityPlayer extends Entity implements IInventory {
 	@Override
 	public void damageEntity( DamageSource source, DamageBase damage ) {
 		//TODO Take armor/defence into consideration when it is added.
-		playerHealth -= damage.getDamageAmount();
+
+		if(source.shouldDamage(this)) {
+			source.doDamageEffects(this, MainFile.game.getServer().getWorld());
+			playerHealth -= damage.getDamageAmount();
+		}
 	}
 
 	@Override
@@ -101,6 +112,7 @@ public class EntityPlayer extends Entity implements IInventory {
 			}
 		}
 	}
+
 
 	@Override
 	public ItemStack[] getItems() {

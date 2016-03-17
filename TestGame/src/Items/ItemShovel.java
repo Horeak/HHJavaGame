@@ -2,13 +2,14 @@ package Items;
 
 import BlockFiles.BlockDirt;
 import BlockFiles.BlockGrass;
+import BlockFiles.Util.IFuel;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
-public class ItemShovel extends Item {
+public class ItemShovel extends Item{
 	public static Image texture;
 
 	@Override
@@ -51,4 +52,5 @@ public class ItemShovel extends Item {
 		}
 		return 1;
 	}
+
 }

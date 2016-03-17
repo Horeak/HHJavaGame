@@ -24,12 +24,14 @@ public class GuiKeybindings extends GuiGame {
 	public static int renderWidth = 190;
 	public GuiKeybindings guiInst = this;
 	public HashMap<String, ArrayList<Keybinding>> keyGroupss = new HashMap<>();
-	Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
+	Rectangle rectangle = new Rectangle(0,0, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
 	boolean selecting = false;
 
 	public GuiKeybindings( GameContainer container, boolean b ) {
 		super(container, b);
 		for (Keybinding key : MainFile.game.getConfig().getKeybindings()) {
+			if(!key.isEnabled()) continue;
+
 			if (keyGroupss.get(key.getGroup()) != null) {
 				keyGroupss.get(key.getGroup()).add(key);
 
@@ -40,7 +42,7 @@ public class GuiKeybindings extends GuiGame {
 			}
 		}
 
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 3);
+		int buttonSize = 40, buttonPos = (buttonSize * 3);
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
 
@@ -78,16 +80,16 @@ public class GuiKeybindings extends GuiGame {
 	@Override
 	public void render( Graphics g2 ) {
 		g2.setColor(org.newdawn.slick.Color.black);
-		g2.drawLine(renderStart, BlockRendering.START_Y_POS, renderStart, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
-		g2.drawLine(renderStart + renderWidth, BlockRendering.START_Y_POS, renderStart + renderWidth, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+		g2.drawLine(renderStart, 0, renderStart,ConfigValues.renderYSize * ConfigValues.size);
+		g2.drawLine(renderStart + renderWidth, 0, renderStart + renderWidth, (ConfigValues.renderYSize * ConfigValues.size));
 
 		g2.setColor(new Color(152, 152, 152, 60));
 		g2.fill(rectangle);
 
 		g2.setColor(new Color(95, 95, 95, 112));
-		g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
+		g2.fill(new Rectangle(renderStart, 0, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
 
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 3);
+		int buttonSize = 40, buttonPos = (buttonSize * 3);
 
 		for (Map.Entry<String, ArrayList<Keybinding>> ent : keyGroupss.entrySet()) {
 			int pos = buttonPos += ((buttonSize) * .5F);

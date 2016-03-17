@@ -1,10 +1,15 @@
 package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Inventory.FurnaceInventory;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ITickBlock;
+import Crafting.CraftingRegister;
+import Guis.GuiFurnace;
+import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Utils.ConfigValues;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -12,39 +17,30 @@ import org.newdawn.slick.Image;
 import java.awt.*;
 import java.util.HashMap;
 
-public class BlockFurnace extends Block implements ITickBlock {
+public class BlockFurnace extends Block {
 
-	//TODO Must find a way to be able to store data in blocks
 	public static Image furnaceFrontOff, furnaceFrontOn, furnaceSide, furnaceTop;
-	public static HashMap<World, HashMap<Point, ItemStack[]>> furnaceData = new HashMap<>();
 
-	public void setInputStack(World world, int x, int y, ItemStack stack){
-		if(!furnaceData.containsKey(world)) furnaceData.put(world, new HashMap<Point, ItemStack[]>());
-		if(!furnaceData.get(world).containsKey(new Point(x, y))) furnaceData.get(world).put(new Point(x, y), new ItemStack[2]);
+	public void addInfo(World world, int x, int y) {
+		super.addInfo(world, x, y);
 
-		furnaceData.get(world).get(new Point(x, y))[0] = stack;
-	}
+		if(world.getInventory(x, y) == null || !(world.getInventory(x, y) instanceof FurnaceInventory)) return;
 
-	public void setOutputStack(World world, int x, int y, ItemStack stack){
-		if(!furnaceData.containsKey(world)) furnaceData.put(world, new HashMap<Point, ItemStack[]>());
-		if(!furnaceData.get(world).containsKey(new Point(x, y))) furnaceData.get(world).put(new Point(x, y), new ItemStack[2]);
+		ItemStack input = world.getInventory(x, y).getItem(0);
+		ItemStack fuel = world.getInventory(x, y).getItem(1);
+		ItemStack output = world.getInventory(x, y).getItem(2);
 
-		furnaceData.get(world).get(new Point(x, y))[1] = stack;
-	}
+		String tI = (input != null ? input.getItem() != null ? input.getStackName() : null : null);
+		String tF = (fuel != null ? fuel.getItem() != null ? fuel.getStackName() : null : null);
+		String tO = (output != null ? output.getItem() != null ? output.getStackName() : null : null);
 
+		blockInfoList.add("");
 
-	public ItemStack getInputStack(World world, int x, int y){
-		if(!furnaceData.containsKey(world)) furnaceData.put(world, new HashMap<Point, ItemStack[]>());
-		if(!furnaceData.get(world).containsKey(new Point(x, y))) furnaceData.get(world).put(new Point(x, y), new ItemStack[2]);
-
-		return furnaceData.get(world).get(new Point(x, y))[0];
-	}
-
-	public ItemStack getOutputStack(World world, int x, int y){
-		if(!furnaceData.containsKey(world)) furnaceData.put(world, new HashMap<Point, ItemStack[]>());
-		if(!furnaceData.get(world).containsKey(new Point(x, y))) furnaceData.get(world).put(new Point(x, y), new ItemStack[2]);
-
-		return furnaceData.get(world).get(new Point(x, y))[1];
+		blockInfoList.add("Input item: " + tI);
+		blockInfoList.add("Fuel item: " + tF);
+		blockInfoList.add("Output item: " + tO);
+		blockInfoList.add("Smelt time: " + (((FurnaceInventory) world.getInventory(x, y)).smeltTime));
+		blockInfoList.add("Fuel: " + (((FurnaceInventory) world.getInventory(x, y)).fuel));
 	}
 
 	@Override
@@ -59,7 +55,7 @@ public class BlockFurnace extends Block implements ITickBlock {
 
 	@Override
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		return side == EnumBlockSide.FRONT ? (getInputStack(world, x, y) != null) ? furnaceFrontOn : furnaceFrontOff : side == EnumBlockSide.SIDE ? furnaceSide : furnaceTop;
+		return side == EnumBlockSide.FRONT ? (world.getInventory(x, y) instanceof FurnaceInventory && ((FurnaceInventory)world.getInventory(x, y)).smeltTime > 0) ? furnaceFrontOn : furnaceFrontOff : side == EnumBlockSide.SIDE ? furnaceSide : furnaceTop;
 	}
 
 	@Override
@@ -75,35 +71,47 @@ public class BlockFurnace extends Block implements ITickBlock {
 	}
 
 	public boolean blockClicked(World world, int x, int y, ItemStack stack){
-		if(stack != null && getInputStack(world, x, y) == null){
-			setInputStack(world, x, y, stack);
-			return true;
-		}else if(stack == null && getInputStack(world, x, y) != null){
-			setInputStack(world, x, y, null);
+		MainFile.game.setCurrentMenu(new GuiFurnace(MainFile.game.gameContainer, ConfigValues.PAUSE_GAME_IN_INV, world, x, y));
+
+		return true;
+	}
+
+	@Override
+	public IInventory getInventory() {
+		return new FurnaceInventory();
+	}
+
+	public ITickBlock getTickBlock(){
+		return new furanceTickBlock();
+	}
+
+
+
+	class furanceTickBlock implements ITickBlock{
+		@Override
+		public boolean shouldUpdate( World world, int x, int y ) {
 			return true;
 		}
 
-		return false;
-	}
+		@Override
+		public int getTimeSinceUpdate(World world, int x, int y) {
+			return world.getInventory(x, y) instanceof FurnaceInventory ? ((FurnaceInventory)world.getInventory(x, y)).timeSinceUpdate : 0;
+		}
 
+		@Override
+		public void setTimeSinceUpdate(World world, int x, int y, int i ) {
+			if(world.getInventory(x, y) instanceof FurnaceInventory){
+				((FurnaceInventory)world.getInventory(x, y)).timeSinceUpdate = i;
+			}
+		}
 
-	@Override
-	public boolean shouldupdate( World world, int x, int y ) {
-		return false;
-	}
-
-	@Override
-	public int getTimeSinceUpdate() {
-		return 0;
-	}
-
-	@Override
-	public void setTimeSinceUpdate( int i ) {
-
-	}
-
-	@Override
-	public void updateBlock( World world, int x, int y ) {
+		@Override
+		public void tickBlock( World world, int x, int y ) {
+			if(world.getInventory(x, y) instanceof FurnaceInventory){
+				((FurnaceInventory)world.getInventory(x, y)).update();
+			}
+		}
 
 	}
+
 }

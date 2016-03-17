@@ -30,7 +30,7 @@ public class BlockSelectionRender extends AbstractWindowRender {
 //		boolean valid = BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0 && BlockSelection.selectedX < MainFile.game.getServer().getWorld().worldSize.xSize && BlockSelection.selectedY < MainFile.game.getServer().getWorld().worldSize.ySize;
 
 //		if (valid) {
-			textureValid.draw(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
+			textureValid.draw((int) ((mouseBlockX) * ConfigValues.size), (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 //		} else {
 //			textureInvalid.draw(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 //		}

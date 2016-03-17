@@ -68,8 +68,6 @@ public class DefaultBlockRendering implements IBlockRenderer {
 			g.setColor(new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), t));
 			g.fill(tangle);
 		}
-
-
 	}
 
 	public static void drawShadowSide( Graphics g, int xStart, int yStart, Block block, World world, int x, int y) {
@@ -229,6 +227,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 						g.popTransform();
 
 						if (renderLighting) {
+							//TODO Fix grass top color being different from sides because of decreased light change
 							drawShadowSide(g, xStart, yStart, block, world, x, y);
 							drawSide(g, xStart, yStart, new Color(0, 0, 0, 0.1F));
 
@@ -263,10 +262,9 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 						if(renderLighting) {
 							drawShadowTop(g, xStart, yStart, block, world, x, y);
-							drawTop(g, xStart, yStart, new Color(1, 1, 1, 0.075F));
-							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.1F));
+							drawTop(g, xStart, yStart, new Color(1, 1, 1, 0.035F));
 						} else if (isItem) {
-							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.3F));
+							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.4F));
 						}
 
 					} else {

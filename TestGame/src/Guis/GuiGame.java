@@ -108,7 +108,7 @@ public abstract class GuiGame extends Gui {
 		for (GuiObject ob : guiObjects) {
 			if (ob instanceof InventoryButton) {
 				InventoryButton button = (InventoryButton) ob;
-				ItemStack item = MainFile.game.getClient().getPlayer().getItem(button.num);
+				ItemStack item = button.inv.getItem(button.num);
 
 				if (button.isMouseOver() && item != null) {
 					int mouseX = MainFile.game.gameContainer.getInput().getMouseX();

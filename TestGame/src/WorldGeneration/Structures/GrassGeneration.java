@@ -25,9 +25,8 @@ public class GrassGeneration extends StructureGeneration {
 				int dx = x + (chunk.chunkX * Chunk.chunkSize);
 				int dy = y + (chunk.chunkY * Chunk.chunkSize);
 
-				//TODO Improve dirt/grass. Dirt is generating above grass?
-				if(Biome.heightMap.get(dx) != null){
-					int h = Biome.heightMap.get(dx); //TODO Does it load the wrong value from the heightMap?
+				if(chunk.world.getBiome(chunk.chunkX * Chunk.chunkSize).containes(dx)){
+					int h = chunk.world.getBiome(chunk.chunkX * Chunk.chunkSize).getHeight(dx);
 
 					if(dy == h)
 					chunk.setBlock(Blocks.blockGrass, x, y);
@@ -38,11 +37,6 @@ public class GrassGeneration extends StructureGeneration {
 				}
 			}
 		}
-	}
-
-	@Override
-	public String getGenerationName() {
-		return "Grass and Dirt Generation";
 	}
 
 	@Override

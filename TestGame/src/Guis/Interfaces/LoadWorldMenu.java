@@ -1,38 +1,51 @@
 package Guis.Interfaces;
 
-import GameFiles.BaseGame;
-import Guis.Objects.GuiButton;
 import Guis.Objects.MainMenuButton;
 import Interface.GuiObject;
 import Interface.UIMenu;
 import Main.MainFile;
-import Render.Renders.BlockRendering;
 import Utils.FileUtil;
 import Utils.FontHandler;
-import Utils.TimeTaker;
 import WorldFiles.World;
-import org.newdawn.slick.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.*;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.FontUtils;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.Font;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 
 public class LoadWorldMenu extends AbstractMainMenu {
 	public LoadWorldMenu guiInst = this;
 
 	public World selected = null;
-
+	float translate = 0;
 
 	//TODO Add delete and rename
-	//TODO Add scrollbar...
 
+	public void renderObject( Graphics g2 ) {
+		if(buttonTimeLimiter != -1 && buttonTimeLimiter < buttonTimeLimit){
+			buttonTimeLimiter += 1;
+		}
+
+		for (GuiObject object : guiObjects) {
+			if(object instanceof WorldButton){
+				g2.setClip(list);
+			}
+
+			object.renderObject(g2, this);
+
+			g2.setClip(null);
+		}
+	}
+
+	public void onMouseWheelMoved( int change ) {
+		for (GuiObject ob : guiObjects) {
+			if (ob instanceof scrollBar) {
+				ob.onMouseWheelMoved(change);
+			}
+		}
+	}
 
 	public LoadWorldMenu() {
 		super();
@@ -53,12 +66,39 @@ public class LoadWorldMenu extends AbstractMainMenu {
 
 		guiObjects.add(new backButton((int)(MainFile.yWindowSize * 0.9F)));
 		guiObjects.add(new startButton((int)list.getMaxX() + 48, (int)list.getMaxY() - 20, (int)list.getWidth() - 76, 32));
+		guiObjects.add(new scrollBar((int)slider.getX(), (int)slider.getY(), (int)slider.getWidth() + 1, (int)slider.getHeight() + 1, this));
 
 	}
+
+	org.newdawn.slick.geom.Rectangle rectangle = new org.newdawn.slick.geom.Rectangle(MainFile.xWindowSize * 0.15F, MainFile.yWindowSize * 0.15F, MainFile.xWindowSize * 0.7F, MainFile.xWindowSize * 0.7F);
+	Rectangle list = new Rectangle(rectangle.getX() + (rectangle.getWidth() * 0.02F), rectangle.getY() + (rectangle.getHeight() * 0.02F), rectangle.getWidth() * 0.5F, rectangle.getHeight() * 0.96F);
+	Rectangle slider = new Rectangle(list.getMaxX() + 5, list.getY(), 31, list.getHeight());
+	Rectangle rect = new Rectangle(list.getMaxX() + 40, list.getY(), list.getWidth() * 0.78F, list.getHeight());
 
 	@Override
 	public void render( Graphics g2 ) {
 		super.render(g2);
+
+		int i = 0;
+		for(GuiObject object : guiObjects){
+			if(object instanceof WorldButton){
+
+				if(!g2.getClip().contains(object.x, object.y) || !g2.getClip().contains(object.x + object.getWidth(), object.y + object.getHeight())){
+					object.enabled = false;
+				}else if (g2.getClip().contains(object.x, object.y) && g2.getClip().contains(object.x + object.getWidth(), object.y + object.getHeight())){
+					object.enabled = true;
+				}
+
+				if(FileUtil.getSavedWorlds().size() > 14) {
+					float f1 = (float) translate / (((int)slider.getHeight() + 1) - 27);
+					float f2 = (FileUtil.getSavedWorlds().size() - 14) * 36;
+					object.y = (int) (((list.getY() + 4) + i * 36) - ((f1 * f2)));
+				}
+
+				i += 1;
+			}
+		}
+
 
 		g2.setColor(Color.white);
 		FontHandler.resizeFont(g2, 24);
@@ -66,8 +106,6 @@ public class LoadWorldMenu extends AbstractMainMenu {
 		g2.drawString("Load world", renderStart + 30, 70);
 		FontHandler.resetFont(g2);
 
-		org.newdawn.slick.geom.Rectangle rectangle = new org.newdawn.slick.geom.Rectangle(MainFile.xWindowSize * 0.15F, MainFile.yWindowSize * 0.15F, MainFile.xWindowSize * 0.7F, MainFile.xWindowSize * 0.7F);
-		Rectangle list = new Rectangle(rectangle.getX() + (rectangle.getWidth() * 0.02F), rectangle.getY() + (rectangle.getHeight() * 0.02F), rectangle.getWidth() * 0.5F, rectangle.getHeight() * 0.96F);
 
 		g2.setColor(Color.lightGray);
 		g2.fill(rectangle);
@@ -79,12 +117,10 @@ public class LoadWorldMenu extends AbstractMainMenu {
 		g2.draw(rectangle);
 		g2.draw(list);
 
-		Rectangle slider = new Rectangle(list.getMaxX() + 5, list.getY(), 31, list.getHeight());
 
 		g2.setColor(Color.darkGray);
 		g2.fill(slider);
 
-		Rectangle rect = new Rectangle(list.getMaxX() + 40, list.getY(), list.getWidth() * 0.78F, list.getHeight());
 
 		g2.setColor(Color.gray);
 		g2.fill(rect);
@@ -99,14 +135,22 @@ public class LoadWorldMenu extends AbstractMainMenu {
 		FontHandler.changeFontStyle(g2, Font.BOLD);
 		g2.drawString("World: " + (selected != null ? selected.worldName : ""), rect.getX() + 5, rect.getY() + 5);
 
-		if(selected != null) {
-//			g2.drawString("Time played: " + selected.getTimePlayed(), rect.getX() + 5, rect.getY() + 30);
+		FontHandler.resizeFont(g2, 12);
 
-			//TODO Display something that does not required the world to be loaded
-//			if(selected.worldSize != null) {
-//				g2.drawString("World size: " + selected.worldSize.name(), rect.getX() + 5, rect.getY() + 45);
-//				g2.drawString(" - " + selected.worldSize.xSize + "x" + selected.worldSize.ySize, rect.getX() + 5, rect.getY() + 60);
-//			}
+		if(selected != null) {
+			int line = (int)rect.getY() + 18, lineWidth = 12;
+
+			g2.drawString("World seed: " + selected.worldSeed, rect.getX() + 5, line += lineWidth);
+			g2.drawString("World day: " + selected.WorldDay, rect.getX() + 5, line += lineWidth);
+
+			if(world.worldProperties.size() > 0) {
+				g2.drawString("World properties: ", rect.getX() + 5, line += lineWidth * 2);
+
+				for (Map.Entry<String, Object> ent : world.worldProperties.entrySet()) {
+					g2.drawString("- " + ent.getKey() + "=" + ent.getValue(), rect.getX() + 8, line += lineWidth);
+				}
+			}
+
 		}
 		FontHandler.resetFont(g2);
 
@@ -132,6 +176,7 @@ public class LoadWorldMenu extends AbstractMainMenu {
 		}
 	}
 
+	//TODO Why isnt the button area offset the same as the render?
 	class WorldButton extends MainMenuButton {
 
 		public World world;
@@ -154,6 +199,7 @@ public class LoadWorldMenu extends AbstractMainMenu {
 		@Override
 		public void renderObject( Graphics g2, UIMenu menu ) {
 			Color temp = g2.getColor();
+			setY(y);
 
 			boolean hover = isMouseOver();
 
@@ -253,7 +299,59 @@ public class LoadWorldMenu extends AbstractMainMenu {
 
 			g2.setColor(temp);
 		}
+	}
 
+	class scrollBar extends GuiObject {
 
+		int trant = 0;
+
+		public scrollBar( int x, int y, int width, int height, UIMenu menu ) {
+			super(MainFile.game,x, y, width, height, menu);
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+
+			if (y >= this.y && y <= (this.y + height)) {
+				float yy = (y - getY()) - 10;
+				trant = (int) yy;
+			}
+		}
+
+		@Override
+		public void renderObject( Graphics g2, UIMenu menu ) {
+			if (trant < 0) {
+				trant = 0;
+			}
+
+			if (trant > (height - 27)) {
+				trant = (height - 27);
+			}
+
+			int am = 0;
+			for(GuiObject ob : guiObjects)
+				if(ob instanceof WorldButton) am += 1;
+
+			translate = trant;
+
+			Rectangle rect = new Rectangle(x, y, width, height);
+
+			g2.setColor(Color.darkGray);
+			g2.fill(rect);
+
+			g2.setColor(Color.black);
+			g2.draw(rect);
+
+			Rectangle re = new Rectangle(x + 1, y + trant + 1, width - 2, 25);
+			g2.setColor(Color.gray);
+			g2.fill(re);
+
+			g2.setColor(Color.darkGray.darker());
+			g2.draw(re);
+		}
+
+		public void onMouseWheelMoved( int change ) {
+			trant += -((change / 120) * 10);
+		}
 	}
 }

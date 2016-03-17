@@ -21,10 +21,14 @@ public class MainMenu extends AbstractMainMenu {
 
 	public MainMenu() {
 		super();
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2) + 40;
+		int buttonSize = 40, buttonPos =  (buttonSize * 2) + 40;
 
 		guiObjects.add(new NewGameButton(buttonPos += buttonSize));
 		guiObjects.add(new LoadGameButton(buttonPos += buttonSize));
+
+		//TODO Should i try to implement multiplayer?
+		guiObjects.add(new MultiplayerButton(buttonPos += buttonSize));
+
 		guiObjects.add(new SettingsButton(buttonPos += buttonSize));
 		guiObjects.add(new ExitButton(buttonPos += buttonSize));
 
@@ -58,6 +62,21 @@ public class MainMenu extends AbstractMainMenu {
 	public boolean canRender() {
 		return true;
 	}
+
+	public class MultiplayerButton extends MainMenuButton {
+
+		public MultiplayerButton( int y ) {
+			super(MainFile.game, renderStart, y, 190, 32, "Multiplayer?", guiInst);
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			//TODO
+//			MainFile.game.setCurrentMenu(new CreateWorldMenu());
+		}
+
+	}
+
 
 	public class NewGameButton extends MainMenuButton {
 

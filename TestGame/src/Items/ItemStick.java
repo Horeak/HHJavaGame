@@ -1,12 +1,14 @@
 package Items;
 
+import BlockFiles.Util.IFuel;
+import Items.Utils.IArmor;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
-public class ItemStick extends Item {
+public class ItemStick extends Item implements IArmor, IFuel{
 
 	public static Image texture;
 
@@ -40,4 +42,8 @@ public class ItemStick extends Item {
 		return false;
 	}
 
+	@Override
+	public int getFuelValue() {
+		return 1;
+	}
 }

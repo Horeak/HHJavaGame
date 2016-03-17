@@ -29,7 +29,10 @@ public class ExtractFolderController {
 		}
 	}
 
+	//TODO Adding new texture when addind new blocks requires deleted extracted or updating version.data. Perhaps check another way if the local is outdated
 	public static boolean shouldExtract(String path){
+		if(MainFile.inDebugMode)return true;
+
 		File file = FileUtils.getFolder(path);
 		File fe = FileUtils.getFile(file + "/version.data");
 
@@ -40,7 +43,7 @@ public class ExtractFolderController {
 			DataHandler handler1 = MainFile.game.saveUtil.getDataHandler("version.data");
 			String rem = handler1.getString("version");
 
-			return rem != version;
+			return rem == null || !rem.equalsIgnoreCase(version);
 		}
 
 

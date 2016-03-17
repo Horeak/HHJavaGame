@@ -19,7 +19,7 @@ public class GuiIngameMenu extends GuiGame {
 	public static int renderStart = 290;
 	public static int renderWidth = 190;
 	public GuiIngameMenu guiInst = this;
-	Rectangle rectangle = new Rectangle(BlockRendering.START_X_POS, BlockRendering.START_Y_POS, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
+	Rectangle rectangle = new Rectangle(0, 0, (ConfigValues.renderXSize * ConfigValues.size), (ConfigValues.renderYSize * ConfigValues.size));
 
 	public GuiIngameMenu( GameContainer container, boolean b ) {
 		super(container, b);
@@ -29,7 +29,7 @@ public class GuiIngameMenu extends GuiGame {
 	public void render( Graphics g2 ) {
 		guiObjects.clear();
 
-		int buttonSize = 50, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 2) + 50;
+		int buttonSize = 50, buttonPos =  (buttonSize * 2) + 50;
 
 		guiObjects.add(new ResumeButton(buttonPos += buttonSize));
 		guiObjects.add(new SettingsButton(buttonPos += buttonSize));
@@ -37,14 +37,14 @@ public class GuiIngameMenu extends GuiGame {
 
 
 		g2.setColor(org.newdawn.slick.Color.black);
-		g2.drawLine(renderStart, BlockRendering.START_Y_POS, renderStart, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
-		g2.drawLine(renderStart + renderWidth, BlockRendering.START_Y_POS, renderStart + renderWidth, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+		g2.drawLine(renderStart, 0, renderStart,  (ConfigValues.renderYSize * ConfigValues.size));
+		g2.drawLine(renderStart + renderWidth, 0, renderStart + renderWidth,  (ConfigValues.renderYSize * ConfigValues.size));
 
 		g2.setColor(new Color(152, 152, 152, 60));
 		g2.fill(rectangle);
 
 		g2.setColor(new Color(95, 95, 95, 112));
-		g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
+		g2.fill(new Rectangle(renderStart, 0, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
 
 
 		FontHandler.resizeFont(g2, 22);

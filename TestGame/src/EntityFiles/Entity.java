@@ -4,6 +4,7 @@ import BlockFiles.Util.Block;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import Main.MainFile;
+import Utils.ConfigValues;
 import Utils.SeriPoint2D;
 import com.sun.javafx.geom.Point2D;
 
@@ -71,7 +72,9 @@ public abstract class Entity implements Serializable{
 	public abstract void loadTextures();
 
 	public Block getBlockBelow() {
-		Block bl = MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);;
+		if(((int)getEntityPostion().y) != getEntityPostion().y) return null;
+
+		Block bl = MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), Math.round(getEntityPostion().y) + 1);
 
 		if(bl == null){
 			bl = MainFile.game.getServer().getWorld().getBlock(Math.round(getEntityPostion().x), (int)(getEntityPostion().y) + 1);
@@ -108,29 +111,28 @@ public abstract class Entity implements Serializable{
 	}
 
 	public void updateEntity() {
-
 		if(!MainFile.game.getServer().getWorld().generating) {
 			timeAlive += 1;
 
+			//TODO Improve falling to use values under 1 when possible and increase with the amount of blocks fallen
+			float blocksToFall = blocksFallen <= 2 ? 0.5F : (blocksFallen / 4);
+
 			Block bl = getBlockBelow();
-			isOnGround = bl != null && !bl.canPassThrough();
+			isOnGround = bl != null && !bl.canPassThrough()&& ((int)pos.y == pos.y);
 
-			if (bl != null && !bl.canPassThrough()) {
+			if(!canMoveTo(pos.x, Math.round(pos.y + blocksToFall)) && ((int)pos.y == pos.y)) {
 				isOnGround = true;
 			}
 
-			if(!canMoveTo(pos.x, Math.round(pos.y + (blocksFallen > 2 ? 2 : 1)))) {
-				isOnGround = true;
-			}
-
+			//TODO When falling too far the blocks fallen will find the block below and cancele fall height! FIX!
 			if (!isOnGround && bl == null || !isOnGround && bl != null && bl.canPassThrough()) {
 				float x = pos.x;
-				float y = Math.round(pos.y + (blocksFallen > 2 ? 2 : 1));
+				float y = Math.round(pos.y + blocksToFall);
 
 				if(canMoveTo(x, y)) {
 					moveTo(x, y);
-				}else if(blocksFallen > 2 && canMoveTo(x, y - 1)){
-					moveTo(x, y - 1);
+				}else if(blocksFallen > 2 && canMoveTo(x, y - blocksToFall)){
+					moveTo(x, y - blocksToFall);
 				}
 
 				blocksFallen += (blocksFallen > 2 ? 2 : 1);

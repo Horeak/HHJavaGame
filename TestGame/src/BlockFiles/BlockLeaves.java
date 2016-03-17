@@ -44,7 +44,7 @@ public class BlockLeaves extends Block {
 	}
 
 	public boolean canPassThrough() {
-		return false;
+		return true;
 	}
 
 	public boolean canStay(World world, int x, int y) {
@@ -70,7 +70,7 @@ public class BlockLeaves extends Block {
 	public void updateBlock( World world, int fromX, int fromY, int curX, int curY ) {
 		super.updateBlock(world, fromX, fromY, curX, curY);
 
-		if (!canStay(world, curX, curY)) {
+		if (!canStay(world, curX, curY) && world.getBlock(curX, curY) instanceof BlockLeaves) {
 			world.breakBlock(curX, curY);
 		}
 	}

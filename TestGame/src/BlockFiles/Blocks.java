@@ -6,39 +6,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Blocks {
-	public static HashMap<Block, Integer> blockRegistry = new HashMap<>();
+	public static HashMap<Block, String> blockRegistry = new HashMap<>();
 
-	public static <T extends Block> Block addBlock(T bl, int id){
+	public static <T extends Block> Block addBlock(T bl, String id){
 		blockRegistry.put(bl, id);
 		return bl;
 	}
 
 	public static <T extends Block> Block addBlock(T bl){
-		return addBlock(bl, blockRegistry.size() + 1);
+		return addBlock(bl, "block_" + bl.getClass().getName());
 	}
 
-	public static int getId(Block bl){
-		for(Map.Entry<Block, Integer> ent :blockRegistry.entrySet()){
+	public static String getId(Block bl){
+		for(Map.Entry<Block, String> ent :blockRegistry.entrySet()){
+			if(bl == null || ent.getKey() == null) continue;
+
 			if(bl.getItemName() == ent.getKey().getItemName()){
 				return ent.getValue();
-			}
-		}
-
-		return -1;
-	}
-
-	public static Block getBlock(int i){
-		for(Map.Entry<Block, Integer> ent : blockRegistry.entrySet()){
-			if(i == ent.getValue()){
-				return ent.getKey();
 			}
 		}
 
 		return null;
 	}
 
+	//TODO Is this returning air?
+	public static Block getBlock(String i){
+		for(Map.Entry<Block, String> ent : blockRegistry.entrySet()){
+			if(ent.getValue().equalsIgnoreCase(i)){
+				return ent.getKey();
+			}
+		}
 
-	public static Block blockAir = addBlock(new BlockAir(), -1);
+		return blockAir;
+	}
+
+
+	public static Block blockAir = addBlock(new BlockAir());
 
 	public static Block blockGrass = addBlock(new BlockGrass());
 	public static Block blockDirt = addBlock(new BlockDirt());
@@ -54,4 +57,12 @@ public class Blocks {
 	public static Block blockTorch = addBlock(new BlockTorch());
 
 	public static Block blockFurnace = addBlock(new BlockFurnace());
+
+	//TODO Add more ores and redo some of those textures
+	//TODO (Copper, Titanium...?)
+	//TODO Implement generation of the ores
+	public static Block blockCoalOre = addBlock(new BlockCoalOre());
+	public static Block blockIronOre = addBlock(new BlockIronOre());
+	public static Block blockGoldOre = addBlock(new BlockGoldOre());
+	public static Block blockSilverOre = addBlock(new BlockSilverOre());
 }

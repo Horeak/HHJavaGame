@@ -24,7 +24,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 		int xCord = (ConfigValues.renderXSize * ConfigValues.size) - 25;
 		int ySize = (ConfigValues.renderYSize * ConfigValues.size);
 
-		Rectangle tangle = new Rectangle(xCord, BlockRendering.START_Y_POS, 266, ySize);
+		Rectangle tangle = new Rectangle(xCord, 0, 266, ySize);
 		g2.setClip(tangle);
 
 		g2.setColor(Color.darkGray);
@@ -37,7 +37,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 		g2.draw(tangle);
 
 		int textStartX = xCord + 5;
-		int textStartY = BlockRendering.START_Y_POS + 15;
+		int textStartY = 15;
 
 		int linePos = textStartY;
 		int lineLength = 13;
@@ -74,15 +74,17 @@ public class DebugInfoRender extends AbstractWindowRender {
 			if(MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY) != null) {
 				g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkX + ", " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).chunkY, textStartX, linePos += (lineLength));
 				g2.drawString(" - Chunk loaded: " + MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX / 16, BlockSelection.selectedY / 16)), textStartX, linePos += (lineLength));
-				g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).getBlock(BlockSelection.selectedX, BlockSelection.selectedY, false), textStartX, linePos += (lineLength));
-				g2.drawString(" - Chunk generated: " + (MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).generated), textStartX, linePos += (lineLength));
+				g2.drawString(" - Chunk: " + MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY), textStartX, linePos += (lineLength));
+//				g2.drawString(" - Chunk generated: " + (MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY).generated), textStartX, linePos += (lineLength));
 			}
 
 			g2.drawString(" - ChunkIsNull: " + (MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY) == null), textStartX, linePos += (lineLength));
+			g2.drawString(" - Chunk is on list: " + (MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX, BlockSelection.selectedY))), textStartX, linePos += (lineLength));
 
 			if(MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX) != null){
 				g2.drawString(" - Biome: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).name, textStartX, linePos += (lineLength));
-				g2.drawString(" - Height: " + Biome.heightMap.get(BlockSelection.selectedX), textStartX, linePos += (lineLength));
+				g2.drawString(" - Biome length: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).length, textStartX, linePos += (lineLength));
+				g2.drawString(" - Height: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).getHeight(BlockSelection.selectedX), textStartX, linePos += (lineLength));
 			}
 
 
@@ -106,7 +108,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 				g2.setColor(Color.black);
 				g2.drawString("Block cords: " + "[" + BlockSelection.selectedX + ", " + BlockSelection.selectedY + "]", textStartX, linePos += (lineLength));
 
-				g2.drawString("Render:" + BlockSelection.selectedBlock.getRender(), textStartX, linePos += (lineLength * 2));
+				g2.drawString("Render:" + BlockSelection.selectedBlock.getRender() != null ? BlockSelection.selectedBlock.getRender().getClass().getName() : null, textStartX, linePos += (lineLength * 2));
 
 				if (BlockSelection.selectedBlock.blockInfoList.size() > 0) {
 					g2.drawString("Blockinfo: ", textStartX, linePos += (lineLength * 2));

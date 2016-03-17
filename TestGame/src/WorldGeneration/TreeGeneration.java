@@ -1,14 +1,12 @@
 package WorldGeneration;
 
-import BlockFiles.BlockGrass;
-import BlockFiles.BlockLeaves;
-import BlockFiles.BlockWood;
-import BlockFiles.Blocks;
+import BlockFiles.*;
 import BlockFiles.Util.Block;
 import Main.MainFile;
 import WorldFiles.Chunk;
 import WorldFiles.World;
 import WorldGeneration.Util.GenerationBase;
+import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
 
 import java.awt.*;
@@ -16,46 +14,46 @@ import java.util.Random;
 
 public class TreeGeneration extends GenerationBase {
 
+	//TODO Make TreeGeneration chunk independent
 	public boolean useRandom = true;
-	//TODO Fix
+	public boolean sapling = false;
+
 	@Override
 	public boolean canGenerate( Chunk chunk, int x, int y ) {
-		if(true)return false;
-
 		if(chunk == null || chunk.world == null) return false;
+		//TODO Return false if biome doesnt support trees!
 
-		if (chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y  + (chunk.chunkY * Chunk.chunkSize), true) instanceof BlockGrass) {
-			Block b = chunk.world.getBlock(x + (chunk.chunkX * Chunk.chunkSize), y  + (chunk.chunkY * Chunk.chunkSize));
+		if (chunk.getBlock(x, y, true) instanceof BlockGrass) {
+			Block b = chunk.getBlock(x, y);
 
-			if (b.canBlockSeeSky(chunk.world, x, y)) {
-				for (int xx = -1; xx < 2; xx++) {
-					for (int yy = -6; yy < 0; yy++) {
-						Block bg = chunk.getBlock(x + xx, y + yy);
-						if (bg != null && bg.isBlockSolid() || bg != null && !bg.canPassThrough()) {
-							return false;
-						}
+			for (int xx = -1; xx < 2; xx++) {
+				for (int yy = -6; yy < 0; yy++) {
+					Block bg = chunk.getBlock(x + xx, y + yy);
+					if (bg != null && !(bg instanceof BlockSapling)) {
+						return false;
 					}
 				}
 
-				return useRandom ? new Random().nextInt(10) == 1 : true;
+				boolean height = useRandom ? y >= chunk.world.getBiome(x + (chunk.chunkX * Chunk.chunkSize)).getHeight(x + (chunk.chunkX * Chunk.chunkSize)) : true;
+				return height && (useRandom ? new Random().nextInt(10) == 1 : true);
 			}
 		}
 
 		return false;
 	}
 
+	//TODO FIX
 	@Override
 	public void generate( Chunk chunk, int x, int y ) {
 		if(chunk == null || chunk.world == null) return;
 
-		//TODO This will be receaving chunk cordinates so convert!
 		int height = 3 + MainFile.random.nextInt(4);
 
 		for (int i = 0; i < height; i++) {
-			chunk.world.setBlock(Blocks.blockWood, x + (chunk.chunkX * Chunk.chunkSize), y - (i + 1) + (chunk.chunkY * Chunk.chunkSize));
+			chunk.world.setBlock(Blocks.blockWood, x + (chunk.chunkX * Chunk.chunkSize), (y + (chunk.chunkY * Chunk.chunkSize)) - (i + 1));
 		}
 
-		Point p = new Point(x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize) - height);
+		Point p = new Point(x, y - height);
 
 		for (int xx = -5; xx < 5; xx++) {
 			for (int yy = -(height + 2); yy <= -(height - 1); yy++) {
@@ -67,13 +65,12 @@ public class TreeGeneration extends GenerationBase {
 					continue;
 				}
 
-				int xPos = (x + xx) + (chunk.chunkX * Chunk.chunkSize);
-				int yPos = (y + yy) + (chunk.chunkY * Chunk.chunkSize);
+				int xPos = (x + xx);
+				int yPos = (y + yy);
 
-				if (chunk.getBlock(xPos, yPos) == null) {
-
+				if (chunk.world.getBlock(xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize)) == null) {
 					if (p.distance(xPos, yPos) <= 3) {
-						chunk.world.setBlock(Blocks.blockLeaves, xPos, yPos);
+						chunk.world.setBlock(Blocks.blockLeaves, xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize));
 					}
 				}
 			}
@@ -82,13 +79,8 @@ public class TreeGeneration extends GenerationBase {
 		for (int i = 0; i < height; i++) {
 			chunk.world.setBlock(Blocks.blockWood, x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize) - (i + 1));
 		}
-	}
 
-	@Override
-	public String getGenerationName() {
-		return "Tree generation";
 	}
-
 	@Override
 	public WorldGenPriority generationPriority() {
 		return WorldGenPriority.LOW_PRIORITY;

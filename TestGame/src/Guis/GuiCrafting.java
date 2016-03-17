@@ -7,6 +7,7 @@ import Interface.GuiObject;
 import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Utils.ConfigValues;
 import Utils.FontHandler;
 import Utils.LoggerUtil;
 import Utils.RenderUtil;
@@ -44,10 +45,10 @@ public class GuiCrafting extends GuiGame {
 
 	public void init() {
 		int i = 0;
-		for (CraftingRecipe res : CraftingRegister.recipes) {
+		for (CraftingRecipe res : CraftingRegister.craftingRecipes) {
 			if(input != null && !input.isEmpty() && res.output.getStackName().toLowerCase().contains(input.toLowerCase()) || input == null || input.isEmpty()) {
 				float f1 = (float)translate / (247 - 27);
-				float f2 = (CraftingRegister.recipes.size() - 4.5F) * 54;
+				float f2 = (CraftingRegister.craftingRecipes.size() - 4.5F) * 54;
 
 				guiObjects.add(new CraftingButton(this, startX + 10, startY + 25 + (i * (54)) - (int)(f1 * f2), res));
 				i += 1;
@@ -73,12 +74,12 @@ public class GuiCrafting extends GuiGame {
 
 
 		for (int g = 0; g < 10; g++) {
-			guiObjects.add(new InventoryButton(this, (startX) + 10 + (g * (50)), (startY + Sheight) + 5, true, g));
+			guiObjects.add(new InventoryButton(this, (startX) + 10 + (g * (50)), (startY + Sheight) + 5, true, g, MainFile.game.getClient().getPlayer()));
 		}
 
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 4; y++) {
-				guiObjects.add(new InventoryButton(this, (startX) + 10 + ((x) * (50)), (startY + Sheight) + 10 + ((y + 1) * (50)), false, 10 + (x + (y * 10))));
+				guiObjects.add(new InventoryButton(this, (startX) + 10 + ((x) * (50)), (startY + Sheight) + 10 + ((y + 1) * (50)), false, 10 + (x + (y * 10)), MainFile.game.getClient().getPlayer()));
 			}
 		}
 
@@ -385,6 +386,7 @@ public class GuiCrafting extends GuiGame {
 			try {
 				if (CraftingRegister.hasMaterialFor(selectedRes)) {
 
+					if(!ConfigValues.debug)
 					for (ItemStack item : selectedRes.input) {
 						MainFile.game.getClient().getPlayer().consumeItem(item);
 					}

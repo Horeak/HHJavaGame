@@ -2,8 +2,10 @@ package Crafting;
 
 import BlockFiles.*;
 import Items.*;
+import Items.Utils.IItemRegistry;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Utils.ConfigValues;
 import Utils.LoggerUtil;
 
 import java.util.ArrayList;
@@ -12,10 +14,13 @@ import java.util.logging.Level;
 
 public class CraftingRegister {
 
-	public static ArrayList<CraftingRecipe> recipes = new ArrayList<>();
+	public static ArrayList<CraftingRecipe> craftingRecipes = new ArrayList<>();
+	public static ArrayList<FuranceRecipe> furanceRecipes = new ArrayList<>();
 
-	public static CraftingRecipe getRecipeFromInput( ItemStack[] input ) {
-		for (CraftingRecipe res : recipes) {
+	public static final int DEFAUILT_SMELT_TIME = 5; //5 sec
+
+	public static CraftingRecipe getCraftingRecipeFromInput( ItemStack[] input ) {
+		for (CraftingRecipe res : craftingRecipes) {
 			if (Arrays.equals(res.input, input)) {
 				return res;
 			}
@@ -24,17 +29,51 @@ public class CraftingRegister {
 		return null;
 	}
 
-	public static void addRecipe( ItemStack[] input, ItemStack output ) {
+	public static void addCraftingRecipe( ItemStack[] input, ItemStack output ) {
 		try {
 			if (input.length > 4) {
 				throw new Exception("Recipes cant be longer then 4 input items!");
 			}
 
-			recipes.add(new CraftingRecipe(input, output));
+			craftingRecipes.add(new CraftingRecipe(input, output));
 		} catch (Exception e) {
 		LoggerUtil.exception(e);
 		}
 	}
+
+	public static void addFurnaceRecipe( ItemStack input, ItemStack output ) {
+		addFurnaceRecipe(input, output, DEFAUILT_SMELT_TIME);
+	}
+
+	public static void addFurnaceRecipe( ItemStack input, ItemStack output, int smeltTime ) {
+		try {
+			furanceRecipes.add(new FuranceRecipe(input, output, smeltTime));
+		} catch (Exception e) {
+			LoggerUtil.exception(e);
+		}
+	}
+
+	public static FuranceRecipe getFurnaceRecipeFromInput(ItemStack input){
+		if(input == null) return null;
+
+		for(FuranceRecipe r : furanceRecipes){
+			//TODO Check item not stacksize
+			if(IItemRegistry.getID(r.input.getItem()) == IItemRegistry.getID(input.getItem()) && input.getStackSize() >= r.input.getStackSize()){
+				return r;
+			}
+		}
+
+		return null;
+	}
+
+	public static ItemStack getFurnaceOutputFromInput(ItemStack input){
+		return getFurnaceRecipeFromInput(input) != null ? getFurnaceRecipeFromInput(input).output : null;
+	}
+
+	public static int getFurnaceSmeltTimeFromInput(ItemStack input){
+		return getFurnaceRecipeFromInput(input) != null ? getFurnaceRecipeFromInput(input).smeltTime : DEFAUILT_SMELT_TIME;
+	}
+
 
 	public static int getAmount(ItemStack item){
 		boolean hasItem = false;
@@ -52,6 +91,7 @@ public class CraftingRegister {
 	}
 
 	public static boolean hasMaterialFor( CraftingRecipe recipe ) {
+		if(ConfigValues.debug) return true;
 
 		if(recipe != null)
 		for (ItemStack item : recipe.input) {
@@ -87,18 +127,28 @@ public class CraftingRegister {
 		return hasItem;
 	}
 
+	//TODO Add furance craftingRecipes
 	public static void registerRecipes() {
-		addRecipe(new ItemStack[]{ new ItemStack(Blocks.blockWood)}, new ItemStack(Blocks.blockPlanks, 3));
-		addRecipe(new ItemStack[]{ new ItemStack(Blocks.blockPlanks, 2)}, new ItemStack(Items.itemStick, 4));
+		addCraftingRecipe(new ItemStack[]{ new ItemStack(Blocks.blockWood)}, new ItemStack(Blocks.blockPlanks, 3));
+		addCraftingRecipe(new ItemStack[]{ new ItemStack(Blocks.blockPlanks, 2)}, new ItemStack(Items.itemStick, 4));
 
-		addRecipe(new ItemStack[]{ new ItemStack(Items.itemStick, 1), new ItemStack(Blocks.blockPlanks)}, new ItemStack(Blocks.blockTorch, 5));
+		addCraftingRecipe(new ItemStack[]{ new ItemStack(Items.itemStick, 1), new ItemStack(Blocks.blockPlanks)}, new ItemStack(Blocks.blockTorch, 5));
 
-		addRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 1)}, new ItemStack(Items.itemShovel));
-		addRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 2)}, new ItemStack(Items.itemAxe));
-		addRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 3)}, new ItemStack(Items.itemPickaxe));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 1)}, new ItemStack(Items.itemShovel));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 2)}, new ItemStack(Items.itemAxe));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 3)}, new ItemStack(Items.itemPickaxe));
 
-		addRecipe(new ItemStack[]{new ItemStack(Blocks.blockWood), new ItemStack(Blocks.blockStone, 6)}, new ItemStack(Blocks.blockFurnace));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockWood), new ItemStack(Blocks.blockStone, 6)}, new ItemStack(Blocks.blockFurnace));
 
+		//TODO Add ingots for ores and add smelting recipes
+		addFurnaceRecipe(new ItemStack(Blocks.blockIronOre), new ItemStack(Items.itemIronIngot));
+
+
+		if(ConfigValues.debug){
+			addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockDirt)}, new ItemStack(Items.debugChunkDestoryer));
+			addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockDirt)}, new ItemStack(Items.debugChunkReloader));
+			addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockDirt)}, new ItemStack(Items.debugChunkRegenerator));
+		}
 
 		LoggerUtil.out.log(Level.INFO, "Crafting recipes registered.");
 	}

@@ -52,6 +52,11 @@ public class AbstractMainMenu extends UIMenu {
 			world.loading = true;
 			world.generateChunks = false;
 
+			world.shouldSave = false;
+			world.shouldLoad = false;
+
+			world.ingnoreLightingHeight = true;
+
 			for(int x = 0; x < length; x++){
 				for(int y = 0; y < ConfigValues.renderYSize - 25; y++){
 					world.setBlock(Blocks.blockAir, x, y);
@@ -93,7 +98,7 @@ public class AbstractMainMenu extends UIMenu {
 				}
 			}
 		}
-		world.updateLightForBlocks(false);
+		world.updateLightForBlocks();
 	}
 
 	@Override
@@ -115,7 +120,7 @@ public class AbstractMainMenu extends UIMenu {
 
 						if (b != null && b.getRender() != null) {
 							if (b.isBlockSolid()) {
-								((DefaultBlockRendering) b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + ((x - 1) * ConfigValues.size), (BlockRendering.START_Y_POS) + (y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, x, y, i);
+								((DefaultBlockRendering) b.getRender()).renderBlock(g2, ((x - 1) * ConfigValues.size),(y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, x, y, i);
 							} else {
 								bbb.put(new Point(x, y), b);
 							}
@@ -128,7 +133,7 @@ public class AbstractMainMenu extends UIMenu {
 					Block b = ent.getValue();
 
 					if (b != null && b.getRender() != null) {
-						((DefaultBlockRendering) b.getRender()).renderBlock(g2, (BlockRendering.START_X_POS) + ((ent.getKey().x - 1) * ConfigValues.size), (BlockRendering.START_Y_POS) + (ent.getKey().y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, ent.getKey().x, ent.getKey().y, i);
+						((DefaultBlockRendering) b.getRender()).renderBlock(g2, ((ent.getKey().x - 1) * ConfigValues.size), (ent.getKey().y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, ent.getKey().x, ent.getKey().y, i);
 					}
 				}
 
@@ -144,11 +149,11 @@ public class AbstractMainMenu extends UIMenu {
 
 		if(renderBar) {
 			g2.setColor(org.newdawn.slick.Color.black);
-			g2.drawLine(renderStart, BlockRendering.START_Y_POS, renderStart, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
-			g2.drawLine(renderStart + renderWidth, BlockRendering.START_Y_POS, renderStart + renderWidth, (BlockRendering.START_Y_POS) + (ConfigValues.renderYSize * ConfigValues.size));
+			g2.drawLine(renderStart, 0, renderStart, (ConfigValues.renderYSize * ConfigValues.size));
+			g2.drawLine(renderStart + renderWidth,0, renderStart + renderWidth, (ConfigValues.renderYSize * ConfigValues.size));
 
 			g2.setColor(new Color(95, 95, 95, 112));
-			g2.fill(new Rectangle(renderStart, BlockRendering.START_Y_POS, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
+			g2.fill(new Rectangle(renderStart, 0, renderWidth, (ConfigValues.renderYSize * ConfigValues.size)));
 		}
 	}
 

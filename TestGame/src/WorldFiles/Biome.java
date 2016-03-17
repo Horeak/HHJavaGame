@@ -3,24 +3,34 @@ package WorldFiles;
 import Main.MainFile;
 import NoiseGenerator.PerlinNoiseGenerator;
 import NoiseGenerator.SimplexNoiseGenerator;
+import WorldGeneration.Structures.CaveGeneration;
 import WorldGeneration.Structures.GrassGeneration;
 import WorldGeneration.Structures.StoneGeneration;
+import WorldGeneration.TreeGeneration;
 import WorldGeneration.Util.StructureGeneration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Biome implements Cloneable{
-	public static HashMap<String, Biome> biomeHashMap = new HashMap<>();
-	public static ArrayList<String> biomeIDs = new ArrayList<>();
+public abstract class Biome implements Cloneable, Serializable{
+	public static transient HashMap<String, Biome> biomeHashMap = new HashMap<>();
+	public static transient ArrayList<String> biomeIDs = new ArrayList<>();
 
 	//Integer 1=x-value, Integer 2=Ground height
-	public static final HashMap<Integer, Integer> heightMap = new HashMap<>();
+	public HashMap<Integer, Integer> heightHashMap = new HashMap<>();
+
+	public synchronized int getHeight(int x){
+		return heightHashMap.get(x);
+	}
+	public synchronized boolean containes(int x){return heightHashMap.containsKey(x);}
+
 
 	public String name;
 	public String id;
-	public StructureGeneration[] worldGens;
+	public transient StructureGeneration[] worldGens;
 	public int length;
 
 	public Biome(String id, String name, StructureGeneration[] worldGens){
@@ -56,7 +66,7 @@ public abstract class Biome implements Cloneable{
 	public abstract void generateHeightMap(World world, int start);
 
 
-	private static Biome plainsBiome = addBiome(new Biome("plainsBiome", "Plains", new StructureGeneration[]{ new GrassGeneration(), new StoneGeneration() }) {
+	private static transient Biome plainsBiome = addBiome(new Biome("plainsBiome", "Plains", new StructureGeneration[]{ new GrassGeneration(), new StoneGeneration()}) {
 
 
 		//TODO The longer away from start it is the the rougher it gets. Needs fixing! WHY THE FUCK!?!??!
@@ -65,17 +75,25 @@ public abstract class Biome implements Cloneable{
 		public void generateHeightMap(World world, int start) {
 			PerlinNoiseGenerator noiseGenerator = new PerlinNoiseGenerator(world.worldSeed);
 
-		//	float freq = 0.05F * length;
 			for(int x = 0; x < (length * Chunk.chunkSize); x++){
-				int xx = x;
 
-				float g = (xx / (float)(length / 0.005F)) * 100;
+				float g = x * 0.05F;
 				double t = noiseGenerator.noise(g) * 10;
 
-				if(!heightMap.containsKey(start + x)) {
-					heightMap.put(start + x, -(int) Math.round(t));
+				if(!heightHashMap.containsKey(start + x)) {
+					heightHashMap.put(start + x, -(int) Math.round(t));
 				}
 			}
 		}
 	});
+
+
+	@Override
+	public String toString() {
+		return "Biome{" +
+				"name='" + name + '\'' +
+				", id='" + id + '\'' +
+				", length=" + length +
+				'}';
+	}
 }

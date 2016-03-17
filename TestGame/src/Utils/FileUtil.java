@@ -39,7 +39,12 @@ public class FileUtil {
 							World world = new World(name);
 							world.worldName = name;
 
-//							world.loadWorld(world.worldName);
+							//Load some values useful for loading the world
+							world.partialLoad("world.data", "worldSeed", world.getClass().getDeclaredField("worldSeed"));
+							world.partialLoad("world.data", "dayNumber", world.getClass().getDeclaredField("WorldDay"));
+
+							world.loadProperties();
+
 							worlds.add(world);
 						}
 					}

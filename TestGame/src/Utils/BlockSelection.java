@@ -14,21 +14,24 @@ public class BlockSelection {
 
 
 	public static void update( GameContainer container ) {
-		Vec2d plPos = new Vec2d(MainFile.game.getClient().getPlayer().getEntityPostion().x, MainFile.game.getClient().getPlayer().getEntityPostion().y);
+		Vec2d plPos = new Vec2d(Math.round(MainFile.game.getClient().getPlayer().getEntityPostion().x), Math.round(MainFile.game.getClient().getPlayer().getEntityPostion().y));
 
 		if (container != null && container.getInput() != null) {
-			Point mousePoint = new Point(container.getInput().getMouseX(), container.getInput().getMouseY());
+			Point mousePoint = new Point(Math.round(container.getInput().getMouseX()), Math.round(container.getInput().getMouseY()));
 
 			if (mousePoint != null)
-				if (mousePoint.getX() > BlockRendering.START_X_POS && mousePoint.getX() < (ConfigValues.renderXSize * ConfigValues.size) + BlockRendering.START_X_POS) {
-					if (mousePoint.getY() > (BlockRendering.START_Y_POS) && mousePoint.getY() < (ConfigValues.renderYSize * ConfigValues.size) + BlockRendering.START_Y_POS) {
+				if (mousePoint.getX() < (ConfigValues.renderXSize * ConfigValues.size)) {
+					if (mousePoint.getY() < (ConfigValues.renderYSize * ConfigValues.size)) {
 
 						//TODO This is still offset for some reason under certain circumstances
-						int mouseX = (int) ((mousePoint.getX()) - (BlockRendering.START_X_POS)) / (ConfigValues.size);
-						int mouseY = (int) ((mousePoint.getY()) - (BlockRendering.START_Y_POS)) / (ConfigValues.size);
+						int mouseX = ((int)mousePoint.getX()) / (ConfigValues.size);
+						int mouseY = ((int)mousePoint.getY()) / (ConfigValues.size);
 
-						int blockX = (mouseX + (int) plPos.x) - ConfigValues.renderRange;
-						int blockY = (mouseY + (int) plPos.y) - ConfigValues.renderRange;
+						int posX = Math.round((float)plPos.x);
+						int posY = Math.round((float)plPos.y);
+
+						int blockX = (mouseX + posX) - ConfigValues.renderRange;
+						int blockY = (mouseY + posY) - ConfigValues.renderRange;
 
 						selectedX = blockX;
 						selectedY = blockY;

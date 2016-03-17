@@ -24,8 +24,8 @@ public class StoneGeneration extends StructureGeneration {
 				int dy = y + (chunk.chunkY * Chunk.chunkSize);
 				int dx = x + (chunk.chunkX * Chunk.chunkSize);
 
-				if(Biome.heightMap.containsKey(dx)){
-					if(dy >= (Biome.heightMap.get(dx) + (3 + (MainFile.random.nextInt(2))))){
+				if(chunk.world.getBiome(chunk.chunkX * Chunk.chunkSize).containes(dx)){
+					if(dy >= (chunk.world.getBiome(chunk.chunkX * Chunk.chunkSize).getHeight(dx) + (3 + (MainFile.random.nextInt(2))))){
 						chunk.setBlock(Blocks.blockStone, x, y);
 					}
 				}
@@ -33,10 +33,6 @@ public class StoneGeneration extends StructureGeneration {
 		}
 	}
 
-	@Override
-	public String getGenerationName() {
-		return "Stone Generation";
-	}
 
 	@Override
 	public WorldGenPriority generationPriority() {

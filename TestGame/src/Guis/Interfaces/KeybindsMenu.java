@@ -28,6 +28,8 @@ public class KeybindsMenu extends AbstractMainMenu {
 	public KeybindsMenu() {
 		super();
 		for (Keybinding key : MainFile.game.getConfig().getKeybindings()) {
+			if(!key.isEnabled()) continue;
+
 			if (keyGroups.get(key.getGroup()) != null) {
 				keyGroups.get(key.getGroup()).add(key);
 			} else {
@@ -38,7 +40,7 @@ public class KeybindsMenu extends AbstractMainMenu {
 			}
 		}
 
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 3);
+		int buttonSize = 40, buttonPos =  (buttonSize * 3);
 		guiObjects.add(new backButton(buttonPos + (buttonSize * (14))));
 
 
@@ -78,7 +80,7 @@ public class KeybindsMenu extends AbstractMainMenu {
 		super.render(g2);
 		g2.setColor(Color.black);
 
-		int buttonSize = 40, buttonPos = (BlockRendering.START_Y_POS) + (buttonSize * 3);
+		int buttonSize = 40, buttonPos =  (buttonSize * 3);
 
 		for (Map.Entry<String, ArrayList<Keybinding>> ent : keyGroups.entrySet()) {
 			int pos = buttonPos += ((buttonSize) * .5F);
