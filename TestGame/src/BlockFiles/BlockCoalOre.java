@@ -2,12 +2,14 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
+import Items.Items;
+import Items.Utils.ItemStack;
 import Main.MainFile;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockCoalOre extends Block{
+public class BlockCoalOre extends BlockStone{
 
 	public static Image texture;
 
@@ -29,5 +31,10 @@ public class BlockCoalOre extends Block{
 	@Override
 	public void loadTextures() {
 		texture = MainFile.game.imageLoader.getImage("blocks","coalOre");
+	}
+
+	@Override
+	public ItemStack getItemDropped( World world, int x, int y ) {
+		return new ItemStack(Items.itemCoal, 1 + (MainFile.random.nextInt(3)));
 	}
 }

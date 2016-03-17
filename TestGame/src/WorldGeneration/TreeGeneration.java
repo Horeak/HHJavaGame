@@ -50,7 +50,7 @@ public class TreeGeneration extends GenerationBase {
 		int height = 3 + MainFile.random.nextInt(4);
 
 		for (int i = 0; i < height; i++) {
-			chunk.world.setBlock(Blocks.blockWood, x + (chunk.chunkX * Chunk.chunkSize), (y + (chunk.chunkY * Chunk.chunkSize)) - (i + 1));
+			chunk.setBlock(Blocks.blockWood, x, (y) - (i + 1));
 		}
 
 		Point p = new Point(x, y - height);
@@ -68,16 +68,16 @@ public class TreeGeneration extends GenerationBase {
 				int xPos = (x + xx);
 				int yPos = (y + yy);
 
-				if (chunk.world.getBlock(xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize)) == null) {
+				if (chunk.getBlock(xPos, yPos) == null) {
 					if (p.distance(xPos, yPos) <= 3) {
-						chunk.world.setBlock(Blocks.blockLeaves, xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize));
+						chunk.setBlock(Blocks.blockLeaves, xPos, yPos);
 					}
 				}
 			}
 		}
 
 		for (int i = 0; i < height; i++) {
-			chunk.world.setBlock(Blocks.blockWood, x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize) - (i + 1));
+			chunk.setBlock(Blocks.blockWood, x, y - (i + 1));
 		}
 
 	}

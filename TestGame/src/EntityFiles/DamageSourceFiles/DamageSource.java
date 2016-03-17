@@ -6,6 +6,7 @@ import WorldFiles.World;
 public enum DamageSource {
 
 	//TODO Add damage sources
+	Fall_Damage("Fall Damage"),
 	UNSPECIFIED("UNSPECIFIED");
 
 

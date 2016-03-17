@@ -5,7 +5,7 @@ import Items.Utils.ItemStack;
 
 public class ArmorInventory implements IInventory{
 
-	public ItemStack[] armorItems = new ItemStack[getInvetorySize()];
+	public ItemStack[] armorItems = new ItemStack[ getInventorySize()];
 
 	@Override
 	public ItemStack[] getItems() {
@@ -23,7 +23,7 @@ public class ArmorInventory implements IInventory{
 	}
 
 	@Override
-	public int getInvetorySize() {
+	public int getInventorySize() {
 		return 4;
 	}
 

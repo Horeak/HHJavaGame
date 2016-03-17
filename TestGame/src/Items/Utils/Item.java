@@ -14,7 +14,7 @@ public abstract class Item implements IItem, Serializable {
 	//TODO Add item registry similar to the blocks
 
 	public abstract int getMaxItemDamage();
-	public abstract Image getTexture();
+	public abstract Image getTexture( ItemStack stack );
 	public abstract void loadTextures();
 
 	public ArrayList<String> getTooltips(ItemStack stack){

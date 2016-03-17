@@ -1,9 +1,7 @@
 package Utils;
 
+import WorldGeneration.*;
 import WorldGeneration.Structures.CaveGeneration;
-import WorldGeneration.CrackedStoneGeneration;
-import WorldGeneration.IronOreGeneration;
-import WorldGeneration.TreeGeneration;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
 
@@ -20,7 +18,10 @@ public class Registrations {
 		generationBases.add(new CrackedStoneGeneration());
 		generationBases.add(new TreeGeneration());
 
+		generationBases.add(new CoalOreGeneration());
 		generationBases.add(new IronOreGeneration());
+		generationBases.add(new SilverOreGeneration());
+		generationBases.add(new GoldOreGeneration());
 
 		StructureGenerations.add(new CaveGeneration());
 

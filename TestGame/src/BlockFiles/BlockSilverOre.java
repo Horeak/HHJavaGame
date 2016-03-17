@@ -7,7 +7,7 @@ import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockSilverOre extends Block{
+public class BlockSilverOre extends BlockStone{
 
 	public static Image texture;
 

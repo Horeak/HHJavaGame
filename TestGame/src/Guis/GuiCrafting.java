@@ -1,10 +1,13 @@
 package Guis;
 
+import BlockFiles.Blocks;
 import Crafting.CraftingRecipe;
 import Crafting.CraftingRegister;
 import Guis.Button.InventoryButton;
 import Interface.GuiObject;
 import Interface.UIMenu;
+import Items.Items;
+import Items.Tools.ITool;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.ConfigValues;
@@ -20,6 +23,7 @@ import org.newdawn.slick.geom.Rectangle;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 
 public class GuiCrafting extends GuiGame {
 
@@ -27,10 +31,87 @@ public class GuiCrafting extends GuiGame {
 	//TODO Improve! Maybe add categories or something similar to make it easier to navigate
 	public GuiCrafting inst = this;
 
-	public int startX = 140, startY = 150;
-	public int Swidth = 520, Sheight = 297;
+	public int startX = 80, startY = 150;
+	public int Swidth = 580, Sheight = 297;
 
-	Rectangle rectangle1 = new Rectangle(startX + 9, startY + 24, 216, Sheight - 49);
+	Rectangle rectangle1 = new Rectangle(startX + 59, startY + 24, 216, Sheight - 49);
+
+	public category[] categories = new category[]{
+			new category() {
+
+		ItemStack stack = new ItemStack(Blocks.blockFurnace);
+		@Override
+		public boolean isItemValid( ItemStack stack ) {
+			return true;
+		}
+
+		@Override
+		public ItemStack getRender() {
+			return stack;
+		}
+
+		@Override
+		public String getName() {
+			return "All";
+		}
+
+		}, new category() {
+		ItemStack stack = new ItemStack(Blocks.blockPlanks);
+
+		@Override
+		public boolean isItemValid( ItemStack stack ) {
+			return stack.isBlock();
+		}
+
+		@Override
+		public ItemStack getRender() {
+			return stack;
+		}
+
+		@Override
+		public String getName() {
+			return "Blocks";
+		}
+	}, new category() {
+		ItemStack stack = new ItemStack(Items.itemStick);
+
+		@Override
+		public boolean isItemValid( ItemStack stack ) {
+			return !stack.isBlock();
+		}
+
+		@Override
+		public ItemStack getRender() {
+			return stack;
+		}
+
+		@Override
+		public String getName() {
+			return "Items";
+		}
+	},
+			new category() {
+		ItemStack stack = new ItemStack(Items.itemStonePickaxe);
+		@Override
+		public boolean isItemValid( ItemStack stack ) {
+			return stack.getItem() instanceof ITool;
+		}
+
+		@Override
+		public ItemStack getRender() {
+			return stack;
+		}
+
+		@Override
+		public String getName() {
+			return "Tools";
+		}
+	}
+
+
+	};
+
+	public category currentCategory = categories[0];
 
 	CraftingRecipe selectedRes = null;
 	float translate = 0; //18 = 1 down
@@ -41,21 +122,40 @@ public class GuiCrafting extends GuiGame {
 	public GuiCrafting( GameContainer container, boolean b ) {
 		super(container, b);
 	}
+	int num = 0;
 
 
 	public void init() {
 		int i = 0;
-		for (CraftingRecipe res : CraftingRegister.craftingRecipes) {
-			if(input != null && !input.isEmpty() && res.output.getStackName().toLowerCase().contains(input.toLowerCase()) || input == null || input.isEmpty()) {
-				float f1 = (float)translate / (247 - 27);
-				float f2 = (CraftingRegister.craftingRecipes.size() - 4.5F) * 54;
+		num = 0;
 
-				guiObjects.add(new CraftingButton(this, startX + 10, startY + 25 + (i * (54)) - (int)(f1 * f2), res));
-				i += 1;
+		ArrayList<CraftingRecipe> resps = new ArrayList<>();
+
+		for (CraftingRecipe res : CraftingRegister.craftingRecipes) {
+			if(currentCategory == null || currentCategory.isItemValid(res.output)) {
+				if (input != null && !input.isEmpty() && res.output.getStackName().toLowerCase().contains(input.toLowerCase()) || input == null || input.isEmpty()) {
+					resps.add(res);
+				}
 			}
 		}
 
-		guiObjects.add(new craftButton(startX + (Swidth / 2) + 8, startY + (Sheight - 35), 243, 25, this));
+		for(CraftingRecipe res : resps){
+			float f1 = (float) translate / (247 - 27);
+			float f2 = (resps.size() - 4.5F) * 54;
+
+			guiObjects.add(new CraftingButton(this, startX + 60, startY + 25 + (i * (54)) - (int) (f1 * f2), res));
+			i += 1;
+			num += 1;
+		}
+
+		int p = 0;
+		for(category cat : categories){
+			guiObjects.add(new categoryButton(startX + 5, startY + 25 + (p * 54), 48, 48, this, cat));
+
+			p += 1;
+		}
+
+		guiObjects.add(new craftButton(startX + (Swidth / 2) + 28, startY + (Sheight - 35), 243, 25, this));
 
 		boolean t = false, j = false;
 		for(GuiObject ob : guiObjects) {
@@ -67,19 +167,19 @@ public class GuiCrafting extends GuiGame {
 
 
 		if(!t)
-		guiObjects.add(new scrollBar(startX + (Swidth / 2) - 25, startY + 25, 20, Sheight - 50, this));
+		guiObjects.add(new scrollBar(startX + (Swidth / 2) - 5, startY + 25, 20, Sheight - 50, this));
 
 		if(!j)
-			guiObjects.add(new inputButton(startX + 9, startY - 10, 246, 32));
+			guiObjects.add(new inputButton(startX + 60, startY - 10, 216, 32));
 
 
 		for (int g = 0; g < 10; g++) {
-			guiObjects.add(new InventoryButton(this, (startX) + 10 + (g * (50)), (startY + Sheight) + 5, true, g, MainFile.game.getClient().getPlayer()));
+			guiObjects.add(new InventoryButton(this, (startX) + 40 + (g * (50)), (startY + Sheight) + 5, true, g, MainFile.game.getClient().getPlayer()));
 		}
 
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 4; y++) {
-				guiObjects.add(new InventoryButton(this, (startX) + 10 + ((x) * (50)), (startY + Sheight) + 10 + ((y + 1) * (50)), false, 10 + (x + (y * 10)), MainFile.game.getClient().getPlayer()));
+				guiObjects.add(new InventoryButton(this, (startX) + 40 + ((x) * (50)), (startY + Sheight) + 10 + ((y + 1) * (50)), false, 10 + (x + (y * 10)), MainFile.game.getClient().getPlayer()));
 			}
 		}
 
@@ -128,7 +228,7 @@ public class GuiCrafting extends GuiGame {
 		g2.drawString("Crafting", startX + 5, startY - 25);
 		FontHandler.resetFont(g2);
 
-		Rectangle rightArea = new Rectangle(startX + (Swidth / 2), startY, (Swidth / 2), Sheight);
+		Rectangle rightArea = new Rectangle(startX + (Swidth / 2) + 20, startY, 258, Sheight);
 
 		g2.setColor(Color.lightGray);
 		g2.fill(rightArea);
@@ -305,6 +405,8 @@ public class GuiCrafting extends GuiGame {
 
 		@Override
 		public void renderObject( Graphics g2, UIMenu menu ) {
+//			if(!g2.getClip().contains(x, y) || !g2.getClip().contains(x + width, y + height)) return;
+
 			boolean other = false;
 
 			for (GuiObject ob : guiObjects) {
@@ -334,27 +436,11 @@ public class GuiCrafting extends GuiGame {
 
 
 			g2.pushTransform();
-
 			g2.scale(0.5F, 0.5F);
 			g2.translate(rectangle.getX() + 20, rectangle.getY() + 40);
 			RenderUtil.renderItem(g2, item, (int) rectangle.getX(), (int) rectangle.getY(), item.getItem().getRenderMode());
 			g2.scale(2, 2);
 			g2.popTransform();
-
-			String required = "";
-
-			int g = 0;
-			for(ItemStack req : res.input){
-				required += req.getStackSize() + "x " + req.getItem().getItemName();
-
-				if((g + 1) < res.input.length){
-					required += ", ";
-				}
-
-				if((g & 1) != 0) required += "\n";
-
-				g += 1;
-			}
 
 			g2.setColor(Color.black);
 			FontHandler.resizeFont(g2, 12);
@@ -363,13 +449,74 @@ public class GuiCrafting extends GuiGame {
 			g2.drawString(item.getItem().getItemName(), x + 50, y);
 			FontHandler.resetFont(g2);
 
-			g2.setColor(Color.black);
-			FontHandler.resizeFont(g2, 10);
-			FontHandler.changeFontStyle(g2, Font.BOLD);
-			g2.drawString("Requires: " + required, x + 50, y + 20);
-			FontHandler.resetFont(g2);
+
+			int i = 0;
+			for(ItemStack stack : res.input){
+				Rectangle te = new Rectangle(x + 55 + (30 * i), y + 20, 20, 20);
+
+				g2.setColor(Color.darkGray.brighter());
+				g2.fill(te);
+
+				g2.setColor(Color.darkGray.darker());
+				g2.draw(te);
+
+				g2.pushTransform();
+				g2.scale(0.25F, 0.25F);
+				g2.translate((te.getX() * 3) + 15, (te.getY() * 3) + 35);
+				RenderUtil.renderItem(g2, stack, (int) te.getX(), (int) te.getY(), stack.getItem().getRenderMode());
+				g2.scale(2, 2);
+				g2.popTransform();
+
+				i += 1;
+			}
+
 
 			g2.setClip(null);
+
+		}
+	}
+
+	class categoryButton extends GuiObject {
+
+		category gg;
+		public categoryButton( int x, int y, int width, int height, UIMenu menu, category g ) {
+			super(MainFile.game,x, y, width, height, menu);
+			this.gg = g;
+		}
+
+		@Override
+		public void onClicked( int button, int x, int y, UIMenu menu ) {
+			currentCategory = gg;
+		}
+
+		@Override
+		public void renderObject( Graphics g2, UIMenu menu ) {
+			Rectangle rectangle = new Rectangle(x, y, width, height);
+
+			g2.setColor(enabled ? isMouseOver() ? Color.lightGray : Color.darkGray : Color.darkGray.darker());
+
+			if(currentCategory == gg){
+				g2.setColor(Color.gray);
+			}
+
+			g2.fill(rectangle);
+
+			g2.setColor(currentCategory == gg ? Color.yellow : Color.white);
+			g2.draw(rectangle);
+
+			g2.pushTransform();
+			g2.scale(0.5F, 0.5F);
+			g2.translate(rectangle.getX() + 25, rectangle.getY() + 40);
+			RenderUtil.renderItem(g2, gg.getRender(), (int) rectangle.getX(), (int) rectangle.getY(), gg.getRender().getItem().getRenderMode());
+			g2.scale(2, 2);
+			g2.popTransform();
+
+			if(isMouseOver()){
+				int mouseX = MainFile.game.gameContainer.getInput().getMouseX();
+				int mouseY = MainFile.game.gameContainer.getInput().getMouseY();
+
+				renderTooltip(mouseX, mouseY, new String[]{gg.getName()});
+			}
 
 		}
 	}
@@ -514,6 +661,12 @@ public class GuiCrafting extends GuiGame {
 
 			g2.setColor(temp);
 		}
+	}
+
+	abstract class category{
+		public abstract boolean isItemValid(ItemStack stack);
+		public abstract ItemStack getRender();
+		public abstract String getName();
 	}
 
 }

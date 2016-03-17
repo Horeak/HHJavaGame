@@ -95,9 +95,9 @@ public class GuiInventory extends GuiGame {
 		g2.drawString("Player: '" + MainFile.game.getClient().getPlayer().getEntityDisplayName() + "'", rectangle.getMaxX() + 60, rectangle.getY() + 5);
 
 		FontHandler.changeFontStyle(g2, Font.PLAIN);
-		g2.drawString("Health: " + MainFile.game.getClient().getPlayer().getEntityHealth() + "/" + MainFile.game.getClient().getPlayer().getPlayerMaxHealth() + " (100) (Base health(without effects from armor))"
+		g2.drawString("Health: " + MainFile.game.getClient().getPlayer().getEntityHealth() + "/" + MainFile.game.getClient().getPlayer().getEntityMaxHealth() + "(" + MainFile.game.getClient().getPlayer().getHealingAmount() + "+)"
 				+ "\n" + "Armor: (0/0)(TODO)"
-				+ "\n" + "Deaths: " + "0", rectangle.getMaxX() + 60, rectangle.getY() + 32);
+				+ "\n" + "Deaths: " + MainFile.game.getClient().getPlayer().deaths, rectangle.getMaxX() + 60, rectangle.getY() + 32);
 
 		FontHandler.resetFont(g2);
 

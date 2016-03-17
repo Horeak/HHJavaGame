@@ -20,12 +20,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Chunk implements Serializable{
 	public static int chunkSize = 16;
 
-	public HashMap<Point, ITickBlock> tickableBlocks = new HashMap<>();
+	public ConcurrentHashMap<Point, ITickBlock> tickableBlocks = new ConcurrentHashMap<>();
 
 	private transient LightUnit[][] lightUnits = new LightUnit[chunkSize][chunkSize];
 

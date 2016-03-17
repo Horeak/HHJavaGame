@@ -40,6 +40,16 @@ public class EntityItem extends Entity {
 	}
 
 	@Override
+	public int getEntityMaxHealth() {
+		return 0;
+	}
+
+	@Override
+	public void healEntity( int heal ) {
+
+	}
+
+	@Override
 	public boolean shouldDamage( DamageSource source ) {
 		return false;
 	}
@@ -70,6 +80,11 @@ public class EntityItem extends Entity {
 
 	@Override
 	public void loadTextures() {
+
+	}
+
+	@Override
+	public void onDeath() {
 
 	}
 

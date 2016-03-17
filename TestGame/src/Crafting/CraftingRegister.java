@@ -127,21 +127,45 @@ public class CraftingRegister {
 		return hasItem;
 	}
 
-	//TODO Add furance craftingRecipes
 	public static void registerRecipes() {
 		addCraftingRecipe(new ItemStack[]{ new ItemStack(Blocks.blockWood)}, new ItemStack(Blocks.blockPlanks, 3));
 		addCraftingRecipe(new ItemStack[]{ new ItemStack(Blocks.blockPlanks, 2)}, new ItemStack(Items.itemStick, 4));
 
 		addCraftingRecipe(new ItemStack[]{ new ItemStack(Items.itemStick, 1), new ItemStack(Blocks.blockPlanks)}, new ItemStack(Blocks.blockTorch, 5));
 
-		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 1)}, new ItemStack(Items.itemShovel));
-		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 2)}, new ItemStack(Items.itemAxe));
-		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 3)}, new ItemStack(Items.itemPickaxe));
-
 		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockWood), new ItemStack(Blocks.blockStone, 6)}, new ItemStack(Blocks.blockFurnace));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockPlanks, 8)}, new ItemStack(Blocks.blockChest));
 
-		//TODO Add ingots for ores and add smelting recipes
+
+		//Wood
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockPlanks, 1)}, new ItemStack(Items.itemWoodShovel));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockPlanks, 2)}, new ItemStack(Items.itemWoodAxe));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockPlanks, 3)}, new ItemStack(Items.itemWoodPickaxe));
+
+		//Stone
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 1)}, new ItemStack(Items.itemStoneShovel));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 2)}, new ItemStack(Items.itemStoneAxe));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Blocks.blockStone, 3)}, new ItemStack(Items.itemStonePickaxe));
+
+		//Iron
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemIronIngot, 1)}, new ItemStack(Items.itemIronShovel));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemIronIngot, 2)}, new ItemStack(Items.itemIronAxe));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemIronIngot, 3)}, new ItemStack(Items.itemIronPickaxe));
+
+		//Gold
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemGoldIngot, 1)}, new ItemStack(Items.itemGoldShovel));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemGoldIngot, 2)}, new ItemStack(Items.itemGoldAxe));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemGoldIngot, 3)}, new ItemStack(Items.itemGoldPickaxe));
+
+		//Silver
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemSilverIngot, 1)}, new ItemStack(Items.itemSilverShovel));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemSilverIngot, 2)}, new ItemStack(Items.itemSilverAxe));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Items.itemStick, 2), new ItemStack(Items.itemSilverIngot, 3)}, new ItemStack(Items.itemSilverPickaxe));
+
+
 		addFurnaceRecipe(new ItemStack(Blocks.blockIronOre), new ItemStack(Items.itemIronIngot));
+		addFurnaceRecipe(new ItemStack(Blocks.blockSilverOre), new ItemStack(Items.itemSilverIngot));
+		addFurnaceRecipe(new ItemStack(Blocks.blockGoldOre), new ItemStack(Items.itemGoldIngot));
 
 
 		if(ConfigValues.debug){

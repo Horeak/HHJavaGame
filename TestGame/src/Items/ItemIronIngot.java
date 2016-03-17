@@ -16,7 +16,7 @@ public class ItemIronIngot extends Item {
 	}
 
 	@Override
-	public Image getTexture() {
+	public Image getTexture( ItemStack stack ) {
 		return icon;
 	}
 

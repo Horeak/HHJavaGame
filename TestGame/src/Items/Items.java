@@ -3,9 +3,20 @@ package Items;
 import Items.DebugTools.ItemChunkDestoryer;
 import Items.DebugTools.ItemChunkRegenerator;
 import Items.DebugTools.ItemChunkReloader;
+import Items.Tools.Stone.*;
+import Items.Tools.Stone.ItemGoldAxe;
+import Items.Tools.Stone.ItemGoldPickaxe;
+import Items.Tools.Stone.ItemGoldShovel;
+import Items.Tools.Stone.ItemIronAxe;
+import Items.Tools.Stone.ItemIronPickaxe;
+import Items.Tools.Stone.ItemIronShovel;
+import Items.Tools.Stone.ItemSilverAxe;
+import Items.Tools.Stone.ItemSilverPickaxe;
+import Items.Tools.Stone.ItemSilverShovel;
+import Items.Tools.Wood.ItemWoodAxe;
+import Items.Tools.Wood.ItemWoodPickaxe;
+import Items.Tools.Wood.ItemWoodShovel;
 import Items.Utils.Item;
-import Main.MainFile;
-import Utils.ConfigValues;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,13 +54,38 @@ public class Items {
 	}
 	
 
-	public static Item itemAxe = addItem(new ItemAxe());
-	public static Item itemPickaxe = addItem(new ItemPickaxe());
-	public static Item itemShovel = addItem(new ItemShovel());
+	//Wood
+	public static Item itemWoodAxe = addItem(new ItemWoodAxe());
+	public static Item itemWoodPickaxe = addItem(new ItemWoodPickaxe());
+	public static Item itemWoodShovel = addItem(new ItemWoodShovel());
+
+	//Stone
+	public static Item itemStoneAxe = addItem(new ItemStoneAxe());
+	public static Item itemStonePickaxe = addItem(new ItemStonePickaxe());
+	public static Item itemStoneShovel = addItem(new ItemStoneShovel());
+
+	//Iron
+	public static Item itemIronAxe = addItem(new ItemIronAxe());
+	public static Item itemIronPickaxe = addItem(new ItemIronPickaxe());
+	public static Item itemIronShovel = addItem(new ItemIronShovel());
+
+	//Gold
+	public static Item itemGoldAxe = addItem(new ItemGoldAxe());
+	public static Item itemGoldPickaxe = addItem(new ItemGoldPickaxe());
+	public static Item itemGoldShovel = addItem(new ItemGoldShovel());
+
+	//Silver
+	public static Item itemSilverAxe = addItem(new ItemSilverAxe());
+	public static Item itemSilverPickaxe = addItem(new ItemSilverPickaxe());
+	public static Item itemSilverShovel = addItem(new ItemSilverShovel());
+
 
 	public static Item itemStick = addItem(new ItemStick());
 
+	public static Item itemCoal = addItem(new ItemCoal());
 	public static Item itemIronIngot = addItem(new ItemIronIngot());
+	public static Item itemSilverIngot = addItem(new ItemSilverIngot());
+	public static Item itemGoldIngot = addItem(new ItemGoldIngot());
 
 
 	public static Item debugChunkDestoryer = addItem(new ItemChunkDestoryer());

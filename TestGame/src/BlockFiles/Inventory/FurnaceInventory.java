@@ -33,7 +33,7 @@ public class FurnaceInventory implements IInventory {
 	}
 
 	@Override
-	public int getInvetorySize() {
+	public int getInventorySize() {
 		return 3;
 	}
 
@@ -50,7 +50,6 @@ public class FurnaceInventory implements IInventory {
 		boolean recipes = CraftingRegister.getFurnaceRecipeFromInput(getItem(0)) != null;
 
 		if(!recipes) return false;
-
 		boolean emptyOrEqualOutput = getItem(2) == null || (getItem(2).getStackSize() + CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).output.getStackSize()) < getItem(2).getMaxStackSize() && getItem(2).getItem().equals(CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).output.getItem());
 
 		return recipes && emptyOrEqualOutput;
@@ -81,10 +80,12 @@ public class FurnaceInventory implements IInventory {
 		}
 
 		if(smeltTime >= CraftingRegister.getFurnaceSmeltTimeFromInput(getItem(0))){
-			if(getItem(2) != null){
-				getItem(2).increaseStackSize(CraftingRegister.getFurnaceOutputFromInput(getItem(0)).getStackSize());
+			ItemStack ot = CraftingRegister.getFurnaceOutputFromInput(getItem(0));
+
+			if(getItem(2) != null && getItem(2).getStackSize() > 0){
+				getItem(2).increaseStackSize(ot.getStackSize());
 			}else{
-				setItem(2, CraftingRegister.getFurnaceOutputFromInput(getItem(0)));
+				setItem(2, new ItemStack(ot.getItem(), ot.getStackSize(), ot.getStackDamage()));
 			}
 
 			getItem(0).decreaseStackSize(CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).input.getStackSize());

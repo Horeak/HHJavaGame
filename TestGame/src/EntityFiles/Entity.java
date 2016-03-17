@@ -64,12 +64,17 @@ public abstract class Entity implements Serializable{
 	public abstract Rectangle2D getEntityBounds();
 
 	public abstract int getEntityHealth();
+	public abstract int getEntityMaxHealth();
+	public abstract void healEntity(int heal);
+	public int getHealingAmount(){return 1;}
 
 	public abstract boolean shouldDamage( DamageSource source );
-
 	public abstract void damageEntity( DamageSource source, DamageBase damage );
+	public abstract void onDeath();
+
 	public abstract void renderEntity( org.newdawn.slick.Graphics g2, int renderX, int renderY );
 	public abstract void loadTextures();
+
 
 	public Block getBlockBelow() {
 		if(((int)getEntityPostion().y) != getEntityPostion().y) return null;
@@ -110,6 +115,7 @@ public abstract class Entity implements Serializable{
 		return false;
 	}
 
+	int healTime = 0, timeToHeal = 10;
 	public void updateEntity() {
 		if(!MainFile.game.getServer().getWorld().generating) {
 			timeAlive += 1;
@@ -138,10 +144,32 @@ public abstract class Entity implements Serializable{
 				blocksFallen += (blocksFallen > 2 ? 2 : 1);
 			}
 
-			if (isOnGround) {
+			if (isOnGround && blocksFallen != 0) {
+				float damage = (float)blocksFallen / 4;
+
+				damageEntity(DamageSource.Fall_Damage, new DamageBase() {
+					@Override
+					public int getDamageAmount() {
+						return Math.round(damage);
+					}
+				});
+
 				blocksFallen = 0;
 			}
+
+				if (getEntityHealth() <= 0) {
+					onDeath();
+				} else if (getEntityHealth() > 0 && getEntityHealth() < getEntityMaxHealth()) {
+					if(healTime >= timeToHeal) {
+						healTime = 0;
+						healEntity(getHealingAmount());
+					}else{
+						healTime += 1;
+					}
+				}
+
 		}
+
 	}
 
 

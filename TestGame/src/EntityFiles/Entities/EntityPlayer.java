@@ -5,7 +5,6 @@ import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import EntityFiles.Entity;
 import EntityFiles.EntityItem;
-import Items.Utils.IArmor;
 import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
 import Main.MainFile;
@@ -34,6 +33,8 @@ public class EntityPlayer extends Entity implements IInventory {
 	private int playerHealth = 100, playerMaxHealth = 100;
 	public String name;
 
+	public int deaths = 0;
+
 	//TODO Add veriables for speed, defence, jump height, damage and similar and make sure all has a static start value. This will make it possible to change these values with for example armor (RPG like)
 
 	public EntityPlayer( float x, float y, String name ) {
@@ -51,8 +52,18 @@ public class EntityPlayer extends Entity implements IInventory {
 		return playerHealth;
 	}
 
-	public int getPlayerMaxHealth() {
+	@Override
+	public int getEntityMaxHealth() {
 		return playerMaxHealth;
+	}
+
+	@Override
+	public void healEntity( int heal ) {
+		playerHealth += heal;
+
+		if(playerHealth > playerMaxHealth){
+			playerHealth = playerMaxHealth;
+		}
 	}
 
 	@Override
@@ -84,6 +95,15 @@ public class EntityPlayer extends Entity implements IInventory {
 	@Override
 	public void loadTextures() {
 		playerTexutre =  MainFile.game.imageLoader.getImage("textures", "player");
+	}
+
+	@Override
+	public void onDeath() {
+		MainFile.game.getServer().getWorld().loadChunk(0, 0);
+		int xx = 0, yy = (MainFile.game.getServer().getWorld().getBiome(0).getHeight(0) - 2);
+		setEntityPosition(xx, yy);
+
+		deaths += 1;
 	}
 
 	public Rectangle2D getPlayerBounds() {
@@ -132,7 +152,7 @@ public class EntityPlayer extends Entity implements IInventory {
 	}
 
 	@Override
-	public int getInvetorySize() {
+	public int getInventorySize() {
 		return INV_SIZE;
 	}
 
@@ -145,7 +165,7 @@ public class EntityPlayer extends Entity implements IInventory {
 	public void consumeItem( ItemStack item ) {
 		int size = item.getStackSize();
 
-		for (int i = 0; i < getInvetorySize(); i++) {
+		for (int i = 0; i < getInventorySize(); i++) {
 			ItemStack it = getItem(i);
 			if (it != null && item != null) {
 
@@ -176,7 +196,7 @@ public class EntityPlayer extends Entity implements IInventory {
 
 		start:
 		for (int g = 0; g < 2; g++)
-			for (int i = 0; i < getInvetorySize(); i++) {
+			for (int i = 0; i < getInventorySize(); i++) {
 				ItemStack it = getItem(i);
 
 				if (checkedCurrent) {
@@ -206,7 +226,7 @@ public class EntityPlayer extends Entity implements IInventory {
 					}
 				}
 
-				if (i == (getInvetorySize() - 1)) {
+				if (i == (getInventorySize() - 1)) {
 					checkedCurrent = true;
 					continue start;
 				}
@@ -219,7 +239,7 @@ public class EntityPlayer extends Entity implements IInventory {
 	public void updateEntity() {
 		super.updateEntity();
 
-		for(int i = 0; i < getInvetorySize(); i++){
+		for(int i = 0; i < getInventorySize(); i++){
 			if(getItem(i) != null){
 				getItem(i).slot = i;
 			}

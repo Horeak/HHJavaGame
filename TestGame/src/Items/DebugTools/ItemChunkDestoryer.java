@@ -16,8 +16,8 @@ public class ItemChunkDestoryer extends Item {
 	}
 
 	@Override
-	public Image getTexture() {
-		return Items.itemStick.getTexture();
+	public Image getTexture( ItemStack stack ) {
+		return Items.itemStick.getTexture(null);
 	}
 
 	@Override

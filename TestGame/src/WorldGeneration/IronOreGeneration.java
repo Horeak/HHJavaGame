@@ -11,7 +11,7 @@ import WorldGeneration.Util.WorldGenPriority;
 public class IronOreGeneration extends GenerationBase {
 	@Override
 	public boolean canGenerate( Chunk chunk, int x, int y ) {
-		return chunk.getBlock(x, y) instanceof BlockStone && (y + (chunk.chunkY * Chunk.chunkSize)) > 15 && MainFile.random.nextInt(100) == 0;
+		return chunk.getBlock(x, y) instanceof BlockStone && (y + (chunk.chunkY * Chunk.chunkSize)) > 20 && MainFile.random.nextInt(150) == 0;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class IronOreGeneration extends GenerationBase {
 			for(int yy = y - (range / 2); yy < y + (range / 2); yy++){
 				double d = noiseGenerator.noise(xx, yy) * 10;
 
-				if(d > 2){
+				if(d > 1.5){
 					chunk.setBlock(Blocks.blockIronOre, xx, yy);
 					vein += 1;
 				}

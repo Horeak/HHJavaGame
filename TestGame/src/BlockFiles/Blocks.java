@@ -29,7 +29,6 @@ public class Blocks {
 		return null;
 	}
 
-	//TODO Is this returning air?
 	public static Block getBlock(String i){
 		for(Map.Entry<Block, String> ent : blockRegistry.entrySet()){
 			if(ent.getValue().equalsIgnoreCase(i)){
@@ -57,10 +56,10 @@ public class Blocks {
 	public static Block blockTorch = addBlock(new BlockTorch());
 
 	public static Block blockFurnace = addBlock(new BlockFurnace());
+	public static Block blockChest = addBlock(new BlockChest());
 
 	//TODO Add more ores and redo some of those textures
 	//TODO (Copper, Titanium...?)
-	//TODO Implement generation of the ores
 	public static Block blockCoalOre = addBlock(new BlockCoalOre());
 	public static Block blockIronOre = addBlock(new BlockIronOre());
 	public static Block blockGoldOre = addBlock(new BlockGoldOre());

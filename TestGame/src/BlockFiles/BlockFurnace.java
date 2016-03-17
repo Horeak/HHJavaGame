@@ -67,8 +67,6 @@ public class BlockFurnace extends Block {
 		furnaceTop = MainFile.game.imageLoader.getImage("blocks", "furnaceTop");
 	}
 
-	public void updateBlock( World world, int fromX, int fromY, int curX, int curY ) {
-	}
 
 	public boolean blockClicked(World world, int x, int y, ItemStack stack){
 		MainFile.game.setCurrentMenu(new GuiFurnace(MainFile.game.gameContainer, ConfigValues.PAUSE_GAME_IN_INV, world, x, y));

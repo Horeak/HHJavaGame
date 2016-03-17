@@ -23,7 +23,7 @@ public class BlockAction {
 		try {
 			int selected = (HotbarRender.slotSelected - 1);
 
-			if (selected < MainFile.game.getClient().getPlayer().getInvetorySize()) {
+			if (selected < MainFile.game.getClient().getPlayer().getInventorySize()) {
 				ItemStack item = MainFile.game.getClient().getPlayer().getItem(selected);
 
 				if (button == Input.MOUSE_LEFT_BUTTON) {

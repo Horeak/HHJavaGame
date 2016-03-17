@@ -18,7 +18,7 @@ public class ItemStick extends Item implements IArmor, IFuel{
 	}
 
 	@Override
-	public Image getTexture() {
+	public Image getTexture( ItemStack stack ) {
 		return texture;
 	}
 

@@ -24,7 +24,6 @@ public class GuiFurnace extends GuiGame {
 	public int startX = 140, startY = 300;
 	public int Swidth = 520, Sheight = 497;
 
-	//TODO Start working on actual smelting
 	public GuiFurnace( GameContainer container, boolean b, World world, int x, int y ) {
 		super(container, b);
 

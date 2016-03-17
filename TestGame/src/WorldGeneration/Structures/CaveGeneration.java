@@ -26,14 +26,14 @@ public class CaveGeneration extends StructureGeneration {
 	@Override
 	public void generate( Chunk chunk) {
 
-		for(int i = 0; i < MainFile.random.nextInt(4); i++) {
+		for(int i = 0; i < MainFile.random.nextInt(3); i++) {
 			int xS = MainFile.random.nextInt(Chunk.chunkSize);
 			int yS = MainFile.random.nextInt(Chunk.chunkSize);
 
 			int xRange = MainFile.random.nextInt(Chunk.chunkSize);
 			int yRange = MainFile.random.nextInt(Chunk.chunkSize);
 
-			System.out.println("Generated cave at: " + (xS + (chunk.chunkX * Chunk.chunkSize)) + ", " + (yS + (chunk.chunkY * Chunk.chunkSize)) + " Range: " + (xRange + ", " + yRange) + " Chunk: " + chunk.chunkX + ", " + chunk.chunkY);
+//			System.out.println("Generated cave at: " + (xS + (chunk.chunkX * Chunk.chunkSize)) + ", " + (yS + (chunk.chunkY * Chunk.chunkSize)) + " Range: " + (xRange + ", " + yRange) + " Chunk: " + chunk.chunkX + ", " + chunk.chunkY);
 
 			for (int x = xS - xRange; x < xS + xRange; x++) {
 				for (int y = yS - yRange; y < yS + yRange; y++) {
@@ -41,7 +41,7 @@ public class CaveGeneration extends StructureGeneration {
 //					Line lineY = new Line(yS, y);
 
 					//TODO Make corners round!
-					if (y > 0 && Point.distance(x, y, xS, yS) < ((xRange + yRange) / 2)) {
+					if (y > (chunk.world.getBiome(x + (chunk.chunkX * Chunk.chunkSize))).getHeight(x + (chunk.chunkX * Chunk.chunkSize)) && Point.distance(x, y, xS, yS) < ((xRange + yRange) / 2)) {
 						//TODO Try and make this work with setting blocks through the world and not the chunk
 						chunk.world.setBlock(Blocks.blockAir, x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize));
 					}
