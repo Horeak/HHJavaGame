@@ -264,7 +264,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 							drawShadowTop(g, xStart, yStart, block, world, x, y);
 							drawTop(g, xStart, yStart, new Color(1, 1, 1, 0.035F));
 						} else if (isItem) {
-							drawTop(g, xStart, yStart, new Color(0.6F, 0.6F, 0.6F, 0.4F));
+							drawTop(g, xStart, yStart, new Color(1F, 1F, 1F, 0.135F));
 						}
 
 					} else {

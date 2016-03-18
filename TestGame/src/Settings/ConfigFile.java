@@ -74,6 +74,13 @@ public class ConfigFile extends Config{
 					return MainFile.inDebugMode;
 				}
 			},
+
+			new Keybinding("Toggle structure bounds", "structureBounds", Input.KEY_K, "Debug"){
+				@Override
+				public boolean isEnabled() {
+					return MainFile.inDebugMode;
+				}
+			},
 	};
 
 

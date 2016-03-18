@@ -28,11 +28,10 @@ public class BlockGrass extends Block {
 	public static HashMap<String, Image> sideImages = new HashMap<>();
 	public static HashMap<String, Image> topImages = new HashMap<>();
 
-	//TODO Will be used to for adding different grass types like for eksample snow
+	//Will be used to for adding different grass types like for eksample snow
 	public static String[] textureNames = new String[]{"Normal"};
 
 	public static String getBlockType(World world, int x, int y){
-		//TODO
 		return textureNames[0];
 	}
 
@@ -113,7 +112,11 @@ public class BlockGrass extends Block {
 			if(world.getBlock(xx, yy) == null) return;
 
 			if (!canGrassGrow(world, xx, yy)) {
-				world.setBlock(Blocks.blockDirt, xx, yy);
+				if(world.getBlock(xx, yy) instanceof BlockGrass) {
+					world.setBlock(Blocks.blockDirt, xx, yy);
+				}else{
+					world.removeTickBlock(xx, yy);
+				}
 			}
 
 			if (canGrassGrow(world, xx, yy)) {

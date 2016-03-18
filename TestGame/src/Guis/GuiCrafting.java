@@ -27,8 +27,6 @@ import java.util.ArrayList;
 
 public class GuiCrafting extends GuiGame {
 
-
-	//TODO Improve! Maybe add categories or something similar to make it easier to navigate
 	public GuiCrafting inst = this;
 
 	public int startX = 80, startY = 150;
@@ -346,23 +344,26 @@ public class GuiCrafting extends GuiGame {
 
 
 	public void keyPressed( int key, char c ) {
-			if (key == MainFile.game.getConfig().getKeybindFromID("crafting").getKey() && !textInput || key == MainFile.game.getConfig().getKeybindFromID("exit").getKey() && !textInput) {
-				closeGui();
-			}else {
+		if (key == MainFile.game.getConfig().getKeybindFromID("crafting").getKey() && !textInput || key == MainFile.game.getConfig().getKeybindFromID("exit").getKey() && !textInput) {
+			closeGui();
+			return;
+		}
 
-				if (key == Input.KEY_BACK) {
-					if (input.length() > 0) {
-						input = input.substring(0, input.length() - 1);
-					}
-				} else {
-					if (input.length() < 19) {
-						if (Character.isDefined(c))
-							if (Character.isLetter(c) || Character.isDigit(c) || Character.isSpaceChar(c)) {
-								input += c;
-							}
+		if (key == Input.KEY_BACK) {
+			if (input.length() > 0) {
+				input = input.substring(0, input.length() - 1);
+				textInput = true;
+			}
+		} else {
+			if (input.length() < 19) {
+				if (Character.isDefined(c))
+					if (Character.isLetter(c) || Character.isDigit(c) || Character.isSpaceChar(c)) {
+						input += c;
+						textInput = true;
 					}
 			}
 		}
+
 	}
 
 	public void onMouseWheelMoved( int change ) {

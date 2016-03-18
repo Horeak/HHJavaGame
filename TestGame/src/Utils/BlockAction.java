@@ -16,6 +16,8 @@ public class BlockAction {
 	public static int blockBreakDelay = 0, blockBreakReach = 200, timeSince;
 	public static int blockDamage;
 
+	public static float maxBlockUseDistance = 3F;
+
 	public static void mouseClick( int button, int delta ) {
 		float speed = 1F / ((float)delta / 25);
 
@@ -71,7 +73,7 @@ public class BlockAction {
 				} else if (button == Input.MOUSE_RIGHT_BUTTON) {
 					Block b = MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
-					if(b == null || b != null && !b.blockClicked(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item)) {
+					if(b == null || b != null && MainFile.game.getClient().getPlayer().getEntityPostion().distance(BlockSelection.selectedX, BlockSelection.selectedY) > maxBlockUseDistance || b != null &&  !b.blockClicked(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item)) {
 						if (item != null) {
 							item.useItem(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
 						}

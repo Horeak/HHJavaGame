@@ -8,7 +8,9 @@ import Utils.ConfigValues;
 import Utils.FontHandler;
 import Utils.TimeTaker;
 import WorldFiles.Biome;
+import WorldFiles.Chunk;
 import WorldFiles.EnumWorldTime;
+import WorldGeneration.Structures.Structure;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
@@ -79,13 +81,17 @@ public class DebugInfoRender extends AbstractWindowRender {
 			}
 
 			g2.drawString(" - ChunkIsNull: " + (MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY) == null), textStartX, linePos += (lineLength));
-			g2.drawString(" - Chunk is on list: " + (MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX, BlockSelection.selectedY))), textStartX, linePos += (lineLength));
+			g2.drawString(" - Chunk is on list: " + (MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX / Chunk.chunkSize, BlockSelection.selectedY / Chunk.chunkSize))), textStartX, linePos += (lineLength));
 
 			if(MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX) != null){
 				g2.drawString(" - Biome: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).name, textStartX, linePos += (lineLength));
 				g2.drawString(" - Biome length: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).length, textStartX, linePos += (lineLength));
 				g2.drawString(" - Height: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).getHeight(BlockSelection.selectedX), textStartX, linePos += (lineLength));
 			}
+
+			Structure st = MainFile.game.getServer().getWorld().getStructure(BlockSelection.selectedX, BlockSelection.selectedY);
+			g2.drawString(" - Structure: " + (st != null ? st.name : null), textStartX, linePos += (lineLength * 2));
+			g2.drawString(" - Rendering structure bounds: " + ConfigValues.renderStructureBounds, textStartX, linePos += (lineLength));
 
 
 			if(MainFile.game.getClient().getPlayer() != null && !MainFile.game.getServer().getWorld().generating) {

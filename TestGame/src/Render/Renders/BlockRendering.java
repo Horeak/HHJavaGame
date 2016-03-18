@@ -7,6 +7,7 @@ import Main.MainFile;
 import Render.EnumRenderMode;
 import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
+import Utils.RenderUtil;
 import WorldFiles.Chunk;
 import com.sun.javafx.geom.Vec2d;
 import org.newdawn.slick.Color;
@@ -20,6 +21,8 @@ import java.util.Map;
 
 public class BlockRendering extends AbstractWindowRender {
 
+
+	//TODO Render Structures
 	@Override
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Vec2d plPos = new Vec2d(MainFile.game.getClient().getPlayer().getEntityPostion().x, MainFile.game.getClient().getPlayer().getEntityPostion().y);
@@ -51,12 +54,41 @@ public class BlockRendering extends AbstractWindowRender {
 						if (MainFile.game.getServer().getWorld().getBlock(xx, yy) != null) {
 							Block block = MainFile.game.getServer().getWorld().getBlock(xx, yy);
 
-							if (block != null)
-								if (block.isBlockSolid()) {
-									((DefaultBlockRendering) block.getRender()).renderBlock(g2, (int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.game.getServer().getWorld(), xx, yy, i);
-								} else {
-									b.put(new Point(xx, yy), block);
+							if (block.isBlockSolid()) {
+								((DefaultBlockRendering) block.getRender()).renderBlock(g2, (int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.game.getServer().getWorld(), xx, yy, i);
+							} else {
+								b.put(new Point(xx, yy), block);
+							}
+
+						}
+
+						//Renders Structures (Debug)
+						if( i == 2)
+						if(ConfigValues.renderStructureBounds) {
+							if (MainFile.game.getServer().getWorld().getStructure(xx, yy) != null) {
+								Block block = MainFile.game.getServer().getWorld().getBlock(xx, yy);
+
+								Rectangle bound = new Rectangle(blockX * ConfigValues.size, blockY * ConfigValues.size, ConfigValues.size, ConfigValues.size);
+
+								Color cg = block != null ? RenderUtil.getColorWithAlpha(Color.green, 0.3F) : RenderUtil.getColorWithAlpha(Color.red, 0.3F);
+
+								if(MainFile.game.getServer().getWorld().getInventory(xx, yy) != null){
+									cg = RenderUtil.getColorWithAlpha(Color.yellow, 0.2F);
+
+								}else if(MainFile.game.getServer().getWorld().getTickBlock(xx, yy) != null){
+									cg = RenderUtil.getColorWithAlpha(Color.cyan, 0.2F);
 								}
+
+								g2.setColor(cg.brighter());
+								g2.draw(bound);
+
+								g2.setColor(cg);
+								g2.fill(bound);
+
+								g2.setColor(cg.brighter());
+								g2.draw(bound);
+
+							}
 						}
 
 					}

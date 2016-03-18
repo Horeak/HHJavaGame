@@ -11,12 +11,10 @@ import org.newdawn.slick.Image;
 public class BlockSelectionRender extends AbstractWindowRender {
 
 	public void loadTextures(){
-		textureValid =  MainFile.game.imageLoader.getImage("textures", "blockSelectionValid");
-		textureInvalid =  MainFile.game.imageLoader.getImage("textures", "blockSelectionInvalid");
+		textureSelection =  MainFile.game.imageLoader.getImage("textures", "blockSelectionValid");
 	}
 
-	public static Image textureValid =  null;
-	public static Image textureInvalid =  null;
+	public static Image textureSelection =  null;
 
 	@Override
 	public void render( Graphics g2 ) {
@@ -26,15 +24,7 @@ public class BlockSelectionRender extends AbstractWindowRender {
 		float mouseBlockX = (float) (BlockSelection.selectedX - plPos.x) + ConfigValues.renderRange;
 		float mouseBlockY = (float) (BlockSelection.selectedY - plPos.y) + ConfigValues.renderRange;
 
-		//TODO Is this needed?
-//		boolean valid = BlockSelection.selectedX >= 0 && BlockSelection.selectedY >= 0 && BlockSelection.selectedX < MainFile.game.getServer().getWorld().worldSize.xSize && BlockSelection.selectedY < MainFile.game.getServer().getWorld().worldSize.ySize;
-
-//		if (valid) {
-			textureValid.draw((int) ((mouseBlockX) * ConfigValues.size), (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
-//		} else {
-//			textureInvalid.draw(BlockRendering.START_X_POS + (int) ((mouseBlockX) * ConfigValues.size), BlockRendering.START_Y_POS + (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
-//		}
-
+		textureSelection.draw((int) ((mouseBlockX) * ConfigValues.size), (int) ((mouseBlockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
 		g2.setColor(temp);
 	}
 

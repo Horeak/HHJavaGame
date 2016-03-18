@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class ItemStack implements Serializable{
 
 	private String itemStored;
-	//TODO Change to id based system. Have an IItem register that gets from block/item registries depending on id (for example have item ids be 4000+ and block ids be 0-3999)
 
 	private int stackSize;
 	private int stackDamage;

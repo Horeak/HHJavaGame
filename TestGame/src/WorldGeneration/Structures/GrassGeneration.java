@@ -16,8 +16,6 @@ public class GrassGeneration extends StructureGeneration {
 		return true;
 	}
 
-
-	//TODO Seems to sometimes ignore heightMap?
 	@Override
 	public void generate( Chunk chunk ) {
 		for(int x = 0; x < Chunk.chunkSize; x++){

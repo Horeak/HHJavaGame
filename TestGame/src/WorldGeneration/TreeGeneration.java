@@ -5,6 +5,7 @@ import BlockFiles.Util.Block;
 import Main.MainFile;
 import WorldFiles.Chunk;
 import WorldFiles.World;
+import WorldGeneration.Structures.Structure;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
@@ -50,7 +51,7 @@ public class TreeGeneration extends GenerationBase {
 		int height = 3 + MainFile.random.nextInt(4);
 
 		for (int i = 0; i < height; i++) {
-			chunk.setBlock(Blocks.blockWood, x, (y) - (i + 1));
+			chunk.setBlock(Blocks.blockWood, x, (y - (i + 1)));
 		}
 
 		Point p = new Point(x, y - height);
@@ -70,15 +71,13 @@ public class TreeGeneration extends GenerationBase {
 
 				if (chunk.getBlock(xPos, yPos) == null) {
 					if (p.distance(xPos, yPos) <= 3) {
-						chunk.setBlock(Blocks.blockLeaves, xPos, yPos);
+						//TODO Leaves not being set when xPos == x
+						chunk.world.setBlock(Blocks.blockLeaves, xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize));
 					}
 				}
 			}
 		}
 
-		for (int i = 0; i < height; i++) {
-			chunk.setBlock(Blocks.blockWood, x, y - (i + 1));
-		}
 
 	}
 	@Override

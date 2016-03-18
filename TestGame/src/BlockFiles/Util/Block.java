@@ -40,11 +40,11 @@ public abstract class Block implements IItem{
 	}
 
 	public void addInfo(World world, int x, int y) {
-		if(getTickBlock() != null){
+		if(world.getTickBlock(x, y) != null){
 			blockInfoList.add("Block is Tickable");
-			blockInfoList.add("Should tick: " + getTickBlock().shouldUpdate(world, x, y));
-			blockInfoList.add("Block ticks every: " + getTickBlock().blockUpdateDelay() + "s");
-			blockInfoList.add("Time until update: " + (getTickBlock().blockUpdateDelay() - getTickBlock().getTimeSinceUpdate(world, x, y)) + "s");
+			blockInfoList.add("Should tick: " + world.getTickBlock(x, y).shouldUpdate(world, x, y));
+			blockInfoList.add("Block ticks every: " + world.getTickBlock(x, y).blockUpdateDelay() + "s");
+			blockInfoList.add("Time until update: " + (world.getTickBlock(x, y).blockUpdateDelay() - world.getTickBlock(x, y).getTimeSinceUpdate(world, x, y)) + "s");
 			blockInfoList.add("");
 		}
 
@@ -147,10 +147,10 @@ public abstract class Block implements IItem{
 	}
 
 
+	//TODO Optimize!
 	public boolean canBlockSeeSky(World world, int x, int y) {
 		if(world.getBlock(x, y, true) instanceof BlockAir) return false;
 
-		//TODO Make sure this goes from bottom up and not top down!
 		for (int g = y - 1; g > (y - (Chunk.chunkSize / 2)); g -= 1) {
 			Block cc = world.getBlock(x, g);
 			if(cc != null && cc.isBlockSolid()) return false;

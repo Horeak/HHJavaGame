@@ -38,7 +38,7 @@ public class ItemChunkRegenerator extends Item {
 		Chunk ch = world.getChunk(x, y);
 		ch.generated = false;
 
-		ch.generateChunk();
+		world.generateChunk(ch);
 
 		return true;
 	}

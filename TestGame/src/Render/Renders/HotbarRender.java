@@ -19,8 +19,6 @@ import java.util.ArrayList;
 
 public class HotbarRender extends AbstractWindowRender {
 
-
-	//TODO Make hotbar an texture
 	public static int slotSelected = 1;
 
 	public static ArrayList<hotbarButton> hotbarButtons = new ArrayList<>();

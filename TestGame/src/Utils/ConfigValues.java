@@ -25,6 +25,7 @@ public class ConfigValues {
 
 	public static boolean renderChunks = false;
 	public static boolean renderChunkColors = false;
+	public static boolean renderStructureBounds = false;
 
 	//Sizes and random values
 	public static int renderXSize = 25;

@@ -14,6 +14,7 @@ import Utils.ConfigValues;
 import WorldFiles.Chunk;
 import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
+import WorldGeneration.Structures.Structure;
 import com.sun.javafx.geom.Vec2d;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -30,8 +31,6 @@ public class BackgroundRender extends AbstractWindowRender {
 		sunImage =  MainFile.game.imageLoader.getImage("textures", "sun");
 		moonImage =  MainFile.game.imageLoader.getImage("textures", "moon");
 	}
-
-	//TODO If player is Chunk.chunkSize blocks below the heightMap render stone as the background
 
 	public static Image sunImage =  null;
 	public static Image moonImage =  null;
@@ -85,7 +84,7 @@ public class BackgroundRender extends AbstractWindowRender {
 						int height = (MainFile.game.getServer().getWorld().getBiome(xx).getHeight(xx));
 						float plHeight = (float) plPos.y;
 
-						Image im = getBlockImageFromDepth(yy, height);
+						Image im = getBlockImageFromDepth(yy, height, xx, yy);
 						if (im == null) continue;
 
 						im.draw((int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), ConfigValues.size, ConfigValues.size);
@@ -144,8 +143,35 @@ public class BackgroundRender extends AbstractWindowRender {
 	}
 
 
-	//TODO Use this to add special background blocks for different levels
-	public static Image getBlockImageFromDepth(int depth, int height){
+	//Use this to add special background blocks for different levels
+	public static Image getBlockImageFromDepth(int depth, int height, int x, int y){
+		if(MainFile.game.getServer().getWorld() != null){
+			if(MainFile.game.getServer().getWorld().getStructure(x, y) != null) {
+				Structure st = MainFile.game.getServer().getWorld().getStructure(x, y);
+
+				if (st.name.toLowerCase().contains("dungeon")) {
+
+					if (st.name.contains("1")) {
+						return Blocks.blockCrackedStone.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.game.getServer().getWorld(), x, height);
+
+					} else if (st.name.contains("2")) {
+						return Blocks.blockBlueDungeonBricks.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.game.getServer().getWorld(), x, height);
+
+					} else if (st.name.contains("3")) {
+						return Blocks.blockGreenDungeonBricks.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.game.getServer().getWorld(), x, height);
+
+					} else if (st.name.contains("4")) {
+						return Blocks.blockRedDungeonBricks.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.game.getServer().getWorld(), x, height);
+
+					} else if (st.name.contains("5")) {
+						return Blocks.blockYellowDungeonBricks.getBlockTextureFromSide(EnumBlockSide.FRONT, MainFile.game.getServer().getWorld(), x, height);
+
+					}
+
+				}
+			}
+		}
+
 		if(depth > height && depth < (height + Chunk.chunkSize)) return Blocks.blockDirt.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
 		if(depth >= (height + Chunk.chunkSize)) return Blocks.blockStone.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
 

@@ -30,6 +30,7 @@ public class EntityPlayer extends Entity implements IInventory {
 	public HashMap<Integer, ItemStack> inventoryItems = new HashMap<>();
 	public ArmorInventory armorInventory = new ArmorInventory();
 
+	//TODO Make maxHealth 10 or 20 or somthing similar
 	private int playerHealth = 100, playerMaxHealth = 100;
 	public String name;
 
@@ -57,6 +58,7 @@ public class EntityPlayer extends Entity implements IInventory {
 		return playerMaxHealth;
 	}
 
+	//TODO Decreasing health?
 	@Override
 	public void healEntity( int heal ) {
 		playerHealth += heal;

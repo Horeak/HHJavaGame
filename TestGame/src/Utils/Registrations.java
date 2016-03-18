@@ -1,6 +1,7 @@
 package Utils;
 
 import WorldGeneration.*;
+import WorldGeneration.Dungeons.*;
 import WorldGeneration.Structures.CaveGeneration;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
@@ -15,7 +16,6 @@ public class Registrations {
 	public static ArrayList<StructureGeneration> StructureGenerations = new ArrayList<StructureGeneration>();
 
 	public static void registerGenerations() {
-		generationBases.add(new CrackedStoneGeneration());
 		generationBases.add(new TreeGeneration());
 
 		generationBases.add(new CoalOreGeneration());
@@ -25,8 +25,11 @@ public class Registrations {
 
 		StructureGenerations.add(new CaveGeneration());
 
-		//TODO Add random "dungeons"
-
+		StructureGenerations.add(new Dungeon1Genertion());
+		StructureGenerations.add(new Dungeon2Genertion());
+		StructureGenerations.add(new Dungeon3Genertion());
+		StructureGenerations.add(new Dungeon4Genertion());
+		StructureGenerations.add(new Dungeon5Genertion());
 
 		LoggerUtil.out.log(Level.INFO, "World generations registered.");
 	}

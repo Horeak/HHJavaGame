@@ -14,7 +14,7 @@ public class Blocks {
 	}
 
 	public static <T extends Block> Block addBlock(T bl){
-		return addBlock(bl, "block_" + bl.getClass().getName());
+		return addBlock(bl, "block_" + bl.getClass().getName() + "_" + bl.getBlockDisplayName());
 	}
 
 	public static String getId(Block bl){
@@ -64,4 +64,9 @@ public class Blocks {
 	public static Block blockIronOre = addBlock(new BlockIronOre());
 	public static Block blockGoldOre = addBlock(new BlockGoldOre());
 	public static Block blockSilverOre = addBlock(new BlockSilverOre());
+
+	public static Block blockBlueDungeonBricks = addBlock(new BlockDungeonBrick(0));
+	public static Block blockGreenDungeonBricks = addBlock(new BlockDungeonBrick(1));
+	public static Block blockRedDungeonBricks = addBlock(new BlockDungeonBrick(2));
+	public static Block blockYellowDungeonBricks = addBlock(new BlockDungeonBrick(3));
 }

@@ -4,6 +4,7 @@ import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ITickBlock;
 import Main.MainFile;
+import WorldFiles.Chunk;
 import WorldFiles.World;
 import WorldGeneration.TreeGeneration;
 import org.newdawn.slick.Color;
@@ -64,7 +65,8 @@ public class BlockSapling extends Block{
 	class saplingTickBlock implements ITickBlock{
 		@Override
 		public boolean shouldUpdate( World world, int x, int y) {
-			return treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1);
+			Chunk ch = world.getChunk(x, y+1);
+			return treeGeneration.canGenerate(ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1);
 		}
 
 		public int blockUpdateDelay() {
@@ -85,8 +87,10 @@ public class BlockSapling extends Block{
 		@Override
 		public void tickBlock( World world, int x, int y) {
 			if(rand.nextInt(20) == 2){
-				if(treeGeneration.canGenerate(world.getChunk(x, y+1), x, y+1)){
-					treeGeneration.generate(world.getChunk(x, y+1), x, y+1);
+				Chunk ch = world.getChunk(x, y+1);
+
+				if(treeGeneration.canGenerate(ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1)){
+					treeGeneration.generate(ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1);
 				}
 			}
 		}

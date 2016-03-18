@@ -11,6 +11,7 @@ import Items.Utils.IInventory;
 import Main.MainFile;
 import Utils.LoggerUtil;
 import Utils.Registrations;
+import WorldGeneration.Structures.Structure;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
@@ -33,12 +34,13 @@ public class Chunk implements Serializable{
 	public String[][] blocks = new String[chunkSize][chunkSize];
 	public IInventory[][] inventoryBlocks = new IInventory[chunkSize][chunkSize];
 
+	public ConcurrentHashMap<Point, Structure> structures = new ConcurrentHashMap<>();
+
 	public int chunkX, chunkY;
 	public transient World world;
 
 	public boolean generated = false;
 
-	//TODO Why isnt grass on other chunks then the first one becoming dirt? Make sure TickBlocks work in other chunks! This may be fixed now?
 	public Chunk(World world, int chunkX, int chunkY){
 		this.world = world;
 
@@ -52,60 +54,14 @@ public class Chunk implements Serializable{
 	public void onUnload(){
 	}
 
-	public void generateChunk(){
-		if(world == null) LoggerUtil.exception(new Exception("ERROR: Null world before generation"));
-		if(generated) return;
-
-		Biome biome = world.getBiome(chunkX * chunkSize);
-
-		for (WorldGenPriority priority : WorldGenPriority.values()) {
-			world.generating = true;
-			generated = false;
-
-
-			if(biome != null && biome.worldGens != null && biome.worldGens.length > 0)
-			for (StructureGeneration gen : biome.worldGens) {
-				if (gen.generationPriority().equals(priority)) {
-					if(MainFile.game.getServer().getWorld() != null) {
-						if (gen.canGenerate(this)) {
-							gen.generate(this);
-						}
-					}
-				}
-			}
-
-			for (StructureGeneration gen : Registrations.StructureGenerations) {
-				if (gen.generationPriority().equals(priority)) {
-					if(MainFile.game.getServer().getWorld() != null) {
-						if (gen.canGenerate(this)) {
-							gen.generate(this);
-						}
-					}
-				}
-			}
-
-			for (GenerationBase gen : Registrations.generationBases) {
-
-				if(gen != null && gen.generationPriority() != null){
-				if (gen.generationPriority().equals(priority)) {
-					if (MainFile.game.getServer().getWorld() != null) {
-						for (int x = 0; x < chunkSize; x++) {
-							for (int y = 0; y < chunkSize; y++) {
-								if (gen.canGenerate(this, x, y)) {
-									gen.generate(this, x, y);
-								}
-							}
-						}
-					}
-				}
-				}
-			}
-
-		}
-
-		generated = true;
-		world.generating = false;
-	}
+	//TODO Should i move this to the World file to prevent errors when trying to set block through world instance?
+//	public void generateChunk(){
+//		if(world == null) LoggerUtil.exception(new Exception("ERROR: Null world before generation"));
+//		if(generated) return;
+//
+//		generated = true;
+//		world.generating = false;
+//	}
 
 
 	public Block getBlock( int x, int y ) {
@@ -140,14 +96,20 @@ public class Chunk implements Serializable{
 	}
 
 	public void setBlock( Block block, int xPos, int yPos ) {
-
 		int wX = xPos + (chunkX * chunkSize), wY = yPos + (chunkY * chunkSize);
 		if(wX < 0) wX *= -1;
 		if(wY < 0) wY *= -1;
 
+		if(xPos >= chunkSize) return;
+		if(yPos >= chunkSize) return;
+
+		if(xPos < 0) return;
+		if(yPos < 0) return;
+
 
 		if(!world.generating) {
 			removeTickBlock(wX, wY);
+			inventoryBlocks[xPos][yPos] = null;
 		}
 
 		if (blocks != null) {
@@ -158,16 +120,12 @@ public class Chunk implements Serializable{
 					if (block != null) {
 						if(block.getTickBlock() != null){
 							tickableBlocks.put(new Point(xPos,yPos), block.getTickBlock());
-						}else{
-							removeTickBlock(xPos, yPos);
 						}
 
 						IInventory in = block.getInventory();
 
 						if(in != null){
 							inventoryBlocks[xPos][yPos] = in;
-						}else{
-							inventoryBlocks[xPos][yPos] = null;
 						}
 
 					}
@@ -191,6 +149,16 @@ public class Chunk implements Serializable{
 			}
 		}else{
 			LoggerUtil.exception(new Exception("Error: blocks array in Chunk was null during setBlock method!"));
+		}
+	}
+
+	public Structure getStructure(int x, int y){
+		return structures.get(new Point(x, y));
+	}
+
+	public void setStucture(Structure st){
+		for(Point p : st.blocks.keySet()){
+			structures.put(p, st);
 		}
 	}
 
@@ -225,9 +193,8 @@ public class Chunk implements Serializable{
 		return MainFile.game.getClient() != null && MainFile.game.getClient().getPlayer() != null && MainFile.game.getClient().getPlayer().getEntityPostion().distance((chunkX * chunkSize) , (chunkY * chunkSize)) < (chunkSize * 2.2F);
 	}
 
-	public synchronized boolean shouldBeLoaded(){
+	public boolean shouldBeLoaded(){
 		if(tickableBlocks != null && tickableBlocks.size() > 0) {
-			//TODO ConcurrentModificationException
 			for (Map.Entry<Point, ITickBlock> ent : new HashMap<Point, ITickBlock>(tickableBlocks).entrySet()) {
 				if (ent == null || ent.getKey() == null || ent.getValue() == null) continue;
 
@@ -242,6 +209,16 @@ public class Chunk implements Serializable{
 
 	public IInventory getInventory(int x, int y){
 		return inventoryBlocks[x][y];
+	}
+	public ITickBlock getTickBlock(int x, int y){
+		return tickableBlocks.get(new Point(x, y));
+	}
+
+	public void setInventory(IInventory inv, int x, int y){
+		inventoryBlocks[x][y] = inv;
+	}
+	public void setTickBlock(ITickBlock tickBlock, int x, int y){
+		tickableBlocks.put(new Point(x, y), tickBlock);
 	}
 
 	@Override

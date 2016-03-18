@@ -17,7 +17,7 @@ public class SilverOreGeneration extends GenerationBase {
 	@Override
 	public void generate( Chunk chunk, int x, int y ) {
 		PerlinNoiseGenerator noiseGenerator = new PerlinNoiseGenerator(chunk.world.worldSeed);
-		int range = 4 + MainFile.random.nextInt(3);
+		int range = 2 + MainFile.random.nextInt(2);
 
 		int vein = 0;
 

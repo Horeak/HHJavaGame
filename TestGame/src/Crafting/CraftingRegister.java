@@ -57,8 +57,7 @@ public class CraftingRegister {
 		if(input == null) return null;
 
 		for(FuranceRecipe r : furanceRecipes){
-			//TODO Check item not stacksize
-			if(IItemRegistry.getID(r.input.getItem()) == IItemRegistry.getID(input.getItem()) && input.getStackSize() >= r.input.getStackSize()){
+			if(IItemRegistry.getID(r.input.getItem()) == IItemRegistry.getID(input.getItem()) && input.getStackSize() >= r.input.getStackSize() && r.input.getStackDamage() == input.getStackDamage()){
 				return r;
 			}
 		}

@@ -29,7 +29,6 @@ public class TextureLoader extends ImageLoader {
 	public Image getImage(TexturePack pack, String folder, String id ) {
 		try {
 
-			//TODO Find a way to create a OpenGL Context on the current thread or return null when there is no GLContext
 			FileInputStream stream = new FileInputStream(pack.fileLocation + (folder != null ? "/" + folder : "") + "/" + id + ".png");
 			Image im = new Image(stream, id, false);
 

@@ -14,18 +14,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Biome implements Cloneable, Serializable{
 	public static transient HashMap<String, Biome> biomeHashMap = new HashMap<>();
 	public static transient ArrayList<String> biomeIDs = new ArrayList<>();
 
 	//Integer 1=x-value, Integer 2=Ground height
-	public HashMap<Integer, Integer> heightHashMap = new HashMap<>();
+	public ConcurrentHashMap<Integer, Integer> heightHashMap = new ConcurrentHashMap<>();
 
-	public synchronized int getHeight(int x){
+	public int getHeight(int x){
 		return heightHashMap.get(x);
 	}
-	public synchronized boolean containes(int x){return heightHashMap.containsKey(x);}
+	public boolean containes(int x){return heightHashMap.containsKey(x);}
 
 
 	public String name;
@@ -62,15 +63,11 @@ public abstract class Biome implements Cloneable, Serializable{
 		return null;
 	}
 
-	//TODO Make sure this is actuly generated before world gen
 	public abstract void generateHeightMap(World world, int start);
 
 
 	private static transient Biome plainsBiome = addBiome(new Biome("plainsBiome", "Plains", new StructureGeneration[]{ new GrassGeneration(), new StoneGeneration()}) {
 
-
-		//TODO The longer away from start it is the the rougher it gets. Needs fixing! WHY THE FUCK!?!??!
-		//TODO Improve heightMap generation!!!!!!!
 		@Override
 		public void generateHeightMap(World world, int start) {
 			PerlinNoiseGenerator noiseGenerator = new PerlinNoiseGenerator(world.worldSeed);
@@ -80,6 +77,7 @@ public abstract class Biome implements Cloneable, Serializable{
 				float g = x * 0.05F;
 				double t = noiseGenerator.noise(g) * 10;
 
+				//TODO Make plains biome smoother (It is a plains biome not a hills biome...)
 				if(!heightHashMap.containsKey(start + x)) {
 					heightHashMap.put(start + x, -(int) Math.round(t));
 				}

@@ -115,7 +115,7 @@ public abstract class Entity implements Serializable{
 		return false;
 	}
 
-	int healTime = 0, timeToHeal = 10;
+	int healTime = 0, timeToHeal = 50;
 	public void updateEntity() {
 		if(!MainFile.game.getServer().getWorld().generating) {
 			timeAlive += 1;
@@ -145,7 +145,7 @@ public abstract class Entity implements Serializable{
 			}
 
 			if (isOnGround && blocksFallen != 0) {
-				float damage = (float)blocksFallen / 4;
+				float damage = (float)blocksFallen / 3F;
 
 				damageEntity(DamageSource.Fall_Damage, new DamageBase() {
 					@Override

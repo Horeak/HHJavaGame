@@ -11,18 +11,15 @@ import java.awt.*;
 
 public class CaveGeneration extends StructureGeneration {
 
-	//TODO Somehow make it work with a "region" instead of one chunk (for example generate it each 4 chunks.)
 	@Override
 	public boolean canGenerate( Chunk chunk) {
 		boolean biome = chunk.world.getBiome((chunk.chunkX * Chunk.chunkSize)) != null;
 		boolean height = biome ? ((chunk.chunkY + 1) * Chunk.chunkSize) > chunk.world.getBiome((chunk.chunkX * Chunk.chunkSize)).getHeight((chunk.chunkX * Chunk.chunkSize)) : false;
 		boolean rand = MainFile.random.nextInt(100) == 0 || true;
-		//TODO Is caves too rare or not working at all?w
 
 		return  biome && height && rand;
 	}
 
-	//TODO Generate more then once
 	@Override
 	public void generate( Chunk chunk) {
 
@@ -40,10 +37,10 @@ public class CaveGeneration extends StructureGeneration {
 //					Line lineX = new Line(xS, x);
 //					Line lineY = new Line(yS, y);
 
-					//TODO Make corners round!
+					//TODO Fix this making holes in the ground level
 					if (y > (chunk.world.getBiome(x + (chunk.chunkX * Chunk.chunkSize))).getHeight(x + (chunk.chunkX * Chunk.chunkSize)) && Point.distance(x, y, xS, yS) < ((xRange + yRange) / 2)) {
 						//TODO Try and make this work with setting blocks through the world and not the chunk
-						chunk.world.setBlock(Blocks.blockAir, x + (chunk.chunkX * Chunk.chunkSize), y + (chunk.chunkY * Chunk.chunkSize));
+						chunk.setBlock(Blocks.blockAir, x, y);
 					}
 
 				}

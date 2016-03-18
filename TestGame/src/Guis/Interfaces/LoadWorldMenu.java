@@ -176,7 +176,6 @@ public class LoadWorldMenu extends AbstractMainMenu {
 		}
 	}
 
-	//TODO Why isnt the button area offset the same as the render?
 	class WorldButton extends MainMenuButton {
 
 		public World world;
