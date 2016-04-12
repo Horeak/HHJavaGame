@@ -3,6 +3,7 @@ package Items.DebugTools;
 import Items.Items;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.Chunk;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
@@ -21,7 +22,7 @@ public class ItemChunkDestoryer extends Item {
 	}
 
 	@Override
-	public void loadTextures() {
+	public void loadTextures(TextureLoader imageLoader) {
 
 	}
 

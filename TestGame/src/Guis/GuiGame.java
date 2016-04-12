@@ -1,11 +1,11 @@
 package Guis;
 
-import Guis.Button.InventoryButton;
 import Interface.Gui;
 import Interface.GuiObject;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.FontHandler;
+import Utils.LoggerUtil;
 import Utils.RenderUtil;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -16,6 +16,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public abstract class GuiGame extends Gui {
 
@@ -41,12 +42,22 @@ public abstract class GuiGame extends Gui {
 		g2.scale(0.5F, 0.5F);
 		g2.translate(mouseX - 16, mouseY - 16);
 
+		//TODO Render stack size when item is held?
 		if (heldItem != null)
-			RenderUtil.renderItem(g2, heldItem, mouseX, mouseY, heldItem.getItem().getRenderMode());
+			RenderUtil.renderItem(g2, heldItem, mouseX, mouseY);
 
 		g2.scale(2, 2);
 		g2.popTransform();
 
+
+		for(GuiObject g : guiObjects){
+			g.renderObjectPost(g2, this);
+		}
+
+
+
+
+		//Renders all tooltips which has been queued
 		for (Map.Entry<Point, String[]> ent : toolTipRendering.entrySet()) {
 			int x = (int) ent.getKey().getX(), y = ((int) ent.getKey().getY()) - (11 * (ent.getValue().length + 1));
 
@@ -96,7 +107,6 @@ public abstract class GuiGame extends Gui {
 				}
 
 				g2.drawString(ent.getValue()[ g ], x - 15, (y + 5) + (g * sHeight));
-
 				FontHandler.resetFont(g2);
 			}
 
@@ -104,35 +114,12 @@ public abstract class GuiGame extends Gui {
 		toolTipRendering.clear();
 	}
 
-	public void renderInventoryButtons(){
-		for (GuiObject ob : guiObjects) {
-			if (ob instanceof InventoryButton) {
-				InventoryButton button = (InventoryButton) ob;
-				ItemStack item = button.inv.getItem(button.num);
-
-				if (button.isMouseOver() && item != null) {
-					int mouseX = MainFile.game.gameContainer.getInput().getMouseX();
-					int mouseY = MainFile.game.gameContainer.getInput().getMouseY();
-
-					int length = item.getTooltips() != null ? item.getTooltips().size() + 1 : 1;
-
-					String[] tt = new String[length];
-
-					tt[0] = item.getStackSize() + "x " + item.getStackName();
-
-					if(item.getTooltips() != null)
-					for(int j = 0; j < tt.length-1; j++){
-						tt[j+1] = item.getTooltips().get(j);
-					}
-
-					renderTooltip(mouseX, mouseY, tt);
-				}
-			}
-		}
-	}
-
 	public void closeGui() {
-		MainFile.game.gameContainer.setPaused(false);
-		MainFile.game.setCurrentMenu(null);
+		if(buttonTimeLimiter >= buttonTimeLimit) {
+			MainFile.game.gameContainer.setPaused(false);
+			MainFile.game.setCurrentMenu(null);
+		}else if(buttonTimeLimit == 0){
+			LoggerUtil.out.log(Level.SEVERE, "ERROR: attempted closeGui() when buttonTimeLimit was less then buttonTimeLimit!");
+		}
 	}
 }

@@ -2,7 +2,6 @@ package Items.Rendering;
 
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
-import Render.EnumRenderMode;
 import Utils.ConfigValues;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -13,7 +12,7 @@ public class ItemRendrerer implements IItemRenderer {
 	public static ItemRendrerer staticReferense = new ItemRendrerer();
 
 	@Override
-	public void renderItem( Graphics g, int rX, int rY, EnumRenderMode renderMode, ItemStack m ) {
+	public void renderItem( Graphics g, int rX, int rY, ItemStack m ) {
 		Item item = (Item)m.getItem();
 
 		if(item.getTexture(m) != null){
@@ -30,7 +29,7 @@ public class ItemRendrerer implements IItemRenderer {
 				rectangle.setWidth(48 - (f*48));
 
 				if(rectangle.getWidth() > 0) {
-					g.setColor(Color.green);
+					g.setColor(new Color(0,1.0f,0,1.0f));
 					g.fill(rectangle);
 				}
 

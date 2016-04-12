@@ -2,19 +2,16 @@ package WorldGeneration.Structures;
 
 import BlockFiles.Util.Block;
 import WorldFiles.Chunk;
-import WorldFiles.World;
 
 import java.awt.*;
 import java.io.Serializable;
-import java.util.HashMap;
 
 public class ChunkStructure extends Structure implements Serializable{
 	public Chunk ch;
 
 	//ChunkStructure is used if something is generated withing a chunk and only uses that one chunk
-	public ChunkStructure( World world, String structureName, Chunk chunk){
-		super(world, structureName);
-
+	public ChunkStructure( Chunk chunk, String structureName ){
+		super(chunk.world, structureName);
 		this.ch = chunk;
 	}
 
@@ -30,5 +27,9 @@ public class ChunkStructure extends Structure implements Serializable{
 		setBlock(block, x, y, true);
 	}
 
+
+	public Block getBlock(int worldX, int worldY){
+		return blocks.get(new Point(worldX - (ch.chunkX * Chunk.chunkSize), worldY - (ch.chunkY * Chunk.chunkSize)));
+	}
 
 }

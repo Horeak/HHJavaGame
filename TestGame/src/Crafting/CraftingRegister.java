@@ -1,7 +1,7 @@
 package Crafting;
 
-import BlockFiles.*;
-import Items.*;
+import BlockFiles.Blocks;
+import Items.Items;
 import Items.Utils.IItemRegistry;
 import Items.Utils.ItemStack;
 import Main.MainFile;
@@ -78,7 +78,7 @@ public class CraftingRegister {
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (ItemStack tem : MainFile.game.getClient().getPlayer().inventoryItems.values()) {
+		for (ItemStack tem : MainFile.game.getClient().getPlayer().items) {
 			if(tem != null && item != null) {
 				if (tem.equals(item)) {
 					hasSize += tem.getStackSize();
@@ -108,7 +108,7 @@ public class CraftingRegister {
 		boolean hasItem = false;
 		int hasSize = 0;
 
-		for (ItemStack tem : MainFile.game.getClient().getPlayer().inventoryItems.values()) {
+		for (ItemStack tem : MainFile.game.getClient().getPlayer().items) {
 			if (!hasItem && hasSize >= item.getStackSize()) {
 				hasItem = true;
 				break;
@@ -134,6 +134,7 @@ public class CraftingRegister {
 
 		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockWood), new ItemStack(Blocks.blockStone, 6)}, new ItemStack(Blocks.blockFurnace));
 		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockPlanks, 8)}, new ItemStack(Blocks.blockChest));
+		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockChest, 2), new ItemStack(Items.itemIronIngot, 4)}, new ItemStack(Blocks.blockItemMover));
 
 
 		//Wood
@@ -166,12 +167,6 @@ public class CraftingRegister {
 		addFurnaceRecipe(new ItemStack(Blocks.blockSilverOre), new ItemStack(Items.itemSilverIngot));
 		addFurnaceRecipe(new ItemStack(Blocks.blockGoldOre), new ItemStack(Items.itemGoldIngot));
 
-
-		if(ConfigValues.debug){
-			addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockDirt)}, new ItemStack(Items.debugChunkDestoryer));
-			addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockDirt)}, new ItemStack(Items.debugChunkReloader));
-			addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockDirt)}, new ItemStack(Items.debugChunkRegenerator));
-		}
 
 		LoggerUtil.out.log(Level.INFO, "Crafting recipes registered.");
 	}

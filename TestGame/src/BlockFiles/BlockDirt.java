@@ -2,7 +2,8 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
-import Main.MainFile;
+import BlockFiles.Util.Material;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -26,8 +27,8 @@ public class BlockDirt extends Block {
 	}
 
 	@Override
-	public void loadTextures() {
-		texture =  MainFile.game.imageLoader.getImage("blocks","dirt");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture =  imageLoader.getImage("blocks","dirt");
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
@@ -38,5 +39,8 @@ public class BlockDirt extends Block {
 		return 5;
 	}
 
-
+	@Override
+	public Material getBlockMaterial() {
+		return Material.DIRT;
+	}
 }

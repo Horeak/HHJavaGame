@@ -5,7 +5,6 @@ import Main.MainFile;
 import WorldFiles.Chunk;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
-import org.newdawn.slick.geom.Line;
 
 import java.awt.*;
 
@@ -13,8 +12,8 @@ public class CaveGeneration extends StructureGeneration {
 
 	@Override
 	public boolean canGenerate( Chunk chunk) {
-		boolean biome = chunk.world.getBiome((chunk.chunkX * Chunk.chunkSize)) != null;
-		boolean height = biome ? ((chunk.chunkY + 1) * Chunk.chunkSize) > chunk.world.getBiome((chunk.chunkX * Chunk.chunkSize)).getHeight((chunk.chunkX * Chunk.chunkSize)) : false;
+		boolean biome = chunk.world.getBiome((chunk.chunkX)) != null;
+		boolean height = biome ? ((chunk.chunkY + 1) * Chunk.chunkSize) > chunk.world.getHeight((chunk.chunkX * Chunk.chunkSize)) : false;
 		boolean rand = MainFile.random.nextInt(100) == 0 || true;
 
 		return  biome && height && rand;
@@ -38,8 +37,7 @@ public class CaveGeneration extends StructureGeneration {
 //					Line lineY = new Line(yS, y);
 
 					//TODO Fix this making holes in the ground level
-					if (y > (chunk.world.getBiome(x + (chunk.chunkX * Chunk.chunkSize))).getHeight(x + (chunk.chunkX * Chunk.chunkSize)) && Point.distance(x, y, xS, yS) < ((xRange + yRange) / 2)) {
-						//TODO Try and make this work with setting blocks through the world and not the chunk
+					if (chunk.world.getBiome(chunk.chunkX) != null && y > (chunk.world.getHeight(x + (chunk.chunkX * Chunk.chunkSize)) + 4)&& Point.distance(x, y, xS, yS) < ((xRange + yRange) / 2)) {
 						chunk.setBlock(Blocks.blockAir, x, y);
 					}
 

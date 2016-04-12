@@ -2,25 +2,24 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
-import Items.Items;
-import Items.Utils.ItemStack;
-import Main.MainFile;
+import BlockFiles.Util.Material;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockCoalOre extends BlockStone{
+public class BlockSandstone extends Block {
 
 	public static Image texture;
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Coal Ore";
+		return "Sandstone";
 	}
 
 	@Override
 	public Color getDefaultBlockColor() {
-		return new Color(30, 30, 30);
+		return Color.yellow.darker();
 	}
 
 	@Override
@@ -29,12 +28,12 @@ public class BlockCoalOre extends BlockStone{
 	}
 
 	@Override
-	public void loadTextures() {
-		texture = MainFile.game.imageLoader.getImage("blocks","coalOre");
+	public void loadTextures( TextureLoader imageLoader ) {
+		texture =  imageLoader.getImage("blocks","sandstone");
 	}
 
 	@Override
-	public ItemStack getItemDropped( World world, int x, int y ) {
-		return new ItemStack(Items.itemCoal, 1 + (MainFile.random.nextInt(3)));
+	public Material getBlockMaterial() {
+		return Material.ROCK;
 	}
 }

@@ -3,7 +3,7 @@ package Items;
 import BlockFiles.Util.IFuel;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
-import Main.MainFile;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
@@ -22,8 +22,8 @@ public class ItemCoal extends Item implements IFuel{
 	}
 
 	@Override
-	public void loadTextures() {
-		icon = MainFile.game.imageLoader.getImage("items", "coal");
+	public void loadTextures(TextureLoader imageLoader) {
+		icon = imageLoader.getImage("items", "coal");
 	}
 
 	@Override

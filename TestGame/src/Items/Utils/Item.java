@@ -4,6 +4,7 @@ import Items.Rendering.IItemRenderer;
 import Items.Rendering.ItemRendrerer;
 import Main.MainFile;
 import Utils.LoggerUtil;
+import Utils.TexutrePackFiles.TextureLoader;
 import org.newdawn.slick.Image;
 
 import java.io.Serializable;
@@ -13,7 +14,9 @@ public abstract class Item implements IItem, Serializable {
 
 	public abstract int getMaxItemDamage();
 	public abstract Image getTexture( ItemStack stack );
-	public abstract void loadTextures();
+	public abstract void loadTextures(TextureLoader imageLoader);
+
+	public int registryValue = -1;
 
 	public ArrayList<String> getTooltips(ItemStack stack){
 		ArrayList<String> tt = new ArrayList<>();
@@ -32,7 +35,7 @@ public abstract class Item implements IItem, Serializable {
 
 			if (stack.getStackDamage() > getMaxItemDamage()) {
 				int i = 0;
-				for (ItemStack stackk : MainFile.game.getClient().getPlayer().inventoryItems.values()) {
+				for (ItemStack stackk : MainFile.game.getClient().getPlayer().items) {
 					if (stackk != null) {
 						if (stackk.getItem().equals(this)) {
 							MainFile.game.getClient().getPlayer().setItem(i, null);
@@ -53,7 +56,7 @@ public abstract class Item implements IItem, Serializable {
 
 
 	@Override
-	public IItem clone() throws CloneNotSupportedException {
+	public IItem clone() {
 		try {
 			return this.getClass().newInstance();
 		} catch (Exception e) {

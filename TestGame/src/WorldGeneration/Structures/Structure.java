@@ -1,7 +1,6 @@
 package WorldGeneration.Structures;
 
 import BlockFiles.Util.Block;
-import WorldFiles.Chunk;
 import WorldFiles.World;
 
 import java.awt.*;
@@ -9,7 +8,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public class Structure implements Serializable{
-	public World world;
+	public transient World world;
 	public String name;
 
 	public HashMap<Point, Block> blocks = new HashMap<>();
@@ -17,6 +16,12 @@ public class Structure implements Serializable{
 	public Structure(World world, String structureName){
 		this.world = world;
 		this.name = structureName;
+	}
+
+	public org.newdawn.slick.Image getBackgroundImage(){return null;}
+
+	public Block getBlock(int x, int y){
+		return blocks.get(new Point(x, y));
 	}
 
 	public void setBlock(Block block, int x, int y, boolean addToStructure){
@@ -31,17 +36,12 @@ public class Structure implements Serializable{
 		setBlock(block, x, y, true);
 	}
 
-	//TODO Is structure not being set or is it being reset?
-	public void finishGen( Chunk chunk){
-		finishGen(chunk.chunkX * Chunk.chunkSize, chunk.chunkY * Chunk.chunkSize);
-	}
+	//TODO This can be used to for example spawn mobs in dungeons
+	public void update(){}
 
-	public void finishGen(int x, int y){
-		world.setStucture(this, x, y);
-
-		if(world.getChunk(x, y) != null){
-			world.getChunk(x, y).setStucture(this);
-		}
+	public boolean shouldRemoveBlock(int x, int y)
+	{
+		return true;
 	}
 
 }

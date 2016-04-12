@@ -4,36 +4,26 @@ package BlockFiles;
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ITickBlock;
+import BlockFiles.Util.Material;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Utils.DataHandler;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
-import javafx.scene.shape.DrawMode;
-import org.json.simple.JSONObject;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Point;
-import org.newdawn.slick.geom.Rectangle;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class BlockGrass extends Block {
-	public static Image topTexture =  null;
-	public static Image sideTexture =  null;
+	public static String[] textureNames = new String[]{"Normal", "Snow"};
 
-	public static HashMap<String, Image> sideImages = new HashMap<>();
-	public static HashMap<String, Image> topImages = new HashMap<>();
+	public static Image[] sideImages = new Image[textureNames.length];
+	public static Image[] topImages = new Image[textureNames.length];
 
-	//Will be used to for adding different grass types like for eksample snow
-	public static String[] textureNames = new String[]{"Normal"};
-
-	public static String getBlockType(World world, int x, int y){
-		return textureNames[0];
+	public int texture = 0;
+	public BlockGrass(int texture){
+		this.texture = texture;
 	}
+
 
 	public static boolean canGrassGrow( World world, int x, int y ) {
 		Block block = world.getBlock(x, y);
@@ -55,21 +45,26 @@ public class BlockGrass extends Block {
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		return side == EnumBlockSide.SIDE || side == EnumBlockSide.FRONT ? sideImages.get(getBlockType(world, x, y)) : topImages.get(getBlockType(world, x, y));
+		return side == EnumBlockSide.SIDE || side == EnumBlockSide.FRONT ? sideImages[texture] : topImages[texture];
 	}
 
 	@Override
-	public void loadTextures() {
+	public void loadTextures(TextureLoader imageLoader) {
+		int i = 0;
 		for(String t : textureNames){
-			topImages.put(t, MainFile.game.imageLoader.getImage("blocks","grassTop_" + t));
-			sideImages.put(t, MainFile.game.imageLoader.getImage("blocks","grassSide_" + t));
+			topImages[i] = imageLoader.getImage("blocks","grassTop_" + t);
+			sideImages[i] = imageLoader.getImage("blocks","grassSide_" + t);
+
+			i += 1;
 		}
 	}
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Grass";
+		return textureNames[texture];
 	}
+
+
 
 	@Override
 	public Color getDefaultBlockColor() {
@@ -148,8 +143,13 @@ public class BlockGrass extends Block {
 			}
 		}
 
-		public int blockUpdateDelay() {
+		public float blockUpdateDelay() {
 			return 5;
 		}
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return texture == 1 ? Material.SNOW : Material.DIRT;
 	}
 }

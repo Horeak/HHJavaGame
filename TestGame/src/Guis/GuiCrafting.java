@@ -206,8 +206,6 @@ public class GuiCrafting extends GuiGame {
 		guiObjects.removeIf(e -> (!(e instanceof scrollBar) && !(e instanceof inputButton)));
 		init();
 
-		renderInventoryButtons();
-
 		g2.setColor(new Color(0.3F, 0.3F, 0.3F, 0.4F));
 		g2.fill(MainFile.blockRenderBounds);
 
@@ -270,7 +268,7 @@ public class GuiCrafting extends GuiGame {
 				g2.scale(0.5F, 0.5F);
 				g2.translate(rect.getX(), rect.getY());
 
-				RenderUtil.renderItem(g2, req, (int) rect.getX() + 10, (int) rect.getY() + 25, req.getItem().getRenderMode());
+				RenderUtil.renderItem(g2, req, (int) rect.getX() + 10, (int) rect.getY() + 25);
 
 				g2.scale(2, 2);
 				g2.popTransform();
@@ -302,7 +300,7 @@ public class GuiCrafting extends GuiGame {
 			g2.scale(0.5F, 0.5F);
 			g2.translate(rect.getX(), rect.getY());
 
-			RenderUtil.renderItem(g2, selectedRes.output, (int) rect.getX() + 10, (int) rect.getY() + 25, selectedRes.output.getItem().getRenderMode());
+			RenderUtil.renderItem(g2, selectedRes.output, (int) rect.getX() + 10, (int) rect.getY() + 25);
 
 			g2.scale(2, 2);
 			g2.popTransform();
@@ -327,6 +325,8 @@ public class GuiCrafting extends GuiGame {
 	}
 
 	public void renderObject( Graphics g2 ) {
+		update();
+
 		for (GuiObject object : guiObjects) {
 			Rectangle temp = g2.getClip();
 
@@ -439,7 +439,7 @@ public class GuiCrafting extends GuiGame {
 			g2.pushTransform();
 			g2.scale(0.5F, 0.5F);
 			g2.translate(rectangle.getX() + 20, rectangle.getY() + 40);
-			RenderUtil.renderItem(g2, item, (int) rectangle.getX(), (int) rectangle.getY(), item.getItem().getRenderMode());
+			RenderUtil.renderItem(g2, item, (int) rectangle.getX(), (int) rectangle.getY());
 			g2.scale(2, 2);
 			g2.popTransform();
 
@@ -464,7 +464,7 @@ public class GuiCrafting extends GuiGame {
 				g2.pushTransform();
 				g2.scale(0.25F, 0.25F);
 				g2.translate((te.getX() * 3) + 15, (te.getY() * 3) + 35);
-				RenderUtil.renderItem(g2, stack, (int) te.getX(), (int) te.getY(), stack.getItem().getRenderMode());
+				RenderUtil.renderItem(g2, stack, (int) te.getX(), (int) te.getY());
 				g2.scale(2, 2);
 				g2.popTransform();
 
@@ -508,7 +508,7 @@ public class GuiCrafting extends GuiGame {
 			g2.pushTransform();
 			g2.scale(0.5F, 0.5F);
 			g2.translate(rectangle.getX() + 25, rectangle.getY() + 40);
-			RenderUtil.renderItem(g2, gg.getRender(), (int) rectangle.getX(), (int) rectangle.getY(), gg.getRender().getItem().getRenderMode());
+			RenderUtil.renderItem(g2, gg.getRender(), (int) rectangle.getX(), (int) rectangle.getY());
 			g2.scale(2, 2);
 			g2.popTransform();
 

@@ -1,24 +1,24 @@
-package BlockFiles;
+package BlockFiles.Ores;
 
 import BlockFiles.BlockRender.EnumBlockSide;
-import BlockFiles.Util.Block;
-import Main.MainFile;
+import BlockFiles.BlockStone;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockSilverOre extends BlockStone{
+public class BlockGoldOre extends BlockStone implements IOre {
 
 	public static Image texture;
 
 	@Override
 	public String getBlockDisplayName() {
-		return "Silver Ore";
+		return "Gold Ore";
 	}
 
 	@Override
 	public Color getDefaultBlockColor() {
-		return new Color(130, 130, 130);
+		return new Color(228, 210, 90);
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class BlockSilverOre extends BlockStone{
 	}
 
 	@Override
-	public void loadTextures() {
-		texture = MainFile.game.imageLoader.getImage("blocks","silverOre");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture = imageLoader.getImage("blocks","goldOre");
 	}
 }

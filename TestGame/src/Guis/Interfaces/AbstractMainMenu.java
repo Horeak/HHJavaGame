@@ -1,19 +1,13 @@
 package Guis.Interfaces;
 
-import BlockFiles.BlockDirt;
-import BlockFiles.BlockGrass;
 import BlockFiles.BlockRender.DefaultBlockRendering;
-import BlockFiles.BlockStone;
 import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import Interface.UIMenu;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Render.EnumRenderMode;
 import Render.Renders.BackgroundRender;
-import Render.Renders.BlockRendering;
 import Utils.ConfigValues;
-import Utils.FileUtil;
 import WorldFiles.Chunk;
 import WorldFiles.EnumWorldTime;
 import WorldFiles.World;
@@ -22,7 +16,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,7 +101,7 @@ public class AbstractMainMenu extends UIMenu {
 		render.render(g2, world);
 
 		if (world != null && world.worldChunks != null) {
-			for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
+			for(int i = 0; i < 3; i++) {
 				HashMap<Point, Block> bbb = new HashMap<>();
 
 				for (int x = 0; x < (length); x++) {
@@ -120,7 +113,7 @@ public class AbstractMainMenu extends UIMenu {
 
 						if (b != null && b.getRender() != null) {
 							if (b.isBlockSolid()) {
-								((DefaultBlockRendering) b.getRender()).renderBlock(g2, ((x - 1) * ConfigValues.size),(y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, x, y, i);
+								((DefaultBlockRendering) b.getRender()).renderBlock(g2, ((x - 1) * ConfigValues.size),(y * ConfigValues.size), new ItemStack(b), world, x, y, i);
 							} else {
 								bbb.put(new Point(x, y), b);
 							}
@@ -133,7 +126,7 @@ public class AbstractMainMenu extends UIMenu {
 					Block b = ent.getValue();
 
 					if (b != null && b.getRender() != null) {
-						((DefaultBlockRendering) b.getRender()).renderBlock(g2, ((ent.getKey().x - 1) * ConfigValues.size), (ent.getKey().y * ConfigValues.size), ConfigValues.renderMod, new ItemStack(b), world, ent.getKey().x, ent.getKey().y, i);
+						((DefaultBlockRendering) b.getRender()).renderBlock(g2, ((ent.getKey().x - 1) * ConfigValues.size), (ent.getKey().y * ConfigValues.size), new ItemStack(b), world, ent.getKey().x, ent.getKey().y, i);
 					}
 				}
 

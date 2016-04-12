@@ -1,14 +1,13 @@
 package Items;
 
 import BlockFiles.Util.IFuel;
-import Items.Utils.IArmor;
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
-import Main.MainFile;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
-public class ItemStick extends Item implements IArmor, IFuel{
+public class ItemStick extends Item implements IFuel{
 
 	public static Image texture;
 
@@ -23,8 +22,8 @@ public class ItemStick extends Item implements IArmor, IFuel{
 	}
 
 	@Override
-	public void loadTextures() {
-		texture =  MainFile.game.imageLoader.getImage("items","woodstick");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture =  imageLoader.getImage("items","woodstick");
 	}
 
 	@Override

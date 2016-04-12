@@ -18,64 +18,69 @@ public class BlockAction {
 
 	public static float maxBlockUseDistance = 3F;
 
+	//TODO Try to compact this!
+	//TODO Fix delay when placing blocks!
 	public static void mouseClick( int button, int delta ) {
 		float speed = 1F / ((float)delta / 25);
-
 
 		try {
 			int selected = (HotbarRender.slotSelected - 1);
 
-			if (selected < MainFile.game.getClient().getPlayer().getInventorySize()) {
-				ItemStack item = MainFile.game.getClient().getPlayer().getItem(selected);
+			if(MainFile.game.getClient().getPlayer().getEntityPostion().distance(BlockSelection.selectedX, BlockSelection.selectedY) <= BlockSelection.maxRange) {
+				if (selected < MainFile.game.getClient().getPlayer().getInventorySize()) {
+					ItemStack item = MainFile.game.getClient().getPlayer().getItem(selected);
 
-				if (button == Input.MOUSE_LEFT_BUTTON) {
-					if (MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY) != null) {
-						Block b = MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
+					if (button == Input.MOUSE_LEFT_BUTTON) {
+						if (MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY) != null) {
+							Block b = MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
-						if(prevX == -1 && prevY == -1 || prevX == BlockSelection.selectedX && prevY == BlockSelection.selectedY) {
-							if (blockDamage >= b.getMaxBlockDamage()) {
-								MainFile.game.getServer().getWorld().breakBlock(BlockSelection.selectedX, BlockSelection.selectedY);
+							if (prevX == -1 && prevY == -1 || prevX == BlockSelection.selectedX && prevY == BlockSelection.selectedY) {
+								if (blockDamage >= b.getMaxBlockDamage()) {
+									MainFile.game.getServer().getWorld().breakBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
-								if (item != null)
-									if (item.getItem() instanceof Item) {
-										((Item) item.getItem()).damageItem(item);
+									if (item != null)
+										if (item.getItem() instanceof Item) {
+											((Item) item.getItem()).damageItem(item);
+										}
+
+									prevX = -1;
+									prevY = -1;
+									blockDamage = 0;
+									blockBreakDelay = 0;
+
+								} else {
+									prevX = BlockSelection.selectedX;
+									prevY = BlockSelection.selectedY;
+									timeSince = 0;
+
+									if (blockBreakDelay >= blockBreakDelay) {
+										MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY).onHit();
+										blockDamage += item != null && item.getItem() != null ? item.getItem().getBlockDamageValue(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item) : 1;
+										blockBreakDelay = 0;
+									} else {
+										MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY).onHit();
+										blockBreakDelay += speed;
 									}
 
+									if (blockDamage >= b.getMaxBlockDamage()) {
+										mouseClick(button, delta);
+									}
+								}
+							} else {
 								prevX = -1;
 								prevY = -1;
 								blockDamage = 0;
 								blockBreakDelay = 0;
-
-							} else {
-								prevX = BlockSelection.selectedX;
-								prevY = BlockSelection.selectedY;
-								timeSince = 0;
-
-								if(blockBreakDelay >= blockBreakDelay){
-									blockDamage += item != null && item.getItem() != null ? item.getItem().getBlockDamageValue( MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item) : 1;
-									blockBreakDelay = 0;
-								}else{
-									blockBreakDelay += speed;
-								}
-
-								if (blockDamage >= b.getMaxBlockDamage()) {
-									mouseClick(button, delta);
-								}
 							}
-						}else{
-							prevX = -1;
-							prevY = -1;
-							blockDamage = 0;
-							blockBreakDelay = 0;
 						}
-					}
 
-				} else if (button == Input.MOUSE_RIGHT_BUTTON) {
-					Block b = MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
+					} else if (button == Input.MOUSE_RIGHT_BUTTON) {
+						Block b = MainFile.game.getServer().getWorld().getBlock(BlockSelection.selectedX, BlockSelection.selectedY);
 
-					if(b == null || b != null && MainFile.game.getClient().getPlayer().getEntityPostion().distance(BlockSelection.selectedX, BlockSelection.selectedY) > maxBlockUseDistance || b != null &&  !b.blockClicked(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item)) {
-						if (item != null) {
-							item.useItem(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
+						if (b == null || b != null && !b.blockClicked(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY, item)) {
+							if (item != null) {
+								item.useItem(MainFile.game.getServer().getWorld(), BlockSelection.selectedX, BlockSelection.selectedY);
+							}
 						}
 					}
 				}
@@ -84,6 +89,7 @@ public class BlockAction {
 		} catch (Exception e) {
 			LoggerUtil.exception(e);
 		}
+
 	}
 
 	public static void update( GameContainer container, int delta ) {

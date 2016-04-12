@@ -1,13 +1,12 @@
 package WorldGeneration;
 
-import BlockFiles.*;
+import BlockFiles.BlockGrass;
+import BlockFiles.BlockSapling;
+import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import Main.MainFile;
 import WorldFiles.Chunk;
-import WorldFiles.World;
-import WorldGeneration.Structures.Structure;
 import WorldGeneration.Util.GenerationBase;
-import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
 
 import java.awt.*;
@@ -18,6 +17,10 @@ public class TreeGeneration extends GenerationBase {
 	//TODO Make TreeGeneration chunk independent
 	public boolean useRandom = true;
 	public boolean sapling = false;
+
+
+
+	//TODO FIX!
 
 	@Override
 	public boolean canGenerate( Chunk chunk, int x, int y ) {
@@ -35,7 +38,7 @@ public class TreeGeneration extends GenerationBase {
 					}
 				}
 
-				boolean height = useRandom ? y >= chunk.world.getBiome(x + (chunk.chunkX * Chunk.chunkSize)).getHeight(x + (chunk.chunkX * Chunk.chunkSize)) : true;
+				boolean height = useRandom ? y >= chunk.world.getHeight(x + (chunk.chunkX * Chunk.chunkSize)) : true;
 				return height && (useRandom ? new Random().nextInt(10) == 1 : true);
 			}
 		}
@@ -72,7 +75,7 @@ public class TreeGeneration extends GenerationBase {
 				if (chunk.getBlock(xPos, yPos) == null) {
 					if (p.distance(xPos, yPos) <= 3) {
 						//TODO Leaves not being set when xPos == x
-						chunk.world.setBlock(Blocks.blockLeaves, xPos + (chunk.chunkX * Chunk.chunkSize), yPos + (chunk.chunkY * Chunk.chunkSize));
+						chunk.setBlock(Blocks.blockLeaves, xPos, yPos);
 					}
 				}
 			}

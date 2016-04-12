@@ -3,7 +3,8 @@ package BlockFiles;
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.IFuel;
-import Main.MainFile;
+import BlockFiles.Util.Material;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -28,9 +29,9 @@ public class BlockWood extends Block implements IFuel {
 	}
 
 	@Override
-	public void loadTextures() {
-		topTexture =  MainFile.game.imageLoader.getImage("blocks","woodTop");
-		sideTexture =  MainFile.game.imageLoader.getImage("blocks","woodSide");
+	public void loadTextures(TextureLoader imageLoader) {
+		topTexture =  imageLoader.getImage("blocks","woodTop");
+		sideTexture =  imageLoader.getImage("blocks","woodSide");
 	}
 
 	@Override
@@ -41,5 +42,10 @@ public class BlockWood extends Block implements IFuel {
 	@Override
 	public int getFuelValue() {
 		return 6;
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.WOOD;
 	}
 }

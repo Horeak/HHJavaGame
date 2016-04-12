@@ -1,13 +1,9 @@
 package Guis;
 
-import GameFiles.BaseGame;
-import Guis.Interfaces.MainMenu;
 import Guis.Objects.MainMenuButton;
 import Interface.GuiObject;
 import Interface.UIMenu;
 import Main.MainFile;
-import Render.Renders.BlockRendering;
-import Settings.Values.Keybinding;
 import Utils.ConfigValues;
 import Utils.FileUtil;
 import Utils.FontHandler;
@@ -15,14 +11,9 @@ import Utils.TexutrePackFiles.TexturePack;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GuiTexturepacks  extends GuiGame {
 	public static int renderStart = 290;
@@ -48,9 +39,7 @@ public class GuiTexturepacks  extends GuiGame {
 		}
 	}
 	public void renderObject( Graphics g2 ) {
-		if(buttonTimeLimiter != -1 && buttonTimeLimiter < buttonTimeLimit){
-			buttonTimeLimiter += 1;
-		}
+		update();
 
 		for (GuiObject object : guiObjects) {
 			if(object instanceof texturePackButton){
@@ -159,7 +148,7 @@ public class GuiTexturepacks  extends GuiGame {
 		public void onClicked( int button, int x, int y, UIMenu menu ) {
 			if(MainFile.game.texturePack != pack && enabled) {
 				MainFile.game.texturePack = pack;
-				MainFile.game.imageLoader.reloadTextures();
+				MainFile.game.reloadTextures();
 			}
 		}
 

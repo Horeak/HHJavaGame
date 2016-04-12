@@ -1,14 +1,9 @@
 package Guis.Interfaces;
 
-import Guis.GuiTexturepacks;
-import Guis.Objects.GuiButton;
 import Guis.Objects.MainMenuButton;
 import Interface.UIMenu;
 import Main.MainFile;
-import Render.EnumRenderMode;
-import Render.Renders.BlockRendering;
 import Settings.Values.ConfigOption;
-import Utils.ConfigValues;
 import Utils.FontHandler;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -61,12 +56,6 @@ public class SettingsMenu extends AbstractMainMenu {
 		return true;
 	}
 
-	public void buttonPressed( GuiButton button ) {
-		if (button.text.toLowerCase().contains("rendermod")) {
-			if (ConfigValues.renderMod == EnumRenderMode.render2_5D) ConfigValues.renderMod = EnumRenderMode.render2D;
-			else ConfigValues.renderMod = EnumRenderMode.render2_5D;
-		}
-	}
 
 	class configButton extends MainMenuButton {
 

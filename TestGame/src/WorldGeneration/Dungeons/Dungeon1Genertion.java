@@ -1,5 +1,6 @@
 package WorldGeneration.Dungeons;
 
+import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Blocks;
 import Main.MainFile;
 import WorldFiles.Chunk;
@@ -7,11 +8,14 @@ import WorldGeneration.Structures.ChunkStructure;
 import WorldGeneration.Util.DungeonLootGenerator;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
+import org.newdawn.slick.Image;
 
-public class Dungeon1Genertion extends StructureGeneration {
+import java.io.Serializable;
+
+public class Dungeon1Genertion extends StructureGeneration implements Serializable {
 	@Override
 	public boolean canGenerate(Chunk chunk) {
-		boolean height = ((chunk.chunkY - 2) * Chunk.chunkSize) > (chunk.world.getBiome(chunk.chunkX * Chunk.chunkSize).getHeight(chunk.chunkX * Chunk.chunkSize));
+		boolean height = ((chunk.chunkY - 2) * Chunk.chunkSize) > (chunk.world.getHeight(chunk.chunkX * Chunk.chunkSize));
 		boolean rand = MainFile.random.nextInt(20) == 0;
 		return rand && height;
 	}
@@ -25,7 +29,17 @@ public class Dungeon1Genertion extends StructureGeneration {
 		int x = MainFile.random.nextInt(Chunk.chunkSize - length);
 		int y = MainFile.random.nextInt(Chunk.chunkSize - height);
 
-		ChunkStructure dungeonStructure = new ChunkStructure(chunk.world, "Dungeon level 1", chunk);
+		ChunkStructure dungeonStructure = new ChunkStructure(chunk, "Dungeon level 1"){
+			@Override
+			public boolean shouldRemoveBlock( int x, int y ) {
+				return false;
+			}
+
+			@Override
+			public Image getBackgroundImage() {
+				return Blocks.blockCrackedStone.getBlockTextureFromSide(EnumBlockSide.FRONT.FRONT, MainFile.game.getServer().getWorld(), 0, 0);
+			}
+		};
 
 		//TODO Make special mobs spawn inside dungeons! (Maybe something similar like Minecraft mob spawners?)
 		for(int xx = x; xx <= (x + length); xx++){
@@ -39,7 +53,7 @@ public class Dungeon1Genertion extends StructureGeneration {
 		}
 
 		DungeonLootGenerator.generateDungeonChestInStructure(chunk.world, chunk,  ((x + 1) + ((length - 2) / 2)), (y + (height - 1)), 1, dungeonStructure);
-		dungeonStructure.finishGen(chunk);
+		chunk.setStucture(dungeonStructure);
 
 	}
 

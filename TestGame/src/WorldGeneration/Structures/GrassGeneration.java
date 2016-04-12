@@ -1,10 +1,6 @@
 package WorldGeneration.Structures;
 
-import BlockFiles.BlockDirt;
-import BlockFiles.BlockGrass;
 import BlockFiles.Blocks;
-import Main.MainFile;
-import WorldFiles.Biome;
 import WorldFiles.Chunk;
 import WorldGeneration.Util.StructureGeneration;
 import WorldGeneration.Util.WorldGenPriority;
@@ -23,8 +19,8 @@ public class GrassGeneration extends StructureGeneration {
 				int dx = x + (chunk.chunkX * Chunk.chunkSize);
 				int dy = y + (chunk.chunkY * Chunk.chunkSize);
 
-				if(chunk.world.getBiome(chunk.chunkX * Chunk.chunkSize).containes(dx)){
-					int h = chunk.world.getBiome(chunk.chunkX * Chunk.chunkSize).getHeight(dx);
+				if(chunk.world.containesHeight(dx)){
+					int h = chunk.world.getHeight(dx);
 
 					if(dy == h)
 					chunk.setBlock(Blocks.blockGrass, x, y);

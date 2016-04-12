@@ -1,9 +1,5 @@
 package Utils;
-/*
-* Project: Random Java Creations
-* Package: Utils
-* Created: 26.07.2015
-*/
+
 
 import BlockFiles.Util.Block;
 import Main.MainFile;
@@ -12,6 +8,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
 public class BlockUtils {
+
+	//TODO Why do i still have these....?
 	public static void renderDefaultBlockDebug( Graphics g2, Block block, int x, int y ) {
 		renderDefaultBlockDebug(g2, block, x, y, ConfigValues.size, ConfigValues.size);
 	}
@@ -25,9 +23,7 @@ public class BlockUtils {
 	}
 
 	public static boolean canPlaceBlockAt( Block block, int x, int y ) {
-		boolean t = (int) MainFile.game.getClient().getPlayer().getEntityPostion().x != x || (int) MainFile.game.getClient().getPlayer().getEntityPostion().y != y;
-
-		if (!MainFile.game.getClient().getPlayer().getPlayerBounds().contains(x, y) && t || block == null) {
+		if (((int) MainFile.game.getClient().getPlayer().getEntityPostion().x != x || (int) MainFile.game.getClient().getPlayer().getEntityPostion().y != y) || block == null) {
 			return MainFile.game.getServer().getWorld().getBlock(x, y) == null;
 		}
 

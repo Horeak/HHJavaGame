@@ -20,8 +20,9 @@ public class ItemStack implements Serializable{
 
 	public int slot;
 
-	public ItemStack(ItemStack stack) throws CloneNotSupportedException {
-		this(stack.getItem().clone(), stack.getStackSize(), stack.getStackDamage());
+	//TODO Is creating new ItemStack instances affecting performance?
+	public ItemStack(ItemStack stack) {
+		this(stack.getItem(), stack.getStackSize(), stack.getStackDamage());
 	}
 
 	public ItemStack(IItem item){
@@ -67,6 +68,10 @@ public class ItemStack implements Serializable{
 
 	public void setStackSize(int i ){
 		stackSize = i;
+
+		if(stackSize > getMaxStackSize()){
+			stackSize = getMaxStackSize();
+		}
 	}
 
 	public void decreaseStackSize( int i ){

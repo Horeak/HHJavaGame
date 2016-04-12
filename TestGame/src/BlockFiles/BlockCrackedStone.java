@@ -1,7 +1,8 @@
 package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
-import Main.MainFile;
+import BlockFiles.Util.Material;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -15,8 +16,8 @@ public class BlockCrackedStone extends BlockStone {
 	}
 
 	@Override
-	public void loadTextures() {
-		texture =  MainFile.game.imageLoader.getImage("blocks","crackedStone");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture =  imageLoader.getImage("blocks","crackedStone");
 	}
 
 	@Override
@@ -31,5 +32,10 @@ public class BlockCrackedStone extends BlockStone {
 
 	public int getMaxBlockDamage() {
 		return 15;
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.ROCK;
 	}
 }

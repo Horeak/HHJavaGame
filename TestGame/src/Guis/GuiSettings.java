@@ -3,7 +3,6 @@ package Guis;
 import Guis.Objects.MainMenuButton;
 import Interface.UIMenu;
 import Main.MainFile;
-import Render.Renders.BlockRendering;
 import Settings.Values.ConfigOption;
 import Utils.ConfigValues;
 import Utils.FontHandler;
@@ -15,6 +14,9 @@ import org.newdawn.slick.geom.Rectangle;
 import java.awt.*;
 
 public class GuiSettings extends GuiGame {
+	//TODO Add text input to allow player name change
+
+
 	public static int renderStart = 290;
 	public static int renderWidth = 190;
 	public GuiSettings guiInst = this;

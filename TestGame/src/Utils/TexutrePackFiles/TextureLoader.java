@@ -1,7 +1,6 @@
 package Utils.TexutrePackFiles;
 
 
-import BlockFiles.BlockRender.DefaultBlockRendering;
 import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import GameFiles.BaseGame;
@@ -62,6 +61,10 @@ public class TextureLoader extends ImageLoader {
 		return getImage(MainFile.game.texturePack, folder, id);
 	}
 
+	public static Image unknownBlock;
+	public static Image[] breakImages = null;
+
+	//TODO Need to reload entity textures
 	public void reloadTextures(){
 		for(Image im : images){
 			try{
@@ -73,26 +76,28 @@ public class TextureLoader extends ImageLoader {
 
 		for(TexturePack pack : FileUtil.texturePacks){
 			if(pack != null) {
-				pack.loadImage();
+				pack.loadImage(this);
 			}
 		}
 
 		if(MainFile.game.getClient() != null && MainFile.game.getClient().getPlayer() != null)
-		MainFile.game.getClient().getPlayer().loadTextures();
+		MainFile.game.getClient().getPlayer().loadTextures(this);
 
 
 		for(AbstractWindowRender windowRender : MainFile.game.getAbstractWindowRenderers()){
-			windowRender.loadTextures();
+			windowRender.loadTextures(this);
 		}
 
-		DefaultBlockRendering.breakImages = new Image[]{  MainFile.game.imageLoader.getImage("textures/breakBlock", "break1"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break2"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break3"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break4"),  MainFile.game.imageLoader.getImage("textures/breakBlock", "break5") };
+		unknownBlock = getImage("blocks", "unknown");
+
+		breakImages = new Image[]{  getImage("textures/breakBlock", "break1"),  getImage("textures/breakBlock", "break2"),  getImage("textures/breakBlock", "break3"),  getImage("textures/breakBlock", "break4"),  getImage("textures/breakBlock", "break5") };
 
 		for(Block bl : Blocks.blockRegistry.keySet()){
-			bl.loadTextures();
+			bl.loadTextures(this);
 		}
 
 		for(Item im : Items.ItemRegistry.keySet()){
-			im.loadTextures();
+			im.loadTextures(this);
 		}
 	}
 }

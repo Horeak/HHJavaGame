@@ -3,7 +3,8 @@ package BlockFiles;
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.IFuel;
-import Main.MainFile;
+import BlockFiles.Util.Material;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -28,12 +29,17 @@ public class BlockWoodenPlanks extends Block implements IFuel {
 	}
 
 	@Override
-	public void loadTextures() {
-		texture = MainFile.game.imageLoader.getImage("blocks","woodenplanks");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture = imageLoader.getImage("blocks","woodenplanks");
 	}
 
 	@Override
 	public int getFuelValue() {
 		return 2;
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.WOOD;
 	}
 }

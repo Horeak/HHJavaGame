@@ -2,8 +2,9 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
+import BlockFiles.Util.Material;
 import Items.Utils.ItemStack;
-import Main.MainFile;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -13,12 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BlockDungeonBrick extends Block {
 
-	public static final int BrickAMount = 4;
 	public int id;
 
-	public static Image[] images = new Image[BrickAMount];
     public static String[] brickNames = new String[]{"Blue Dungeon Bricks", "Green Dungeon Bricks", "Red Dungeon Bricks", "Yellow Dungeon Bricks"};
-
+	public static Image[] images = new Image[brickNames.length];
 
 	public int getMaxBlockDamage() {
 		return 10 * ((id + 2));
@@ -44,9 +43,9 @@ public class BlockDungeonBrick extends Block {
 	}
 
 	@Override
-	public void loadTextures() {
-		for(int i = 0; i < BrickAMount; i++){
-			images[i] = MainFile.game.imageLoader.getImage("blocks", "dungeonBrick" + i);
+	public void loadTextures(TextureLoader imageLoader) {
+		for(int i = 0; i < images.length; i++){
+			images[i] = imageLoader.getImage("blocks", "dungeonBrick" + i);
 		}
 	}
 
@@ -64,5 +63,10 @@ public class BlockDungeonBrick extends Block {
 
 
 		return toolTips.get(id);
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.ROCK;
 	}
 }

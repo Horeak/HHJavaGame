@@ -2,7 +2,6 @@ package Utils;
 
 import BlockFiles.Util.Block;
 import Main.MainFile;
-import Render.Renders.BlockRendering;
 import com.sun.javafx.geom.Vec2d;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.geom.Point;
@@ -11,6 +10,8 @@ public class BlockSelection {
 
 	public static Block selectedBlock = null;
 	public static int selectedX = -1, selectedY = -1;
+
+	public static int maxRange = 8;
 
 
 	public static void update( GameContainer container ) {

@@ -1,13 +1,10 @@
 package Render.Renders;
 
-import BlockFiles.BlockRender.EnumBlockSide;
 import Main.MainFile;
 import Rendering.AbstractWindowRender;
 import Utils.BlockSelection;
 import Utils.ConfigValues;
 import Utils.FontHandler;
-import Utils.TimeTaker;
-import WorldFiles.Biome;
 import WorldFiles.Chunk;
 import WorldFiles.EnumWorldTime;
 import WorldGeneration.Structures.Structure;
@@ -64,6 +61,7 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString("World info:", textStartX, linePos += (lineLength * 2));
 
 			g2.drawString(" - World name: '" + MainFile.game.getServer().getWorld().worldName + "'", textStartX, linePos += (lineLength));
+			g2.drawString(" - World mode: " + (MainFile.game.getServer().getWorld().gameMode.name), textStartX, linePos += (lineLength));
 			g2.drawString(" - Time played: " + MainFile.game.getServer().getWorld().getTimePlayed(), textStartX, linePos += (lineLength));
 
 			g2.drawString(" - World time: " + MainFile.game.getServer().getWorld().WorldTime + " / " + MainFile.game.getServer().getWorld().WorldTimeDayEnd, textStartX, linePos += (lineLength * 2));
@@ -83,10 +81,10 @@ public class DebugInfoRender extends AbstractWindowRender {
 			g2.drawString(" - ChunkIsNull: " + (MainFile.game.getServer().getWorld().getChunk(BlockSelection.selectedX, BlockSelection.selectedY) == null), textStartX, linePos += (lineLength));
 			g2.drawString(" - Chunk is on list: " + (MainFile.game.getServer().getWorld().worldChunks.containsKey(new Point(BlockSelection.selectedX / Chunk.chunkSize, BlockSelection.selectedY / Chunk.chunkSize))), textStartX, linePos += (lineLength));
 
-			if(MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX) != null){
-				g2.drawString(" - Biome: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).name, textStartX, linePos += (lineLength));
-				g2.drawString(" - Biome length: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).length, textStartX, linePos += (lineLength));
-				g2.drawString(" - Height: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX).getHeight(BlockSelection.selectedX), textStartX, linePos += (lineLength));
+			if(MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX / Chunk.chunkSize) != null){
+				g2.drawString(" - Biome: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX / Chunk.chunkSize).name, textStartX, linePos += (lineLength));
+				//g2.drawString(" - Biome length: " + MainFile.game.getServer().getWorld().getBiome(BlockSelection.selectedX / Chunk.chunkSize).length, textStartX, linePos += (lineLength));
+				g2.drawString(" - Height: " + MainFile.game.getServer().getWorld().getHeight(BlockSelection.selectedX), textStartX, linePos += (lineLength));
 			}
 
 			Structure st = MainFile.game.getServer().getWorld().getStructure(BlockSelection.selectedX, BlockSelection.selectedY);

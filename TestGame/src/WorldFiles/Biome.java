@@ -1,38 +1,25 @@
 package WorldFiles;
 
-import Main.MainFile;
+import BlockFiles.BlockRender.EnumBlockSide;
+import BlockFiles.Blocks;
 import NoiseGenerator.PerlinNoiseGenerator;
 import NoiseGenerator.SimplexNoiseGenerator;
-import WorldGeneration.Structures.CaveGeneration;
-import WorldGeneration.Structures.GrassGeneration;
-import WorldGeneration.Structures.StoneGeneration;
-import WorldGeneration.TreeGeneration;
+import WorldGeneration.Structures.*;
 import WorldGeneration.Util.StructureGeneration;
+import org.newdawn.slick.Image;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Biome implements Cloneable, Serializable{
 	public static transient HashMap<String, Biome> biomeHashMap = new HashMap<>();
 	public static transient ArrayList<String> biomeIDs = new ArrayList<>();
 
-	//Integer 1=x-value, Integer 2=Ground height
-	public ConcurrentHashMap<Integer, Integer> heightHashMap = new ConcurrentHashMap<>();
-
-	public int getHeight(int x){
-		return heightHashMap.get(x);
-	}
-	public boolean containes(int x){return heightHashMap.containsKey(x);}
-
-
 	public String name;
 	public String id;
 	public transient StructureGeneration[] worldGens;
-	public int length;
 
 	public Biome(String id, String name, StructureGeneration[] worldGens){
 		this.name = name;
@@ -46,12 +33,11 @@ public abstract class Biome implements Cloneable, Serializable{
 		return b;
 	}
 
-	public static Biome getInstanceOf(String id, int legngth){
+	public static Biome getInstanceOf(String id){
 		for(Map.Entry<String, Biome> ent : biomeHashMap.entrySet()){
 			if(ent.getKey().equalsIgnoreCase(id)){
 				try {
 					Biome b = (Biome)ent.getValue().clone();
-					b.length = legngth;
 
 					return b;
 				} catch (CloneNotSupportedException e) {
@@ -63,27 +49,118 @@ public abstract class Biome implements Cloneable, Serializable{
 		return null;
 	}
 
-	public abstract void generateHeightMap(World world, int start);
+	transient PerlinNoiseGenerator noiseGenerator;
+
+	//TODO Need to redo this!
+	public void generateHeightMap(World world, int start) {
+		if (noiseGenerator == null || noiseGenerator.seed != world.worldSeed) {
+			noiseGenerator = new PerlinNoiseGenerator(world.worldSeed);
+		}
+
+		SimplexNoiseGenerator noise = new SimplexNoiseGenerator(world.worldSeed);
+
+		float height = 0;
+
+		for (int i = 0; i < Chunk.chunkSize; i++)   {
+			int pos = start + i;
+
+			height = (float) noise.getNoise(pos, getOctaves(), getFrequency(), getAmplitude()) * 10;
+
+			if(!world.heightHashMap.containsKey(pos)){
+				world.heightHashMap.put(pos, Math.round(height));
+			}
+		}
+
+
+	}
+
+	public abstract int getOctaves();
+	public abstract float getFrequency();
+	public abstract float getAmplitude();
+
+	public abstract Image getBackgroundImage( int height);
 
 
 	private static transient Biome plainsBiome = addBiome(new Biome("plainsBiome", "Plains", new StructureGeneration[]{ new GrassGeneration(), new StoneGeneration()}) {
 
 		@Override
-		public void generateHeightMap(World world, int start) {
-			PerlinNoiseGenerator noiseGenerator = new PerlinNoiseGenerator(world.worldSeed);
+		public int getOctaves() {
+			return 4;
+		}
 
-			for(int x = 0; x < (length * Chunk.chunkSize); x++){
+		@Override
+		public float getFrequency() {
+			return 0.2F;
+		}
 
-				float g = x * 0.05F;
-				double t = noiseGenerator.noise(g) * 10;
+		@Override
+		public float getAmplitude() {
+			return 0.4F;
+		}
 
-				//TODO Make plains biome smoother (It is a plains biome not a hills biome...)
-				if(!heightHashMap.containsKey(start + x)) {
-					heightHashMap.put(start + x, -(int) Math.round(t));
-				}
-			}
+		@Override
+		public Image getBackgroundImage( int height ) {
+			if(height >= 0 && height <= Chunk.chunkSize) return Blocks.blockDirt.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+			if(height > Chunk.chunkSize) return Blocks.blockStone.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+
+			return null;
 		}
 	});
+
+	private static transient Biome snowBiome = addBiome(new Biome("snowBiome", "Snow Biome", new StructureGeneration[]{ new SnowGeneration(), new StoneGeneration(), new SnowLayerGeneration()}) {
+
+		@Override
+		public int getOctaves() {
+			return 2;
+		}
+
+		@Override
+		public float getFrequency() {
+			return 0.2F;
+		}
+
+		@Override
+		public float getAmplitude() {
+			return 0.3F;
+		}
+
+		@Override
+		public Image getBackgroundImage( int height ) {
+			if(height >= 0 && height <= Chunk.chunkSize) return Blocks.blockDirt.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+			if(height > Chunk.chunkSize) return Blocks.blockStone.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+
+			return null;
+		}
+	});
+
+
+	private static transient Biome desertBiome = addBiome(new Biome("desertBiome", "Desert", new StructureGeneration[]{ new SandGeneration(), new StoneGeneration()}) {
+
+
+		@Override
+		public int getOctaves() {
+			return 8;
+		}
+
+		@Override
+		public float getFrequency() {
+			return 0.2F;
+		}
+
+		@Override
+		public float getAmplitude() {
+			return 0.2F;
+		}
+
+		@Override
+		public Image getBackgroundImage( int height ) {
+			if(height >= 2 && height <= Chunk.chunkSize) return Blocks.blockSand.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+			if(height > Chunk.chunkSize) return Blocks.blockStone.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+
+			return null;
+		}
+	});
+
 
 
 	@Override
@@ -91,7 +168,6 @@ public abstract class Biome implements Cloneable, Serializable{
 		return "Biome{" +
 				"name='" + name + '\'' +
 				", id='" + id + '\'' +
-				", length=" + length +
 				'}';
 	}
 }

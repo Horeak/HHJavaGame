@@ -4,18 +4,16 @@ import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Inventory.FurnaceInventory;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ITickBlock;
-import Crafting.CraftingRegister;
+import BlockFiles.Util.Material;
 import Guis.GuiFurnace;
 import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.ConfigValues;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
-
-import java.awt.*;
-import java.util.HashMap;
 
 public class BlockFurnace extends Block {
 
@@ -55,16 +53,16 @@ public class BlockFurnace extends Block {
 
 	@Override
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		return side == EnumBlockSide.FRONT ? (world.getInventory(x, y) instanceof FurnaceInventory && ((FurnaceInventory)world.getInventory(x, y)).smeltTime > 0) ? furnaceFrontOn : furnaceFrontOff : side == EnumBlockSide.SIDE ? furnaceSide : furnaceTop;
+		return side == EnumBlockSide.FRONT ? world != null && (world.getInventory(x, y) instanceof FurnaceInventory && ((FurnaceInventory)world.getInventory(x, y)).smeltTime > 0) ? furnaceFrontOn : furnaceFrontOff : side == EnumBlockSide.SIDE ? furnaceSide : furnaceTop;
 	}
 
 	@Override
-	public void loadTextures() {
-		furnaceFrontOff = MainFile.game.imageLoader.getImage("blocks", "furnaceFrontOff");
-		furnaceFrontOn = MainFile.game.imageLoader.getImage("blocks", "furnaceFrontOn");
+	public void loadTextures(TextureLoader imageLoader) {
+		furnaceFrontOff = imageLoader.getImage("blocks", "furnaceFrontOff");
+		furnaceFrontOn = imageLoader.getImage("blocks", "furnaceFrontOn");
 
-		furnaceSide = MainFile.game.imageLoader.getImage("blocks", "furnaceSide");
-		furnaceTop = MainFile.game.imageLoader.getImage("blocks", "furnaceTop");
+		furnaceSide = imageLoader.getImage("blocks", "furnaceSide");
+		furnaceTop = imageLoader.getImage("blocks", "furnaceTop");
 	}
 
 
@@ -112,4 +110,9 @@ public class BlockFurnace extends Block {
 
 	}
 
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.ROCK;
+	}
 }

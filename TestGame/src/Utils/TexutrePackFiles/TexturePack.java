@@ -1,16 +1,12 @@
 package Utils.TexutrePackFiles;
 
 
-import Main.MainFile;
-import Utils.FileUtil;
 import Utils.FileUtils;
 import org.newdawn.slick.Image;
 
 import java.io.File;
 
 public class TexturePack {
-
-	//TODO Que texutre files when selected?
 
 	public String name;
 	public String fileLocation;
@@ -21,8 +17,8 @@ public class TexturePack {
 		this.fileLocation = fileLocation;
 	}
 
-	public void loadImage(){
-		image = MainFile.game.imageLoader.getImage(this, null, "packImage_" + name);
+	public void loadImage(TextureLoader imageLoader){
+		image = imageLoader.getImage(this, null, "packImage_" + name);
 	}
 
 	public File getFile(String filePath){

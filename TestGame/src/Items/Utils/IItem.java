@@ -1,8 +1,6 @@
 package Items.Utils;
 
 import Items.Rendering.IItemRenderer;
-import Render.EnumRenderMode;
-import Utils.ConfigValues;
 import WorldFiles.World;
 
 import java.io.Serializable;
@@ -12,7 +10,6 @@ public interface IItem extends Cloneable, Serializable{
 	int getItemMaxStackSize();
 	String getItemName();
 
-	default EnumRenderMode getRenderMode(){return ConfigValues.renderMod;}
 	IItemRenderer getRender();
 
 	default ArrayList<String> getTooltips(ItemStack stack){return null;}
@@ -26,6 +23,6 @@ public interface IItem extends Cloneable, Serializable{
 	default boolean equals( IItem item ) {
 		return item != null && item.getItemName().equals(getItemName());
 	}
-	IItem clone() throws CloneNotSupportedException;
+	IItem clone();
 
 }

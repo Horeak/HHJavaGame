@@ -1,10 +1,10 @@
 package Render.Renders;
 
-import BlockFiles.BlockRender.DefaultBlockRendering;
+import BlockFiles.BlockRender.IBlockRenderer;
+import BlockFiles.Ores.IOre;
 import BlockFiles.Util.Block;
 import Items.Utils.ItemStack;
 import Main.MainFile;
-import Render.EnumRenderMode;
 import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
@@ -18,11 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class BlockRendering extends AbstractWindowRender {
 
-
-	//TODO Render Structures
 	@Override
 	public void render( org.newdawn.slick.Graphics g2 ) {
 		Vec2d plPos = new Vec2d(MainFile.game.getClient().getPlayer().getEntityPostion().x, MainFile.game.getClient().getPlayer().getEntityPostion().y);
@@ -33,7 +30,7 @@ public class BlockRendering extends AbstractWindowRender {
 		int xxx = (ConfigValues.renderXSize * ConfigValues.size), yyy = (ConfigValues.renderYSize * ConfigValues.size);
 		int j = ((xxx) / ConfigValues.size), g = ((yyy) / ConfigValues.size);
 
-		for(int i = (ConfigValues.renderMod == EnumRenderMode.render2D || ConfigValues.simpleBlockRender ? 2 : 0); i < 3; i++) {
+		for(int i = 0; i < 3; i++) {
 		HashMap<Point, Block> b = new HashMap<>();
 
 			for (int x = -(j / 2) - 2; x < (j / 2) + 2; x++) {
@@ -54,19 +51,24 @@ public class BlockRendering extends AbstractWindowRender {
 						if (MainFile.game.getServer().getWorld().getBlock(xx, yy) != null) {
 							Block block = MainFile.game.getServer().getWorld().getBlock(xx, yy);
 
-							if (block.isBlockSolid()) {
-								((DefaultBlockRendering) block.getRender()).renderBlock(g2, (int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), block.getRenderMode(), new ItemStack(block), MainFile.game.getServer().getWorld(), xx, yy, i);
-							} else {
-								b.put(new Point(xx, yy), block);
-							}
+							if(block != null) {
+								if (!block.opaqueRender()) {
+									((IBlockRenderer) block.getRender()).renderBlock(g2, (int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), new ItemStack(block), MainFile.game.getServer().getWorld(), xx, yy, i);
+								} else {
+									b.put(new Point(xx, yy), block);
+								}
 
+							}
 						}
+
+						Color ccg = g2.getColor();
 
 						//Renders Structures (Debug)
 						if( i == 2)
 						if(ConfigValues.renderStructureBounds) {
+
 							if (MainFile.game.getServer().getWorld().getStructure(xx, yy) != null) {
-								Block block = MainFile.game.getServer().getWorld().getBlock(xx, yy);
+								Block block = MainFile.game.getServer().getWorld().getStructure(xx, yy).getBlock(xx, yy);
 
 								Rectangle bound = new Rectangle(blockX * ConfigValues.size, blockY * ConfigValues.size, ConfigValues.size, ConfigValues.size);
 
@@ -77,6 +79,9 @@ public class BlockRendering extends AbstractWindowRender {
 
 								}else if(MainFile.game.getServer().getWorld().getTickBlock(xx, yy) != null){
 									cg = RenderUtil.getColorWithAlpha(Color.cyan, 0.2F);
+
+								}else if(block instanceof IOre){
+									cg = RenderUtil.getColorWithAlpha( block.getDefaultBlockColor().darker(), 0.4F);
 								}
 
 								g2.setColor(cg.brighter());
@@ -90,17 +95,18 @@ public class BlockRendering extends AbstractWindowRender {
 
 							}
 						}
-
+						g2.setColor(ccg);
 					}
 				}
 			}
+
 
 			//Non-solid block rendering is delayed to prevent overlay issues
 			for (Map.Entry<Point, Block> bb : b.entrySet()) {
 				float blockX = (float) (((bb.getKey().x) - plPos.x) + ConfigValues.renderRange);
 				float blockY = (float) (((bb.getKey().y) - plPos.y) + ConfigValues.renderRange);
 
-				((DefaultBlockRendering) bb.getValue().getRender()).renderBlock(g2,(int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), bb.getValue().getRenderMode(), new ItemStack(bb.getValue()), MainFile.game.getServer().getWorld(), bb.getKey().x, bb.getKey().y, i);
+				((IBlockRenderer) bb.getValue().getRender()).renderBlock(g2,(int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), new ItemStack(bb.getValue()), MainFile.game.getServer().getWorld(), bb.getKey().x, bb.getKey().y, i);
 			}
 
 		}

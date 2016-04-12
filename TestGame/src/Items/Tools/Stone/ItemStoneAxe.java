@@ -1,15 +1,13 @@
 package Items.Tools.Stone;
 
-import BlockFiles.BlockWood;
-import Items.Items;
 import Items.Tools.ITool;
-import Items.Utils.Item;
+import Items.Tools.ItemAxe;
 import Items.Utils.ItemStack;
-import Main.MainFile;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
-public class ItemStoneAxe extends Item implements ITool{
+public class ItemStoneAxe extends ItemAxe implements ITool{
 
 	public static Image texture;
 
@@ -24,8 +22,8 @@ public class ItemStoneAxe extends Item implements ITool{
 	}
 
 	@Override
-	public void loadTextures() {
-		texture =  MainFile.game.imageLoader.getImage("items/tools/stone","stoneAxe");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture =  imageLoader.getImage("items/tools/stone","stoneAxe");
 	}
 
 	@Override
@@ -43,12 +41,8 @@ public class ItemStoneAxe extends Item implements ITool{
 		return false;
 	}
 
-	public int getBlockDamageValue( World world, int x, int y, ItemStack stack ) {
-		if(stack.getStackDamage() < getMaxItemDamage()) {
-			if(world.getBlock(x, y) instanceof BlockWood){
-				return 4;
-			}
-		}
-		return 1;
+	@Override
+	public int getValueOnProperMaterial() {
+		return 4;
 	}
 }

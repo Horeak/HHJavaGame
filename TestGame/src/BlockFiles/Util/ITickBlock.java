@@ -8,7 +8,7 @@ import java.io.Serializable;
 public interface ITickBlock extends Serializable{
 
 	boolean shouldUpdate( World world, int x, int y);
-	default int blockUpdateDelay() {
+	default float blockUpdateDelay() {
 		return 1;
 	}
 

@@ -24,9 +24,7 @@ public class LoadWorldMenu extends AbstractMainMenu {
 	//TODO Add delete and rename
 
 	public void renderObject( Graphics g2 ) {
-		if(buttonTimeLimiter != -1 && buttonTimeLimiter < buttonTimeLimit){
-			buttonTimeLimiter += 1;
-		}
+		update();
 
 		for (GuiObject object : guiObjects) {
 			if(object instanceof WorldButton){

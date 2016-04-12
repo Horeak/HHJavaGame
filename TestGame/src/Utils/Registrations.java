@@ -12,8 +12,8 @@ import java.util.logging.Level;
 
 public class Registrations {
 
-	public static ArrayList<GenerationBase> generationBases = new ArrayList<GenerationBase>();
-	public static ArrayList<StructureGeneration> StructureGenerations = new ArrayList<StructureGeneration>();
+	public static final ArrayList<GenerationBase> generationBases = new ArrayList<GenerationBase>();
+	public static final ArrayList<StructureGeneration> StructureGenerations = new ArrayList<StructureGeneration>();
 
 	public static void registerGenerations() {
 		generationBases.add(new TreeGeneration());

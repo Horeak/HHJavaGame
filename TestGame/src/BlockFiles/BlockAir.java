@@ -2,6 +2,8 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
+import BlockFiles.Util.Material;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -24,11 +26,16 @@ public class BlockAir extends Block {
 	}
 
 	@Override
-	public void loadTextures() {
+	public void loadTextures(TextureLoader imageLoader) {
 
 	}
 
 	public int getMaxBlockDamage() {
 		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.AIR;
 	}
 }

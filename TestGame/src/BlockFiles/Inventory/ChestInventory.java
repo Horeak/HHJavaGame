@@ -31,4 +31,14 @@ public class ChestInventory implements IInventory {
 	public String getInventoryName() {
 		return "Chest";
 	}
+
+	@Override
+	public boolean validItemForSlot( ItemStack stack, int slot ) {
+		return true;
+	}
+
+	@Override
+	public boolean canConsumeFromSlot( int slot ) {
+		return true;
+	}
 }

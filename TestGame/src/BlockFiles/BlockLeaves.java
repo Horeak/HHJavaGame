@@ -2,17 +2,18 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
+import BlockFiles.Util.Material;
 import Items.Utils.ItemStack;
 import Main.MainFile;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-import java.util.Random;
-
 public class BlockLeaves extends Block {
 	public static Image texture;
-	private static Random rand = new Random();
+
+	//TODO Make leaves placed by player stay
 
 	@Override
 	public String getBlockDisplayName() {
@@ -30,13 +31,18 @@ public class BlockLeaves extends Block {
 	}
 
 	@Override
-	public void loadTextures() {
-		texture =  MainFile.game.imageLoader.getImage("blocks", "leaves");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture =  imageLoader.getImage("blocks", "leaves");
 	}
 
 	@Override
 	public ItemStack getItemDropped(World world, int x, int y) {
-		return rand.nextInt(10) == 1 ? new ItemStack(Blocks.blockSapling) : null;
+		return MainFile.random.nextInt(10) == 1 ? new ItemStack(Blocks.blockSapling) : null;
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.PLANT;
 	}
 
 	public boolean isBlockSolid() {

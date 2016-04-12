@@ -2,13 +2,13 @@ package BlockFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Inventory.ChestInventory;
-import BlockFiles.Util.Block;
+import BlockFiles.Util.Material;
 import Guis.GuiChest;
-import Guis.GuiFurnace;
 import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.ConfigValues;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -33,10 +33,15 @@ public class BlockChest extends BlockWood {
 	}
 
 	@Override
-	public void loadTextures() {
-		frontIcon = MainFile.game.imageLoader.getImage("blocks", "chestFront");
-		topIcon = MainFile.game.imageLoader.getImage("blocks", "chestTop");
-		sideIcon = MainFile.game.imageLoader.getImage("blocks", "chestSide");
+	public void loadTextures(TextureLoader imageLoader) {
+		frontIcon = imageLoader.getImage("blocks", "chestFront");
+		topIcon = imageLoader.getImage("blocks", "chestTop");
+		sideIcon = imageLoader.getImage("blocks", "chestSide");
+	}
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.WOOD;
 	}
 
 	@Override

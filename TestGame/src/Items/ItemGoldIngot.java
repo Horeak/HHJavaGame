@@ -2,7 +2,7 @@ package Items;
 
 import Items.Utils.Item;
 import Items.Utils.ItemStack;
-import Main.MainFile;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
@@ -21,8 +21,8 @@ public class ItemGoldIngot extends Item {
 	}
 
 	@Override
-	public void loadTextures() {
-		icon = MainFile.game.imageLoader.getImage("items", "goldIngot");
+	public void loadTextures(TextureLoader imageLoader) {
+		icon = imageLoader.getImage("items", "goldIngot");
 	}
 
 	@Override

@@ -3,7 +3,8 @@ package Guis;
 import BlockFiles.Inventory.FurnaceInventory;
 import Crafting.CraftingRegister;
 import Guis.Button.InventoryButton;
-import Interface.Gui;
+import Guis.Objects.IInventoryGui;
+import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.FontHandler;
@@ -13,11 +14,10 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.fills.GradientFill;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.svg.Gradient;
 
 import java.awt.*;
 
-public class GuiFurnace extends GuiGame {
+public class GuiFurnace extends GuiGame implements IInventoryGui{
 	public World world;
 	public int x, y;
 
@@ -116,8 +116,6 @@ public class GuiFurnace extends GuiGame {
 
 		g2.setClip(null);
 
-		renderInventoryButtons();
-
 	}
 
 	@Override
@@ -129,5 +127,10 @@ public class GuiFurnace extends GuiGame {
 		if (key == MainFile.game.getConfig().getKeybindFromID("inventory").getKey() || key == MainFile.game.getConfig().getKeybindFromID("exit").getKey()) {
 			closeGui();
 		}
+	}
+
+	@Override
+	public IInventory getInvetory() {
+		return world.getInventory(x, y);
 	}
 }

@@ -1,21 +1,19 @@
 package Guis;
 
-import BlockFiles.Inventory.FurnaceInventory;
-import Crafting.CraftingRegister;
 import Guis.Button.InventoryButton;
-import Items.Utils.ItemStack;
+import Guis.Objects.IInventoryGui;
+import Items.Utils.IInventory;
 import Main.MainFile;
 import Utils.FontHandler;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.fills.GradientFill;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
 
-public class GuiChest extends GuiGame {
+public class GuiChest extends GuiGame implements IInventoryGui{
 	public World world;
 	public int x, y;
 
@@ -67,7 +65,6 @@ public class GuiChest extends GuiGame {
 		g2.drawString("Chest", startX + 5, 105);
 		FontHandler.resetFont(g2);
 
-		renderInventoryButtons();
 
 	}
 
@@ -80,5 +77,10 @@ public class GuiChest extends GuiGame {
 		if (key == MainFile.game.getConfig().getKeybindFromID("inventory").getKey() || key == MainFile.game.getConfig().getKeybindFromID("exit").getKey()) {
 			closeGui();
 		}
+	}
+
+	@Override
+	public IInventory getInvetory() {
+		return world.getInventory(x, y);
 	}
 }

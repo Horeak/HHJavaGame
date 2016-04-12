@@ -1,7 +1,6 @@
 package WorldFiles;
 
 import BlockFiles.BlockAir;
-import BlockFiles.BlockDirt;
 import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ILightSource;
@@ -10,11 +9,7 @@ import BlockFiles.Util.LightUnit;
 import Items.Utils.IInventory;
 import Main.MainFile;
 import Utils.LoggerUtil;
-import Utils.Registrations;
 import WorldGeneration.Structures.Structure;
-import WorldGeneration.Util.GenerationBase;
-import WorldGeneration.Util.StructureGeneration;
-import WorldGeneration.Util.WorldGenPriority;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -54,14 +49,11 @@ public class Chunk implements Serializable{
 	public void onUnload(){
 	}
 
-	//TODO Should i move this to the World file to prevent errors when trying to set block through world instance?
-//	public void generateChunk(){
-//		if(world == null) LoggerUtil.exception(new Exception("ERROR: Null world before generation"));
-//		if(generated) return;
-//
-//		generated = true;
-//		world.generating = false;
-//	}
+	public void update(){
+		for(Structure st : structures.values()){
+			st.update();
+		}
+	}
 
 
 	public Block getBlock( int x, int y ) {
@@ -112,6 +104,13 @@ public class Chunk implements Serializable{
 			inventoryBlocks[xPos][yPos] = null;
 		}
 
+		if(getStructure(xPos, yPos) != null && block == null){
+			if(getStructure(xPos, yPos).shouldRemoveBlock(xPos, yPos)){
+				structures.remove(new Point(xPos,yPos));
+			}
+		}
+
+
 		if (blocks != null) {
 			if (xPos >= 0 && yPos >= 0) {
 				if (xPos < chunkSize && yPos < chunkSize) {
@@ -153,7 +152,13 @@ public class Chunk implements Serializable{
 	}
 
 	public Structure getStructure(int x, int y){
-		return structures.get(new Point(x, y));
+		Structure st = structures.get(new Point(x, y));
+
+		if(st != null && st.world == null){
+			st.world = world;
+		}
+
+		return st;
 	}
 
 	public void setStucture(Structure st){

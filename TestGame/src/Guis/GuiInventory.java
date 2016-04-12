@@ -3,8 +3,6 @@ package Guis;
 import Guis.Button.ArmorInventoryButton;
 import Guis.Button.InventoryButton;
 import Main.MainFile;
-import Render.Renders.BlockRendering;
-import Settings.Config;
 import Utils.ConfigValues;
 import Utils.FontHandler;
 import org.newdawn.slick.Color;
@@ -14,7 +12,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
 
-public class GuiInventory extends GuiGame {
+public class GuiInventory extends GuiGame{
 
 	public int startX = 140, startY = 160;
 	public int Swidth = 520, Sheight = 497;
@@ -67,9 +65,6 @@ public class GuiInventory extends GuiGame {
 		g2.drawString(MainFile.game.getClient().getPlayer().getInventoryName(), startX + 5, startY + 5);
 		FontHandler.resetFont(g2);
 
-		renderInventoryButtons();
-
-
 		g2.setColor(Color.gray.darker(0.25F));
 		g2.fill(rectangle);
 
@@ -115,5 +110,4 @@ public class GuiInventory extends GuiGame {
 			closeGui();
 		}
 	}
-
 }

@@ -4,6 +4,7 @@ import BlockFiles.Util.IFuel;
 import Crafting.CraftingRegister;
 import Items.Utils.IInventory;
 import Items.Utils.ItemStack;
+import Utils.LoggerUtil;
 
 public class FurnaceInventory implements IInventory {
 
@@ -42,6 +43,17 @@ public class FurnaceInventory implements IInventory {
 		return "Furnace";
 	}
 
+	@Override
+	public boolean validItemForSlot( ItemStack stack, int slot ) {
+		return slot == 0 && stack != null && CraftingRegister.getFurnaceRecipeFromInput(stack) != null || slot == 1 && stack.getItem() instanceof IFuel || slot == 2 && false;
+	}
+
+	@Override
+	public boolean canConsumeFromSlot( int slot ) {
+		return slot < 2;
+	}
+	public boolean canOutputfromSlot(int slot){return slot == 2;}
+
 	public boolean canSmelt(){
 		return fuel > 0 && canSmeltF();
 	}
@@ -64,12 +76,7 @@ public class FurnaceInventory implements IInventory {
 		if(canSmeltF() && fuel <= 0){
 			if(getItem(1) != null && getItem(1).getItem() instanceof IFuel){
 				fuel += ((IFuel)getItem(1).getItem()).getFuelValue();
-
-				getItem(1).decreaseStackSize(1);
-
-				if(getItem(1).getStackSize() <= 0){
-					setItem(1, null);
-				}
+				consumeFromSlot(null, 1);
 			}
 		}
 
@@ -82,17 +89,14 @@ public class FurnaceInventory implements IInventory {
 		if(smeltTime >= CraftingRegister.getFurnaceSmeltTimeFromInput(getItem(0))){
 			ItemStack ot = CraftingRegister.getFurnaceOutputFromInput(getItem(0));
 
-			if(getItem(2) != null && getItem(2).getStackSize() > 0){
-				getItem(2).increaseStackSize(ot.getStackSize());
-			}else{
-				setItem(2, new ItemStack(ot.getItem(), ot.getStackSize(), ot.getStackDamage()));
-			}
+			try {
 
-			getItem(0).decreaseStackSize(CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).input.getStackSize());
+				addItemToSlot(new ItemStack(ot), 2);
 
-			if(getItem(0).getStackSize() <= 0){
-				setItem(0, null);
+			} catch (Exception e) {
+				LoggerUtil.exception(e);
 			}
+			consumeFromSlot(CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).input, 0);
 
 			smeltTime = 0;
 			return;

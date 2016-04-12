@@ -3,7 +3,9 @@ package BlockFiles;
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ILightSource;
-import Main.MainFile;
+import BlockFiles.Util.Material;
+import Utils.RenderUtil;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -18,7 +20,7 @@ public class BlockTorch extends Block implements ILightSource {
 
 	@Override
 	public Color getDefaultBlockColor() {
-		return Color.yellow;
+		return RenderUtil.getColorWithAlpha(Color.yellow, 0.75F);
 	}
 
 
@@ -49,8 +51,13 @@ public class BlockTorch extends Block implements ILightSource {
 	}
 
 	@Override
-	public void loadTextures() {
+	public void loadTextures(TextureLoader imageLoader) {
 
 	}
 
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.WOOD;
+	}
 }

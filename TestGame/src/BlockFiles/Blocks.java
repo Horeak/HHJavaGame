@@ -1,15 +1,25 @@
 package BlockFiles;
 
+import BlockFiles.Ores.BlockCoalOre;
+import BlockFiles.Ores.BlockGoldOre;
+import BlockFiles.Ores.BlockIronOre;
+import BlockFiles.Ores.BlockSilverOre;
 import BlockFiles.Util.Block;
+import Utils.LoggerUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class Blocks {
 	public static HashMap<Block, String> blockRegistry = new HashMap<>();
 
 	public static <T extends Block> Block addBlock(T bl, String id){
+		bl.registryValue = blockRegistry.size() + 1;
 		blockRegistry.put(bl, id);
+
+		LoggerUtil.out.log(Level.INFO, "Block registried: " + bl + ", id=" + id + ", registryNum=" + bl.registryValue);
+
 		return bl;
 	}
 
@@ -39,11 +49,16 @@ public class Blocks {
 		return blockAir;
 	}
 
-
 	public static Block blockAir = addBlock(new BlockAir());
 
-	public static Block blockGrass = addBlock(new BlockGrass());
+	public static Block blockGrass = addBlock(new BlockGrass(0));
+	public static Block blockSnow = addBlock(new BlockGrass(1));
+
+	public static Block blockSnowLayer = addBlock(new BlockSnow());
+
 	public static Block blockDirt = addBlock(new BlockDirt());
+	public static Block blockSand = addBlock(new BlockSand());
+	public static Block blockSandStone = addBlock(new BlockSandstone());
 
 	public static Block blockStone = addBlock(new BlockStone());
 	public static Block blockCrackedStone =  addBlock(new BlockCrackedStone());
@@ -57,6 +72,7 @@ public class Blocks {
 
 	public static Block blockFurnace = addBlock(new BlockFurnace());
 	public static Block blockChest = addBlock(new BlockChest());
+	public static Block blockItemMover = addBlock(new BlockItemMover());
 
 	//TODO Add more ores and redo some of those textures
 	//TODO (Copper, Titanium...?)

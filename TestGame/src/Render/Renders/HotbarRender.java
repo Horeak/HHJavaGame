@@ -7,14 +7,12 @@ import Main.MainFile;
 import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
 import Utils.FontHandler;
+import Utils.ImageLoader;
 import Utils.RenderUtil;
-import com.sun.deploy.config.Config;
-import org.newdawn.slick.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
-import java.awt.Font;
 import java.util.ArrayList;
 
 public class HotbarRender extends AbstractWindowRender {
@@ -30,8 +28,8 @@ public class HotbarRender extends AbstractWindowRender {
 	public static org.newdawn.slick.Image hotbarImage;
 
 	@Override
-	public void loadTextures() {
-		hotbarImage = MainFile.game.imageLoader.getImage("ui", "hotbar");
+	public void loadTextures(ImageLoader imageLoader) {
+		hotbarImage = imageLoader.getImage("ui", "hotbar");
 	}
 
 	@Override
@@ -131,7 +129,7 @@ public class HotbarRender extends AbstractWindowRender {
 			g2.scale(0.5F, 0.5F);
 
 			if(item != null && item.getItem() != null)
-			RenderUtil.renderItem(g2, item, (x + 14) * 2, (y + 23) * 2, item.getItem().getRenderMode());
+			RenderUtil.renderItem(g2, item, (x + 14) * 2, (y + 23) * 2);
 
 			g2.scale(2, 2);
 

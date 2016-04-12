@@ -1,21 +1,24 @@
-package EntityFiles;
+package EntityFiles.Entities;
 
 import BlockFiles.Util.Block;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
+import EntityFiles.Entity;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.RenderUtil;
+import Utils.TexutrePackFiles.TextureLoader;
 import org.newdawn.slick.Graphics;
 
 import java.awt.geom.Rectangle2D;
 
 public class EntityItem extends Entity {
-
+	//TODO Add droppedBy to make it delay pickup if dropped by same person
 	public ItemStack stack;
 	public int delay = 0, delayTo = 5;
 
 	public static int DESPAWN_TIME = 3000;
+	public static float PICKUP_RANGE = 1.5F;
 
 	public EntityItem( float x, float y, ItemStack stack ) {
 		super(x, y);
@@ -31,7 +34,7 @@ public class EntityItem extends Entity {
 
 	@Override
 	public Rectangle2D getEntityBounds() {
-		return new Rectangle2D.Double(pos.x, pos.y, 0, 0);
+		return new Rectangle2D.Double(getEntityPostion().x, getEntityPostion().y, 0, 0);
 	}
 
 	@Override
@@ -72,14 +75,14 @@ public class EntityItem extends Entity {
 		g2.translate(renderX + 16, renderY - (48 + renderOff) + 8);
 
 		if(stack != null && stack.getItem() != null)
-		RenderUtil.renderItem(g2, stack, renderX, renderY, stack.getItem().getRenderMode());
+		RenderUtil.renderItem(g2, stack, renderX, renderY);
 
 		g2.scale(2, 2);
 		g2.popTransform();
 	}
 
 	@Override
-	public void loadTextures() {
+	public void loadTextures(TextureLoader imageLoader) {
 
 	}
 
@@ -91,8 +94,9 @@ public class EntityItem extends Entity {
 	public void updateEntity() {
 		super.updateEntity();
 
+		//Despawns the item after the DESPAWN_TIME has been reached
 		if(timeAlive > DESPAWN_TIME){
-			MainFile.game.getServer().getWorld().RemoveEntities.add(this);
+			MainFile.game.getServer().getWorld().despawnEntity(this);
 		}
 
 		if(!top && renderOff < renderTop){
@@ -108,12 +112,14 @@ public class EntityItem extends Entity {
 		if(renderOff > renderTop) renderOff = renderTop;
 		if(renderOff < 0) renderOff = 0;
 
+
+		//Gives the player the item if withing the range of the item ad despawns the entity
 		if(delay >= delayTo) {
-			if (MainFile.game.getClient().getPlayer().getEntityPostion().distance(pos) < 1.5F) {
+			if (MainFile.game.getClient().getPlayer().getEntityPostion().distance(getEntityPostion()) < PICKUP_RANGE) {
 				MainFile.game.getClient().getPlayer().addItem(stack);
 				stack = null;
 
-				MainFile.game.getServer().getWorld().RemoveEntities.add(this);
+				MainFile.game.getServer().getWorld().despawnEntity(this);
 			}
 		}else if(delay < delayTo){
 			delay += 1;

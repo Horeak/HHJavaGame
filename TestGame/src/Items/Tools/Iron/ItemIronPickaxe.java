@@ -1,15 +1,13 @@
 package Items.Tools.Stone;
 
-import BlockFiles.BlockStone;
-import Items.Items;
 import Items.Tools.ITool;
-import Items.Utils.Item;
+import Items.Tools.ItemPickaxe;
 import Items.Utils.ItemStack;
-import Main.MainFile;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Image;
 
-public class ItemIronPickaxe extends Item implements ITool {
+public class ItemIronPickaxe extends ItemPickaxe implements ITool {
 
 
 	public static Image texture;
@@ -25,8 +23,8 @@ public class ItemIronPickaxe extends Item implements ITool {
 	}
 
 	@Override
-	public void loadTextures() {
-		texture =  MainFile.game.imageLoader.getImage("items/tools/iron","ironPickaxe");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture =  imageLoader.getImage("items/tools/iron","ironPickaxe");
 	}
 
 	@Override
@@ -44,13 +42,8 @@ public class ItemIronPickaxe extends Item implements ITool {
 		return false;
 	}
 
-	//Make it work on ores aswell when implemented
-	public int getBlockDamageValue( World world, int x, int y, ItemStack stack ) {
-		if(stack.getStackDamage() < getMaxItemDamage()) {
-			if(world.getBlock(x, y) instanceof BlockStone){
-				return 8;
-			}
-		}
-		return 1;
+	@Override
+	public int getValueOnProperMaterial() {
+		return 8;
 	}
 }

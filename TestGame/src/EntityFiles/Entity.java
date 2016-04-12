@@ -4,9 +4,9 @@ import BlockFiles.Util.Block;
 import EntityFiles.DamageSourceFiles.DamageBase;
 import EntityFiles.DamageSourceFiles.DamageSource;
 import Main.MainFile;
-import Utils.ConfigValues;
 import Utils.SeriPoint2D;
-import com.sun.javafx.geom.Point2D;
+import Utils.TexutrePackFiles.TextureLoader;
+import WorldFiles.Chunk;
 
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
@@ -73,7 +73,7 @@ public abstract class Entity implements Serializable{
 	public abstract void onDeath();
 
 	public abstract void renderEntity( org.newdawn.slick.Graphics g2, int renderX, int renderY );
-	public abstract void loadTextures();
+	public abstract void loadTextures(TextureLoader imageLoader);
 
 
 	public Block getBlockBelow() {
@@ -107,7 +107,19 @@ public abstract class Entity implements Serializable{
 		Block targetBlock = MainFile.game.getServer().getWorld().getBlock(Math.round(x), Math.round(y));
 			if (targetBlock != null && !targetBlock.blockBounds(Math.round(x), Math.round(y)).intersects(getEntityBounds()) || targetBlock != null && targetBlock.canPassThrough() || targetBlock == null) {
 				if (canMoveTo(x, y)) {
+
+					if(y == getEntityPostion().y){
+						if(getBlockBelow() != null){
+							getBlockBelow().onStep();
+						}
+					}else{
+						if(getBlockBelow() != null){
+							getBlockBelow().onFall();
+						}
+					}
+
 					setEntityPosition(x, y);
+
 					return true;
 				}
 			}
@@ -116,45 +128,55 @@ public abstract class Entity implements Serializable{
 	}
 
 	int healTime = 0, timeToHeal = 50;
+	public boolean shouldFall = true;
+
 	public void updateEntity() {
+		//Dont update the entity if it is not loaded. Just a quick fix to EntityItem falling through the world
+		//TODO Replace this with prober fix which unloads the entities
+		if(!MainFile.game.getServer().getWorld().isChunkLoaded(Math.round(getEntityPostion().x) / Chunk.chunkSize, Math.round(getEntityPostion().y) / Chunk.chunkSize)) return;
+
 		if(!MainFile.game.getServer().getWorld().generating) {
 			timeAlive += 1;
 
-			//TODO Improve falling to use values under 1 when possible and increase with the amount of blocks fallen
-			float blocksToFall = blocksFallen <= 2 ? 0.5F : (blocksFallen / 4);
+			if(shouldFall) {
+				//TODO Improve falling to use values under 1 when possible and increase with the amount of blocks fallen
+				float blocksToFall = blocksFallen <= 2 ? 0.5F : (blocksFallen / 4);
 
-			Block bl = getBlockBelow();
-			isOnGround = bl != null && !bl.canPassThrough()&& ((int)pos.y == pos.y);
+				Block bl = getBlockBelow();
+				isOnGround = bl != null && !bl.canPassThrough() && ((int) pos.y == pos.y);
 
-			if(!canMoveTo(pos.x, Math.round(pos.y + blocksToFall)) && ((int)pos.y == pos.y)) {
-				isOnGround = true;
-			}
-
-			//TODO When falling too far the blocks fallen will find the block below and cancele fall height! FIX!
-			if (!isOnGround && bl == null || !isOnGround && bl != null && bl.canPassThrough()) {
-				float x = pos.x;
-				float y = Math.round(pos.y + blocksToFall);
-
-				if(canMoveTo(x, y)) {
-					moveTo(x, y);
-				}else if(blocksFallen > 2 && canMoveTo(x, y - blocksToFall)){
-					moveTo(x, y - blocksToFall);
+				if (!canMoveTo(pos.x, Math.round(pos.y + blocksToFall)) && ((int) pos.y == pos.y)) {
+					isOnGround = true;
 				}
 
-				blocksFallen += (blocksFallen > 2 ? 2 : 1);
-			}
+				//TODO When falling too far the blocks fallen will find the block below and cancele fall height! FIX!
+				if (!isOnGround && bl == null || !isOnGround && bl != null && bl.canPassThrough()) {
+					float x = pos.x;
+					float y = Math.round(pos.y + blocksToFall);
 
-			if (isOnGround && blocksFallen != 0) {
-				float damage = (float)blocksFallen / 3F;
-
-				damageEntity(DamageSource.Fall_Damage, new DamageBase() {
-					@Override
-					public int getDamageAmount() {
-						return Math.round(damage);
+					if (canMoveTo(x, y)) {
+						moveTo(x, y);
+					} else if (blocksFallen > 2 && canMoveTo(x, y - blocksToFall)) {
+						moveTo(x, y - blocksToFall);
 					}
-				});
 
-				blocksFallen = 0;
+					blocksFallen += (blocksFallen > 2 ? 2 : 1);
+				}
+
+				if (isOnGround && blocksFallen != 0) {
+					float damage = (float) blocksFallen / 3F;
+
+					if (shouldDamage(DamageSource.Fall_Damage)) {
+						damageEntity(DamageSource.Fall_Damage, new DamageBase() {
+							@Override
+							public int getDamageAmount() {
+								return Math.round(damage);
+							}
+						});
+					}
+
+					blocksFallen = 0;
+				}
 			}
 
 				if (getEntityHealth() <= 0) {
@@ -172,6 +194,8 @@ public abstract class Entity implements Serializable{
 
 	}
 
+
+	public boolean shouldLoadChunk(){return false;}
 
 	@Override
 	public boolean equals( Object o ) {

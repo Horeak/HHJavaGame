@@ -5,6 +5,8 @@ import WorldFiles.World;
 
 public enum DamageSource {
 
+	//TODO Change system where Damage sources can be added without changing enum class!
+
 	//TODO Add damage sources
 	Fall_Damage("Fall Damage"),
 	UNSPECIFIED("UNSPECIFIED");

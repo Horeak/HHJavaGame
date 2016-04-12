@@ -1,7 +1,7 @@
 package Guis.Button;
 
-import EntityFiles.Entities.EntityPlayer;
 import Guis.GuiGame;
+import Guis.Objects.IInventoryGui;
 import Interface.GuiObject;
 import Interface.UIMenu;
 import Items.Utils.IInventory;
@@ -26,6 +26,8 @@ public class InventoryButton extends GuiObject {
 
 	public int xSize, ySize;
 
+	//TODO Make InventoryButton use a texture
+	//TODO Add function to render button overlay similar to armor buttons
 	public InventoryButton( GuiGame gui, int x, int y, boolean renderNumber, int number, IInventory inventory ) {
 		this(gui, x, y, 48, 48, renderNumber, number, inventory);
 	}
@@ -42,102 +44,86 @@ public class InventoryButton extends GuiObject {
 		this.ySize = ySize;
 	}
 
-	public boolean validItem(ItemStack stack){
-		return true;
-	}
-
-	public static int addItem( GuiGame gui, int slot, IInventory inv ) throws Exception {
-		if (gui.heldItem == null && inv.getItem(slot) != null) {
-			gui.heldItem = new ItemStack(inv.getItem(slot));
-			inv.setItem(slot, null);
-
-		} else if (gui.heldItem != null && inv.getItem(slot) == null) {
-			inv.setItem(slot, gui.heldItem);
-			return 0;
-
-		} else if (gui.heldItem != null && inv.getItem(slot) != null && gui.heldItem.equals(inv.getItem(slot)) && inv.getItem(slot).getStackSize() < inv.getItem(slot).getMaxStackSize()) {
-			int t = inv.getItem(slot).getMaxStackSize() - inv.getItem(slot).getStackSize();
-			int tt = t - gui.heldItem.getStackSize();
-
-			if (tt > 0) {
-				if (inv.getItem(slot).getMaxStackSize() - tt > inv.getItem(slot).getMaxStackSize()) {
-					inv.getItem(slot).setStackSize(inv.getItem(slot).getMaxStackSize());
-				} else {
-					inv.getItem(slot).setStackSize(inv.getItem(slot).getMaxStackSize() - tt);
-				}
-
-				return 0;
-			} else {
-				gui.heldItem.setStackSize(gui.heldItem.getStackSize() - t);
-				inv.getItem(slot).setStackSize(inv.getItem(slot).getMaxStackSize() - tt);
-
-				if (gui.heldItem.getStackSize() == 0) {
-					return 0;
-				}
-			}
-
-		}else if(gui.heldItem != null && inv.getItem(slot) != null && !gui.heldItem.equals(inv.getItem(slot))){
-			ItemStack stack = inv.getItem(slot);
-			inv.setItem(slot, gui.heldItem);
-			gui.heldItem = new ItemStack(stack);
-		}
-
-		return gui.heldItem != null ? gui.heldItem.getStackSize() : 0;
-	}
-
 	@Override
 	public void onClicked( int button, int x, int y, UIMenu menu ) {
 		try {
-			//TODO Create a inventoryhandler util so that i dont have to make this code for every inventory
-			if (button == Input.MOUSE_LEFT_BUTTON) {
-				try {
-					if(validItem(gui.heldItem) || gui.heldItem == null) {
-						int tt = addItem(gui, num, inv);
+			if(MainFile.game.gameContainer.getInput().isKeyDown(Input.KEY_LSHIFT)){
+				if (button == Input.MOUSE_LEFT_BUTTON) {
+					if (gui instanceof IInventoryGui) {
+						if(inv.getItem(num) != null) {
 
-						if (tt > 0) {
-							gui.heldItem.setStackSize(tt);
-						} else {
-							gui.heldItem = null;
+							if (inv == MainFile.game.getClient().getPlayer()) {
+								IInventory invv = ((IInventoryGui) gui).getInvetory();
+
+								if (invv.addItem(inv.getItem(num))) {
+									inv.setItem(num, null);
+								}
+							} else {
+								if (MainFile.game.getClient().getPlayer().addItem(inv.getItem(num))) {
+									inv.setItem(num, null);
+								}
+							}
 						}
 					}
-
-				} catch (Exception e) {
-					LoggerUtil.exception(e);
 				}
+			}else {
 
-			} else if (button == Input.MOUSE_RIGHT_BUTTON) {
-				if (gui.heldItem == null && inv.getItem(num) != null) {
-					gui.heldItem = new ItemStack(inv.getItem(num));
 
-					int t = gui.heldItem.getStackSize();
-					int tj = t / 2;
+				if (button == Input.MOUSE_LEFT_BUTTON) {
+					try {
+						if (gui.heldItem != null && inv.validItemForSlot(gui.heldItem, num)) {
+							int tt = inv.addItemToSlot(gui.heldItem, num);
 
-					if (gui.heldItem.getStackSize() == 1) {
-						gui.heldItem = new ItemStack(inv.getItem(num));
-						inv.setItem(num, null);
-					} else {
-						gui.heldItem.decreaseStackSize(tj);
-						inv.getItem(num).setStackSize(tj);
+							if (tt > 0) {
+								gui.heldItem.setStackSize(tt);
+							} else {
+								gui.heldItem = null;
+							}
+
+						} else if (gui.heldItem == null) {
+							gui.heldItem = inv.getItem(num);
+							inv.setItem(num, null);
+						}
+
+					} catch (Exception e) {
+						LoggerUtil.exception(e);
 					}
 
-				} else if (gui.heldItem != null && inv.getItem(num) == null) {
-					int t = gui.heldItem.getStackSize();
-					int tj = 1;
+					//TODO Perhaps look at a way to improve this? (Messy code)
+				} else if (button == Input.MOUSE_RIGHT_BUTTON) {
+					if (gui.heldItem == null && inv.getItem(num) != null) {
+						gui.heldItem = new ItemStack(inv.getItem(num));
 
-					if (gui.heldItem.getStackSize() == 1) {
-						inv.setItem(num, gui.heldItem);
-						gui.heldItem = null;
-					} else {
-						gui.heldItem.setStackSize(tj);
-						inv.setItem(num, new ItemStack(gui.heldItem));
-						gui.heldItem.setStackSize(t-1);
+						int t = gui.heldItem.getStackSize();
+						int tj = t / 2;
+
+						if (gui.heldItem.getStackSize() == 1) {
+							gui.heldItem = new ItemStack(inv.getItem(num));
+							inv.setItem(num, null);
+						} else {
+							gui.heldItem.decreaseStackSize(tj);
+							inv.getItem(num).setStackSize(tj);
+						}
+
+					} else if (gui.heldItem != null && inv.getItem(num) == null) {
+						int t = gui.heldItem.getStackSize();
+						int tj = 1;
+
+						if (gui.heldItem.getStackSize() == 1) {
+							inv.setItem(num, gui.heldItem);
+							gui.heldItem = null;
+						} else {
+							gui.heldItem.setStackSize(tj);
+							inv.setItem(num, new ItemStack(gui.heldItem));
+							gui.heldItem.setStackSize(t - 1);
+						}
+
 					}
 
 				}
 
 			}
-
-		} catch (CloneNotSupportedException e) {
+		} catch (Exception e) {
 			LoggerUtil.exception(e);
 		}
 	}
@@ -177,7 +163,7 @@ public class InventoryButton extends GuiObject {
 			g2.scale(0.5F, 0.5F);
 			g2.translate(tangle.getMinX(), tangle.getMaxY());
 
-			RenderUtil.renderItem(g2, item, (int) tangle.getCenterX(), y, item.getItem().getRenderMode());
+			RenderUtil.renderItem(g2, item, (int) tangle.getCenterX(), y);
 
 			g2.scale(2, 2);
 			g2.popTransform();
@@ -202,5 +188,27 @@ public class InventoryButton extends GuiObject {
 			FontHandler.resetFont(g2);
 		}
 
+	}
+
+	public void renderObjectPost(Graphics g2, UIMenu menu){
+		ItemStack item = inv.getItem(num);
+
+		if (isMouseOver() && item != null) {
+			int mouseX = MainFile.game.gameContainer.getInput().getMouseX();
+			int mouseY = MainFile.game.gameContainer.getInput().getMouseY();
+
+			int length = item.getTooltips() != null ? item.getTooltips().size() + 1 : 1;
+
+			String[] tt = new String[length];
+
+			tt[0] = item.getStackSize() + "x " + item.getStackName();
+
+			if(item.getTooltips() != null)
+				for(int j = 0; j < tt.length-1; j++){
+					tt[j+1] = item.getTooltips().get(j);
+				}
+
+			gui.renderTooltip(mouseX, mouseY, tt);
+		}
 	}
 }

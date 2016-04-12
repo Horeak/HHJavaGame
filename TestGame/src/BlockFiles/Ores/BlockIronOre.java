@@ -1,13 +1,13 @@
-package BlockFiles;
+package BlockFiles.Ores;
 
 import BlockFiles.BlockRender.EnumBlockSide;
-import BlockFiles.Util.Block;
-import Main.MainFile;
+import BlockFiles.BlockStone;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
-public class BlockIronOre extends BlockStone{
+public class BlockIronOre extends BlockStone  implements IOre{
 
 	public static Image texture;
 
@@ -27,7 +27,7 @@ public class BlockIronOre extends BlockStone{
 	}
 
 	@Override
-	public void loadTextures() {
-		texture = MainFile.game.imageLoader.getImage("blocks","ironOre");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture = imageLoader.getImage("blocks","ironOre");
 	}
 }

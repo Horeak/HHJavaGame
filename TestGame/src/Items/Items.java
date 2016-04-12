@@ -4,28 +4,25 @@ import Items.DebugTools.ItemChunkDestoryer;
 import Items.DebugTools.ItemChunkRegenerator;
 import Items.DebugTools.ItemChunkReloader;
 import Items.Tools.Stone.*;
-import Items.Tools.Stone.ItemGoldAxe;
-import Items.Tools.Stone.ItemGoldPickaxe;
-import Items.Tools.Stone.ItemGoldShovel;
-import Items.Tools.Stone.ItemIronAxe;
-import Items.Tools.Stone.ItemIronPickaxe;
-import Items.Tools.Stone.ItemIronShovel;
-import Items.Tools.Stone.ItemSilverAxe;
-import Items.Tools.Stone.ItemSilverPickaxe;
-import Items.Tools.Stone.ItemSilverShovel;
 import Items.Tools.Wood.ItemWoodAxe;
 import Items.Tools.Wood.ItemWoodPickaxe;
 import Items.Tools.Wood.ItemWoodShovel;
 import Items.Utils.Item;
+import Utils.LoggerUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class Items {
 	public static HashMap<Item, String> ItemRegistry = new HashMap<>();
 	
 	public static <T extends Item> Item addItem(T bl, String id){
+		bl.registryValue = ItemRegistry.size() + 1;
 		ItemRegistry.put(bl, id);
+
+		LoggerUtil.out.log(Level.INFO, "Item registried: " + bl + ", id=" + id + ", registryNum=" + bl.registryValue);
+
 		return bl;
 	}
 	

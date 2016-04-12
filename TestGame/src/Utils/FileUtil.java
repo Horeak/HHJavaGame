@@ -2,11 +2,8 @@ package Utils;
 
 import Main.MainFile;
 import Utils.TexutrePackFiles.TexturePack;
-import WorldFiles.EnumWorldSize;
 import WorldFiles.World;
-import org.newdawn.slick.*;
 
-import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 

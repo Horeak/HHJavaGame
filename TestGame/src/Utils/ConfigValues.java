@@ -1,8 +1,6 @@
 package Utils;
 
 
-import Render.EnumRenderMode;
-
 public class ConfigValues {
 
 
@@ -16,8 +14,6 @@ public class ConfigValues {
 
 	public static final boolean PAUSE_GAME_IN_GUI = true;
 	public static final boolean PAUSE_GAME_IN_INV = false;
-
-	public static final boolean SPLIT_LOG_FILES = false;
 
 	//Render and debug options
 	public static boolean debug = false;
@@ -36,7 +32,6 @@ public class ConfigValues {
 	public static int hotbarRenderSize = 54;
 
 	public static int size = 32;
-	public static EnumRenderMode renderMod = EnumRenderMode.render2_5D;
 
 	public static float brightness = 1F; //Higher value = darker
 	public static int lightUpdateRenderRange = 64;

@@ -3,7 +3,8 @@ package BlockFiles;
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ITickBlock;
-import Main.MainFile;
+import BlockFiles.Util.Material;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.Chunk;
 import WorldFiles.World;
 import WorldGeneration.TreeGeneration;
@@ -38,8 +39,14 @@ public class BlockSapling extends Block{
 	}
 
 	@Override
-	public void loadTextures() {
-		texture  =  MainFile.game.imageLoader.getImage("blocks","sapling");
+	public void loadTextures(TextureLoader imageLoader) {
+		texture  =  imageLoader.getImage("blocks","sapling");
+	}
+
+
+	@Override
+	public Material getBlockMaterial() {
+		return Material.PLANT;
 	}
 
 	@Override
@@ -69,7 +76,7 @@ public class BlockSapling extends Block{
 			return treeGeneration.canGenerate(ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1);
 		}
 
-		public int blockUpdateDelay() {
+		public float blockUpdateDelay() {
 			return 60;
 		}
 

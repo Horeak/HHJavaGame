@@ -10,6 +10,7 @@ import Items.Utils.IItem;
 import Items.Utils.ItemStack;
 import Main.MainFile;
 import Utils.BlockUtils;
+import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.Chunk;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
@@ -23,10 +24,14 @@ public abstract class Block implements IItem{
 	public static int DEFAULT_MAX_STACK_SIZE = 64;
 	private int maxStackSize = DEFAULT_MAX_STACK_SIZE;
 
+	public int registryValue = -1;
+
 	public ArrayList<String> blockInfoList = new ArrayList<>();
 
 
 	public abstract String getBlockDisplayName();
+
+	//TODO Queue color after block instance is first created? To prevent a new color instance being created each render.
 	public abstract Color getDefaultBlockColor();
 
 	public float getMovementFriction() {
@@ -38,13 +43,14 @@ public abstract class Block implements IItem{
 	public boolean canPassThrough() {
 		return !isBlockSolid();
 	}
+	public boolean opaqueRender(){return isBlockSolid();}
 
 	public void addInfo(World world, int x, int y) {
 		if(world.getTickBlock(x, y) != null){
 			blockInfoList.add("Block is Tickable");
 			blockInfoList.add("Should tick: " + world.getTickBlock(x, y).shouldUpdate(world, x, y));
 			blockInfoList.add("Block ticks every: " + world.getTickBlock(x, y).blockUpdateDelay() + "s");
-			blockInfoList.add("Time until update: " + (world.getTickBlock(x, y).blockUpdateDelay() - world.getTickBlock(x, y).getTimeSinceUpdate(world, x, y)) + "s");
+			blockInfoList.add("Time until update: " + (world.getTickBlock(x, y).blockUpdateDelay() - (world.getTickBlock(x, y).getTimeSinceUpdate(world, x, y) / 1000)) + "s"); //Divided by 1000 to make it once each second
 			blockInfoList.add("");
 		}
 
@@ -92,11 +98,13 @@ public abstract class Block implements IItem{
 	public boolean useBlockTexture() {
 		return true;
 	}
-	public abstract void loadTextures();
+	public abstract void loadTextures(TextureLoader imageLoader);
 
 	public int getMaxBlockDamage() {
 		return 10;
 	}
+
+	public abstract Material getBlockMaterial();
 
 	public ItemStack getItemDropped(World world, int x, int y) {
 		return new ItemStack(this);
@@ -111,6 +119,37 @@ public abstract class Block implements IItem{
 	@Override
 	public int getItemMaxStackSize() {
 		return maxStackSize;
+	}
+
+
+	public void onStep(){
+		if(getBlockMaterial() != null){
+			if(getBlockMaterial().blockWalkSound != null) {
+				if(!getBlockMaterial().blockWalkSound.playing()) {
+					MainFile.game.soundLoader.playSound(getBlockMaterial().blockWalkSound, true);
+				}
+			}
+		}
+	}
+
+	public void onFall(){
+		if(getBlockMaterial() != null){
+			if(getBlockMaterial().blockFallSound != null) {
+				if(!getBlockMaterial().blockFallSound.playing()) {
+					MainFile.game.soundLoader.playSound(getBlockMaterial().blockWalkSound, true);
+				}
+			}
+		}
+	}
+
+	public void onHit(){
+		if(getBlockMaterial() != null){
+			if(getBlockMaterial().blockBreakSound != null) {
+				if(!getBlockMaterial().blockBreakSound.playing()) {
+					MainFile.game.soundLoader.playSound(getBlockMaterial().blockBreakSound, true);
+				}
+			}
+		}
 	}
 
 
@@ -142,7 +181,7 @@ public abstract class Block implements IItem{
 	}
 
 	@Override
-	public IItem clone() throws CloneNotSupportedException {
+	public IItem clone() {
 		return Blocks.getBlock(Blocks.getId(this));
 	}
 
@@ -157,14 +196,16 @@ public abstract class Block implements IItem{
 			if(cc != null && !cc.canPassThrough()) return false;
 		}
 
-		int h = world.getBiome(x) != null ? world.getBiome(x).getHeight(x) : 0;
+		int h = world.getBiome(x / Chunk.chunkSize) != null ? world.getHeight(x) : 0;
 
 		return world.ingnoreLightingHeight ? true : (y - (Chunk.chunkSize)) <= h;
 	}
+
+
+	//TODO Add a isInventory() and isTickBlock() function so that blocks will not have to create a new instance each tick to check if is valid inventory or tick block
 
 	public IInventory getInventory(){
 		return null;
 	}
 	public ITickBlock getTickBlock(){return null;}
-
 }
