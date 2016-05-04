@@ -1,16 +1,14 @@
 package Utils;
 
 import Main.MainFile;
-import org.apache.commons.io.filefilter.FileFileFilter;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 
-import java.io.*;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 
 public class ExtractFolderController {
+
+	//TODO Add seperate client and server extract folder
 
 	public static void extractFolder(String path) {
 		File file = FileUtils.getFolder(path);
@@ -28,27 +26,7 @@ public class ExtractFolderController {
 			e.printStackTrace();
 		}
 	}
-
-	//TODO Adding new texture when addind new blocks requires deleted extracted or updating version.data. Perhaps check another way if the local is outdated
 	public static boolean shouldExtract(String path){
-		if(MainFile.inDebugMode)return true;
-
-		File file = FileUtils.getFolder(path);
-		File fe = FileUtils.getFile(file + "/version.data");
-
-		if(fe != null){
-			DataHandler handler = new DataHandler(fe);
-			String version = handler.getString("version");
-
-			DataHandler handler1 = MainFile.game.saveUtil.getDataHandler("version.data");
-			String rem = handler1.getString("version");
-
-			return rem == null || !rem.equalsIgnoreCase(version);
-		}
-
-
-		return false;
+		return !ConfigValues.isServer;
 	}
-
-	//TODO Add a function to check if a folder/file is same as game version (to allow checking for change to the default texturepack for example)
 }

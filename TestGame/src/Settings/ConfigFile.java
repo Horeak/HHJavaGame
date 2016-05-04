@@ -4,6 +4,7 @@ import Main.MainFile;
 import Settings.Values.ConfigOption;
 import Settings.Values.Keybinding;
 import Utils.ConfigValues;
+import Utils.LoggerUtil;
 import org.newdawn.slick.Input;
 
 public class ConfigFile extends Config{
@@ -36,6 +37,15 @@ public class ConfigFile extends Config{
 		@Override
 		public void setValue(Object ob) {
 			ConfigValues.debug = (Boolean) ob;
+			try {
+				if(((Boolean)ob)){
+					MainFile.game.gameContainer.setDisplayMode(MainFile.xWindowSize + MainFile.debugSize, MainFile.yWindowSize, false);
+				}else{
+					MainFile.game.gameContainer.setDisplayMode(MainFile.xWindowSize, MainFile.yWindowSize, false);
+				}
+			} catch (Exception e) {
+				LoggerUtil.exception(e);
+			}
 		}
 
 		public boolean showOption() {

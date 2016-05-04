@@ -2,9 +2,11 @@ package WorldFiles;
 
 import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Blocks;
-import NoiseGenerator.PerlinNoiseGenerator;
 import NoiseGenerator.SimplexNoiseGenerator;
-import WorldGeneration.Structures.*;
+import WorldGeneration.Structures.GrassGeneration;
+import WorldGeneration.Structures.SandGeneration;
+import WorldGeneration.Structures.SnowLayerGeneration;
+import WorldGeneration.Structures.StoneGeneration;
 import WorldGeneration.Util.StructureGeneration;
 import org.newdawn.slick.Image;
 
@@ -17,8 +19,13 @@ public abstract class Biome implements Cloneable, Serializable{
 	public static transient HashMap<String, Biome> biomeHashMap = new HashMap<>();
 	public static transient ArrayList<String> biomeIDs = new ArrayList<>();
 
+	//TODO Add underground biomes? (For example to add magma caverns)(Will have to remake biome system to make it 2D instead of 1D)
+
 	public String name;
 	public String id;
+
+	public int length = 0;
+
 	public transient StructureGeneration[] worldGens;
 
 	public Biome(String id, String name, StructureGeneration[] worldGens){
@@ -49,14 +56,7 @@ public abstract class Biome implements Cloneable, Serializable{
 		return null;
 	}
 
-	transient PerlinNoiseGenerator noiseGenerator;
-
-	//TODO Need to redo this!
 	public void generateHeightMap(World world, int start) {
-		if (noiseGenerator == null || noiseGenerator.seed != world.worldSeed) {
-			noiseGenerator = new PerlinNoiseGenerator(world.worldSeed);
-		}
-
 		SimplexNoiseGenerator noise = new SimplexNoiseGenerator(world.worldSeed);
 
 		float height = 0;
@@ -70,15 +70,13 @@ public abstract class Biome implements Cloneable, Serializable{
 				world.heightHashMap.put(pos, Math.round(height));
 			}
 		}
-
-
 	}
 
 	public abstract int getOctaves();
 	public abstract float getFrequency();
 	public abstract float getAmplitude();
 
-	public abstract Image getBackgroundImage( int height);
+	public abstract Image getBackgroundImage( int height );
 
 
 	private static transient Biome plainsBiome = addBiome(new Biome("plainsBiome", "Plains", new StructureGeneration[]{ new GrassGeneration(), new StoneGeneration()}) {
@@ -100,14 +98,15 @@ public abstract class Biome implements Cloneable, Serializable{
 
 		@Override
 		public Image getBackgroundImage( int height ) {
-			if(height >= 0 && height <= Chunk.chunkSize) return Blocks.blockDirt.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+			if(height >= 0 && height <= Chunk.chunkSize - 4) return Blocks.blockDirt.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
+			if(height >= Chunk.chunkSize - 3 && height <= Chunk.chunkSize) return Blocks.blockSandStone.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
 			if(height > Chunk.chunkSize) return Blocks.blockStone.getBlockTextureFromSide(EnumBlockSide.FRONT, null, 0,0);
 
 			return null;
 		}
 	});
 
-	private static transient Biome snowBiome = addBiome(new Biome("snowBiome", "Snow Biome", new StructureGeneration[]{ new SnowGeneration(), new StoneGeneration(), new SnowLayerGeneration()}) {
+	private static transient Biome snowBiome = addBiome(new Biome("snowBiome", "Snow Biome", new StructureGeneration[]{ new GrassGeneration(), new StoneGeneration(), new SnowLayerGeneration()}) {
 
 		@Override
 		public int getOctaves() {
@@ -139,7 +138,7 @@ public abstract class Biome implements Cloneable, Serializable{
 
 		@Override
 		public int getOctaves() {
-			return 8;
+			return 6;
 		}
 
 		@Override
@@ -149,7 +148,7 @@ public abstract class Biome implements Cloneable, Serializable{
 
 		@Override
 		public float getAmplitude() {
-			return 0.2F;
+			return 0.28F;
 		}
 
 		@Override

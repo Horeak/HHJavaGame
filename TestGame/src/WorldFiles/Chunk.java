@@ -114,36 +114,28 @@ public class Chunk implements Serializable{
 		if (blocks != null) {
 			if (xPos >= 0 && yPos >= 0) {
 				if (xPos < chunkSize && yPos < chunkSize) {
-					blocks[ xPos ][ yPos ] = Blocks.getId(block);
+					blocks[xPos][yPos] = Blocks.getId(block);
 
 					if (block != null) {
-						if(block.getTickBlock() != null){
-							tickableBlocks.put(new Point(xPos,yPos), block.getTickBlock());
+						if (block.getTickBlock() != null) {
+							tickableBlocks.put(new Point(xPos, yPos), block.getTickBlock());
 						}
 
 						IInventory in = block.getInventory();
 
-						if(in != null){
+						if (in != null) {
 							inventoryBlocks[xPos][yPos] = in;
 						}
 
+
+						if (xPos < 0 || xPos > chunkSize || yPos < 0 || yPos > chunkSize)
+							return;
+
+						if (lightUnits == null)
+							return;
+
+						lightUnits[xPos][yPos] = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
 					}
-
-					if(!world.generating) {
-						if(getBlock(xPos, yPos, true) != null) {
-							getBlock(xPos, yPos, true).updateBlock(world, wX, wY, wX, wY);
-						}
-
-						world.updateNearbyBlocks(wX, wY);
-					}
-
-					if(xPos < 0 || xPos > chunkSize || yPos < 0 || yPos > chunkSize)
-						return;
-
-					if(lightUnits == null)
-						return;
-
-					lightUnits[xPos][yPos] = new LightUnit(ILightSource.DEFAULT_LIGHT_COLOR, 0);
 				}
 			}
 		}else{
@@ -161,9 +153,17 @@ public class Chunk implements Serializable{
 		return st;
 	}
 
-	public void setStucture(Structure st){
-		for(Point p : st.blocks.keySet()){
-			structures.put(p, st);
+	public void setStructure(Structure st){
+		for(Point t : st.blocks.keySet()){
+			structures.put(t, st);
+		}
+	}
+
+	public void setStructure(Structure st, int x, int y){
+		if(st == null){
+			structures.remove(new Point(x, y));
+		}else{
+			structures.put(new Point(x, y), st);
 		}
 	}
 

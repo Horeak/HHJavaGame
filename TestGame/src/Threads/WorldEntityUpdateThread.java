@@ -20,8 +20,6 @@ public class WorldEntityUpdateThread extends Thread {
 							ent.updateEntity();
 						}
 
-						MainFile.game.getServer().getWorld().Entities.removeAll(MainFile.game.getServer().getWorld().RemoveEntities);
-						MainFile.game.getServer().getWorld().RemoveEntities.clear();
 					}
 				}
 

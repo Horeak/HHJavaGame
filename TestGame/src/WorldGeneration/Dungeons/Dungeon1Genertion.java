@@ -4,6 +4,7 @@ import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Blocks;
 import Main.MainFile;
 import WorldFiles.Chunk;
+import WorldFiles.World;
 import WorldGeneration.Structures.ChunkStructure;
 import WorldGeneration.Util.DungeonLootGenerator;
 import WorldGeneration.Util.StructureGeneration;
@@ -14,7 +15,7 @@ import java.io.Serializable;
 
 public class Dungeon1Genertion extends StructureGeneration implements Serializable {
 	@Override
-	public boolean canGenerate(Chunk chunk) {
+	public boolean canGenerate( World world, Chunk chunk ) {
 		boolean height = ((chunk.chunkY - 2) * Chunk.chunkSize) > (chunk.world.getHeight(chunk.chunkX * Chunk.chunkSize));
 		boolean rand = MainFile.random.nextInt(20) == 0;
 		return rand && height;
@@ -22,7 +23,7 @@ public class Dungeon1Genertion extends StructureGeneration implements Serializab
 
 	//TODO Make higher level dungeons either alot more rare or add some kind of danger to them!
 	@Override
-	public void generate(Chunk chunk) {
+	public void generate( World world, Chunk chunk ) {
 		int length = 6;
 		int height = 5;
 
@@ -53,7 +54,7 @@ public class Dungeon1Genertion extends StructureGeneration implements Serializab
 		}
 
 		DungeonLootGenerator.generateDungeonChestInStructure(chunk.world, chunk,  ((x + 1) + ((length - 2) / 2)), (y + (height - 1)), 1, dungeonStructure);
-		chunk.setStucture(dungeonStructure);
+		chunk.setStructure(dungeonStructure);
 
 	}
 

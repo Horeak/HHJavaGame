@@ -30,8 +30,6 @@ public abstract class Block implements IItem{
 
 
 	public abstract String getBlockDisplayName();
-
-	//TODO Queue color after block instance is first created? To prevent a new color instance being created each render.
 	public abstract Color getDefaultBlockColor();
 
 	public float getMovementFriction() {
@@ -64,7 +62,7 @@ public abstract class Block implements IItem{
 
 
 	public float getLightValue(World world, int x, int y) {
-		if(!world.isChunkLoaded(x / Chunk.chunkSize, y / Chunk.chunkSize)) return 0F;
+		if(!world.isChunkLoaded(World.getChunkX(x), World.getChunkY(y))) return 0F;
 
 		LightUnit unit = world.getLightUnit(x, y);
 
@@ -80,8 +78,10 @@ public abstract class Block implements IItem{
 			tt += g;
 		}
 
-		if (tt > ILightSource.MAX_LIGHT_STRENGTH)
+		if (tt > ILightSource.MAX_LIGHT_STRENGTH) {
 			tt = ILightSource.MAX_LIGHT_STRENGTH;
+		}
+
 		return tt;
 
 	}
@@ -190,13 +190,16 @@ public abstract class Block implements IItem{
 	public boolean canBlockSeeSky(World world, int x, int y) {
 		if(world.getBlock(x, y, true) instanceof BlockAir) return false;
 
+		//TODO Check if the chunks above are loaded before trying and if the arnt use a height based check
+
 		for (int g = y - 1; g > (y - (Chunk.chunkSize / 2)); g -= 1) {
 			Block cc = world.getBlock(x, g);
+
 			if(cc != null && cc.isBlockSolid()) return false;
 			if(cc != null && !cc.canPassThrough()) return false;
 		}
 
-		int h = world.getBiome(x / Chunk.chunkSize) != null ? world.getHeight(x) : 0;
+		int h = world.getBiome(World.getChunkX(x)) != null ? world.getHeight(x) : 0;
 
 		return world.ingnoreLightingHeight ? true : (y - (Chunk.chunkSize)) <= h;
 	}

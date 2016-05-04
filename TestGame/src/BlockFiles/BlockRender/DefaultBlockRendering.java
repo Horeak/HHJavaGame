@@ -41,7 +41,7 @@ public class DefaultBlockRendering implements IBlockRenderer {
 
 			}
 
-			if (top && face == 0) {
+			if (top && face == 1) {
 				IBlockRenderer.drawTopImage(g, xStart, yStart, block.getBlockTextureFromSide(EnumBlockSide.TOP, world, x, y) != null ? block.getBlockTextureFromSide(EnumBlockSide.TOP, world, x, y).getFlippedCopy(true, false) : TextureLoader.unknownBlock.getFlippedCopy(true, false));
 
 				if(block.getBlockTextureFromSide(EnumBlockSide.TOP, world, x, y) == null){

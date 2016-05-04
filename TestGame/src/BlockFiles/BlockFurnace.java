@@ -86,7 +86,7 @@ public class BlockFurnace extends Block {
 	class furanceTickBlock implements ITickBlock{
 		@Override
 		public boolean shouldUpdate( World world, int x, int y ) {
-			return true;
+			return world.getInventory(x, y) != null && ((FurnaceInventory)world.getInventory(x, y)).canSmeltF();
 		}
 
 		@Override
@@ -94,6 +94,8 @@ public class BlockFurnace extends Block {
 			return world.getInventory(x, y) instanceof FurnaceInventory ? ((FurnaceInventory)world.getInventory(x, y)).timeSinceUpdate : 0;
 		}
 
+
+		//TODO Make it update faster but use same speed? (Would make gui update smoother)
 		@Override
 		public void setTimeSinceUpdate(World world, int x, int y, int i ) {
 			if(world.getInventory(x, y) instanceof FurnaceInventory){
@@ -108,6 +110,10 @@ public class BlockFurnace extends Block {
 			}
 		}
 
+		@Override
+		public float blockUpdateDelay() {
+			return 1;
+		}
 	}
 
 

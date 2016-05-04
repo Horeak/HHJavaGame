@@ -5,18 +5,19 @@ import BlockFiles.Blocks;
 import Main.MainFile;
 import NoiseGenerator.PerlinNoiseGenerator;
 import WorldFiles.Chunk;
+import WorldFiles.World;
 import WorldGeneration.Structures.ChunkStructure;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.WorldGenPriority;
 
 public class GoldOreGeneration extends GenerationBase {
 	@Override
-	public boolean canGenerate( Chunk chunk, int x, int y ) {
+	public boolean canGenerate( World world, Chunk chunk, int x, int y ) {
 		return chunk.getBlock(x, y) instanceof BlockStone && (y + (chunk.chunkY * Chunk.chunkSize)) > 50 && MainFile.random.nextInt(200) == 0;
 	}
 
 	@Override
-	public void generate( Chunk chunk, int x, int y ) {
+	public void generate( World world, Chunk chunk, int x, int y ) {
 		PerlinNoiseGenerator noiseGenerator = new PerlinNoiseGenerator(chunk.world.worldSeed);
 		int range = 2 + MainFile.random.nextInt(2);
 
@@ -35,7 +36,7 @@ public class GoldOreGeneration extends GenerationBase {
 			}
 		}
 
-		chunk.setStucture(chunkStructure);
+		chunk.setStructure(chunkStructure);
 	}
 
 

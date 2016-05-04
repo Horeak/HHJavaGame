@@ -86,7 +86,7 @@ public class AbstractMainMenu extends UIMenu {
 						Chunk ch = world.getChunk(x, ConfigValues.renderYSize - 5);
 						ch.world = world;
 
-						new TreeGeneration().generate(ch, x - (ch.chunkX * Chunk.chunkSize), (ConfigValues.renderYSize - 4) - (ch.chunkY * Chunk.chunkSize));
+						new TreeGeneration().generate(world, ch, x - (ch.chunkX * Chunk.chunkSize), (ConfigValues.renderYSize - 4) - (ch.chunkY * Chunk.chunkSize));
 					}
 				}
 			}

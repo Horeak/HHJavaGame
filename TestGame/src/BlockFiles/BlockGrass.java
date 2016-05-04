@@ -14,15 +14,8 @@ import org.newdawn.slick.Image;
 
 
 public class BlockGrass extends Block {
-	public static String[] textureNames = new String[]{"Normal", "Snow"};
 
-	public static Image[] sideImages = new Image[textureNames.length];
-	public static Image[] topImages = new Image[textureNames.length];
-
-	public int texture = 0;
-	public BlockGrass(int texture){
-		this.texture = texture;
-	}
+	public static Image topImage, sideImage;
 
 
 	public static boolean canGrassGrow( World world, int x, int y ) {
@@ -45,23 +38,18 @@ public class BlockGrass extends Block {
 	}
 
 	public Image getBlockTextureFromSide( EnumBlockSide side, World world, int x, int y ) {
-		return side == EnumBlockSide.SIDE || side == EnumBlockSide.FRONT ? sideImages[texture] : topImages[texture];
+		return side == EnumBlockSide.SIDE || side == EnumBlockSide.FRONT ? sideImage : topImage;
 	}
 
 	@Override
 	public void loadTextures(TextureLoader imageLoader) {
-		int i = 0;
-		for(String t : textureNames){
-			topImages[i] = imageLoader.getImage("blocks","grassTop_" + t);
-			sideImages[i] = imageLoader.getImage("blocks","grassSide_" + t);
-
-			i += 1;
-		}
+		topImage = imageLoader.getImage("blocks","grassTop");
+		sideImage = imageLoader.getImage("blocks","grassSide");
 	}
 
 	@Override
 	public String getBlockDisplayName() {
-		return textureNames[texture];
+		return "Grass";
 	}
 
 
@@ -150,6 +138,6 @@ public class BlockGrass extends Block {
 
 	@Override
 	public Material getBlockMaterial() {
-		return texture == 1 ? Material.SNOW : Material.DIRT;
+		return Material.DIRT;
 	}
 }

@@ -19,6 +19,9 @@ public class CraftingRegister {
 
 	public static final int DEFAUILT_SMELT_TIME = 5; //5 sec
 
+
+	//TODO Add a block based crafting? (For example make that personal crafting can have max 2 inputs or something like that?)
+
 	public static CraftingRecipe getCraftingRecipeFromInput( ItemStack[] input ) {
 		for (CraftingRecipe res : craftingRecipes) {
 			if (Arrays.equals(res.input, input)) {
@@ -130,7 +133,9 @@ public class CraftingRegister {
 		addCraftingRecipe(new ItemStack[]{ new ItemStack(Blocks.blockWood)}, new ItemStack(Blocks.blockPlanks, 3));
 		addCraftingRecipe(new ItemStack[]{ new ItemStack(Blocks.blockPlanks, 2)}, new ItemStack(Items.itemStick, 4));
 
-		addCraftingRecipe(new ItemStack[]{ new ItemStack(Items.itemStick, 1), new ItemStack(Blocks.blockPlanks)}, new ItemStack(Blocks.blockTorch, 5));
+		addCraftingRecipe(new ItemStack[]{ new ItemStack(Items.itemStick, 1), new ItemStack(Blocks.blockPlanks)}, new ItemStack(Blocks.blockTorch, 3));
+		addCraftingRecipe(new ItemStack[]{ new ItemStack(Items.itemStick, 1), new ItemStack(Items.itemCoal)}, new ItemStack(Blocks.blockTorch, 16));
+
 
 		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockWood), new ItemStack(Blocks.blockStone, 6)}, new ItemStack(Blocks.blockFurnace));
 		addCraftingRecipe(new ItemStack[]{new ItemStack(Blocks.blockPlanks, 8)}, new ItemStack(Blocks.blockChest));

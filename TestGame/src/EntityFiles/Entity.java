@@ -6,7 +6,7 @@ import EntityFiles.DamageSourceFiles.DamageSource;
 import Main.MainFile;
 import Utils.SeriPoint2D;
 import Utils.TexutrePackFiles.TextureLoader;
-import WorldFiles.Chunk;
+import WorldFiles.World;
 
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
@@ -133,7 +133,7 @@ public abstract class Entity implements Serializable{
 	public void updateEntity() {
 		//Dont update the entity if it is not loaded. Just a quick fix to EntityItem falling through the world
 		//TODO Replace this with prober fix which unloads the entities
-		if(!MainFile.game.getServer().getWorld().isChunkLoaded(Math.round(getEntityPostion().x) / Chunk.chunkSize, Math.round(getEntityPostion().y) / Chunk.chunkSize)) return;
+		if(!MainFile.game.getServer().getWorld().isChunkLoaded(World.getChunkX(Math.round(getEntityPostion().x)), World.getChunkY(Math.round(getEntityPostion().y)))) return;
 
 		if(!MainFile.game.getServer().getWorld().generating) {
 			timeAlive += 1;

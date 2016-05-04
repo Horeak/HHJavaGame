@@ -4,6 +4,7 @@ import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Blocks;
 import Main.MainFile;
 import WorldFiles.Chunk;
+import WorldFiles.World;
 import WorldGeneration.Structures.ChunkStructure;
 import WorldGeneration.Util.DungeonLootGenerator;
 import WorldGeneration.Util.StructureGeneration;
@@ -14,14 +15,14 @@ import java.io.Serializable;
 
 public class Dungeon2Genertion extends StructureGeneration  implements Serializable{
 	@Override
-	public boolean canGenerate(Chunk chunk) {
+	public boolean canGenerate( World world, Chunk chunk ) {
 		boolean height = ((chunk.chunkY - 4) * Chunk.chunkSize) > (chunk.world.getHeight(chunk.chunkX * Chunk.chunkSize));
 		boolean rand = MainFile.random.nextInt(40) == 0;
 		return rand && height;
 	}
 
 	@Override
-	public void generate(Chunk chunk) {
+	public void generate( World world, Chunk chunk ) {
 		int length = 8;
 		int height = 5;
 
@@ -54,7 +55,7 @@ public class Dungeon2Genertion extends StructureGeneration  implements Serializa
 		DungeonLootGenerator.generateDungeonChestInStructure(chunk.world, chunk,  (x + 3), (y + (height - 1)), 2, dungeonStructure);
 		DungeonLootGenerator.generateDungeonChestInStructure(chunk.world, chunk,  (x + 5), (y + (height - 1)), 2, dungeonStructure);
 
-		chunk.setStucture(dungeonStructure);
+		chunk.setStructure(dungeonStructure);
 
 	}
 

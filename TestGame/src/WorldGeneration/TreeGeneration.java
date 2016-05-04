@@ -6,6 +6,7 @@ import BlockFiles.Blocks;
 import BlockFiles.Util.Block;
 import Main.MainFile;
 import WorldFiles.Chunk;
+import WorldFiles.World;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.WorldGenPriority;
 
@@ -23,7 +24,7 @@ public class TreeGeneration extends GenerationBase {
 	//TODO FIX!
 
 	@Override
-	public boolean canGenerate( Chunk chunk, int x, int y ) {
+	public boolean canGenerate( World world, Chunk chunk, int x, int y ) {
 		if(chunk == null || chunk.world == null) return false;
 		//TODO Return false if biome doesnt support trees!
 
@@ -48,7 +49,7 @@ public class TreeGeneration extends GenerationBase {
 
 	//TODO FIX
 	@Override
-	public void generate( Chunk chunk, int x, int y ) {
+	public void generate( World world, Chunk chunk, int x, int y ) {
 		if(chunk == null || chunk.world == null) return;
 
 		int height = 3 + MainFile.random.nextInt(4);

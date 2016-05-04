@@ -1,6 +1,8 @@
 package Render.Renders;
 
 import BlockFiles.BlockRender.IBlockRenderer;
+import BlockFiles.BlockSnowLayer;
+import BlockFiles.Blocks;
 import BlockFiles.Ores.IOre;
 import BlockFiles.Util.Block;
 import Items.Utils.ItemStack;
@@ -9,14 +11,15 @@ import Rendering.AbstractWindowRender;
 import Utils.ConfigValues;
 import Utils.RenderUtil;
 import WorldFiles.Chunk;
+import WorldFiles.World;
 import com.sun.javafx.geom.Vec2d;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BlockRendering extends AbstractWindowRender {
 
@@ -31,7 +34,8 @@ public class BlockRendering extends AbstractWindowRender {
 		int j = ((xxx) / ConfigValues.size), g = ((yyy) / ConfigValues.size);
 
 		for(int i = 0; i < 3; i++) {
-		HashMap<Point, Block> b = new HashMap<>();
+			ConcurrentHashMap<Point, Block> b = new ConcurrentHashMap<>();
+			ConcurrentHashMap<Point, Block> structure = new ConcurrentHashMap<>();
 
 			for (int x = -(j / 2) - 2; x < (j / 2) + 2; x++) {
 				for (int y = -(g / 2) - 2; y < (g / 2) + 2; y++) {
@@ -39,7 +43,7 @@ public class BlockRendering extends AbstractWindowRender {
 					int xx = (int) (x + plPos.x);
 					int yy = (int) (y + plPos.y);
 
-					if(!Chunk.shouldRangeLoad(xx / Chunk.chunkSize, yy / Chunk.chunkSize))
+					if(!Chunk.shouldRangeLoad(World.getChunkX(xx), World.getChunkY(yy)))
 						continue;
 
 					if(MainFile.game.getServer().getWorld().isChunkLoaded(xx / Chunk.chunkSize, yy / Chunk.chunkSize) &&
@@ -61,8 +65,6 @@ public class BlockRendering extends AbstractWindowRender {
 							}
 						}
 
-						Color ccg = g2.getColor();
-
 						//Renders Structures (Debug)
 						if( i == 2)
 						if(ConfigValues.renderStructureBounds) {
@@ -70,44 +72,69 @@ public class BlockRendering extends AbstractWindowRender {
 							if (MainFile.game.getServer().getWorld().getStructure(xx, yy) != null) {
 								Block block = MainFile.game.getServer().getWorld().getStructure(xx, yy).getBlock(xx, yy);
 
-								Rectangle bound = new Rectangle(blockX * ConfigValues.size, blockY * ConfigValues.size, ConfigValues.size, ConfigValues.size);
-
-								Color cg = block != null ? RenderUtil.getColorWithAlpha(Color.green, 0.3F) : RenderUtil.getColorWithAlpha(Color.red, 0.3F);
-
-								if(MainFile.game.getServer().getWorld().getInventory(xx, yy) != null){
-									cg = RenderUtil.getColorWithAlpha(Color.yellow, 0.2F);
-
-								}else if(MainFile.game.getServer().getWorld().getTickBlock(xx, yy) != null){
-									cg = RenderUtil.getColorWithAlpha(Color.cyan, 0.2F);
-
-								}else if(block instanceof IOre){
-									cg = RenderUtil.getColorWithAlpha( block.getDefaultBlockColor().darker(), 0.4F);
-								}
-
-								g2.setColor(cg.brighter());
-								g2.draw(bound);
-
-								g2.setColor(cg);
-								g2.fill(bound);
-
-								g2.setColor(cg.brighter());
-								g2.draw(bound);
+								structure.put(new Point(xx, yy), block);
 
 							}
 						}
-						g2.setColor(ccg);
 					}
 				}
 			}
 
+			ConcurrentHashMap<Point, Block> snowList = new ConcurrentHashMap<>();
 
 			//Non-solid block rendering is delayed to prevent overlay issues
 			for (Map.Entry<Point, Block> bb : b.entrySet()) {
 				float blockX = (float) (((bb.getKey().x) - plPos.x) + ConfigValues.renderRange);
 				float blockY = (float) (((bb.getKey().y) - plPos.y) + ConfigValues.renderRange);
 
+				if(bb.getValue() instanceof BlockSnowLayer){
+					snowList.put(bb.getKey(), bb.getValue());
+					b.remove(bb.getKey());
+					continue;
+				}
+
 				((IBlockRenderer) bb.getValue().getRender()).renderBlock(g2,(int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), new ItemStack(bb.getValue()), MainFile.game.getServer().getWorld(), bb.getKey().x, bb.getKey().y, i);
 			}
+
+			//I know i am stupid for doing this....
+			for (Map.Entry<Point, Block> bb : snowList.entrySet()) {
+				float blockX = (float) (((bb.getKey().x) - plPos.x) + ConfigValues.renderRange);
+				float blockY = (float) (((bb.getKey().y) - plPos.y) + ConfigValues.renderRange);
+
+
+				((IBlockRenderer) bb.getValue().getRender()).renderBlock(g2,(int) ((blockX) * ConfigValues.size), (int) ((blockY) * ConfigValues.size), new ItemStack(bb.getValue()), MainFile.game.getServer().getWorld(), bb.getKey().x, bb.getKey().y, i);
+			}
+
+			for(Map.Entry<Point, Block> bb : structure.entrySet()){
+				float blockX = (float) (((bb.getKey().x) - plPos.x) + ConfigValues.renderRange);
+				float blockY = (float) (((bb.getKey().y) - plPos.y) + ConfigValues.renderRange);
+
+				Block block = bb.getValue();
+				Rectangle bound = new Rectangle(blockX * ConfigValues.size, blockY * ConfigValues.size, ConfigValues.size, ConfigValues.size);
+
+				//TODO Red color is not being shown when there is air blocks!
+				Color cg = block != Blocks.blockAir && block != null ? RenderUtil.getColorWithAlpha(Color.green, 0.3F) : RenderUtil.getColorWithAlpha(Color.red, 0.3F);
+
+				if(MainFile.game.getServer().getWorld().getInventory(bb.getKey().x, bb.getKey().y) != null){
+					cg = RenderUtil.getColorWithAlpha(Color.yellow, 0.2F);
+
+				}else if(MainFile.game.getServer().getWorld().getTickBlock(bb.getKey().x, bb.getKey().y) != null){
+					cg = RenderUtil.getColorWithAlpha(Color.cyan, 0.2F);
+
+				}else if(block instanceof IOre){
+					cg = RenderUtil.getColorWithAlpha( block.getDefaultBlockColor().darker(), 0.4F);
+				}
+
+				g2.setColor(cg.brighter());
+				g2.draw(bound);
+
+				g2.setColor(cg);
+				g2.fill(bound);
+
+				g2.setColor(cg.brighter());
+				g2.draw(bound);
+			}
+
 
 		}
 

@@ -5,18 +5,22 @@ import BlockFiles.Blocks;
 import Main.MainFile;
 import NoiseGenerator.PerlinNoiseGenerator;
 import WorldFiles.Chunk;
+import WorldFiles.World;
 import WorldGeneration.Structures.ChunkStructure;
 import WorldGeneration.Util.GenerationBase;
 import WorldGeneration.Util.WorldGenPriority;
 
 public class CoalOreGeneration extends GenerationBase {
+
+	//TODO Add a general ore registry where you can register the rarity of it and the block
+
 	@Override
-	public boolean canGenerate( Chunk chunk, int x, int y ) {
+	public boolean canGenerate( World world, Chunk chunk, int x, int y ) {
 		return chunk.getBlock(x, y) instanceof BlockStone && (y + (chunk.chunkY * Chunk.chunkSize)) > 10 && MainFile.random.nextInt(100) == 0;
 	}
 
 	@Override
-	public void generate( Chunk chunk, int x, int y ) {
+	public void generate( World world, Chunk chunk, int x, int y ) {
 		PerlinNoiseGenerator noiseGenerator = new PerlinNoiseGenerator(chunk.world.worldSeed);
 		int range = 3 + MainFile.random.nextInt(3);
 
@@ -35,7 +39,7 @@ public class CoalOreGeneration extends GenerationBase {
 			}
 		}
 
-		chunk.setStucture(chunkStructure);
+		chunk.setStructure(chunkStructure);
 	}
 
 

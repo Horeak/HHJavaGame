@@ -62,7 +62,7 @@ public class FurnaceInventory implements IInventory {
 		boolean recipes = CraftingRegister.getFurnaceRecipeFromInput(getItem(0)) != null;
 
 		if(!recipes) return false;
-		boolean emptyOrEqualOutput = getItem(2) == null || (getItem(2).getStackSize() + CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).output.getStackSize()) < getItem(2).getMaxStackSize() && getItem(2).getItem().equals(CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).output.getItem());
+		boolean emptyOrEqualOutput = getItem(2) == null || (getItem(2).getStackSize() + CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).output.getStackSize()) <= getItem(2).getMaxStackSize() && getItem(2).getItem().equals(CraftingRegister.getFurnaceRecipeFromInput(getItem(0)).output.getItem());
 
 		return recipes && emptyOrEqualOutput;
 	}

@@ -73,7 +73,7 @@ public class BlockSapling extends Block{
 		@Override
 		public boolean shouldUpdate( World world, int x, int y) {
 			Chunk ch = world.getChunk(x, y+1);
-			return treeGeneration.canGenerate(ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1);
+			return treeGeneration.canGenerate(world, ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1);
 		}
 
 		public float blockUpdateDelay() {
@@ -96,8 +96,8 @@ public class BlockSapling extends Block{
 			if(rand.nextInt(20) == 2){
 				Chunk ch = world.getChunk(x, y+1);
 
-				if(treeGeneration.canGenerate(ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1)){
-					treeGeneration.generate(ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1);
+				if(treeGeneration.canGenerate(world, ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1)){
+					treeGeneration.generate(world, ch, x - (ch.chunkX * Chunk.chunkSize), (y - (ch.chunkY * Chunk.chunkSize))+1);
 				}
 			}
 		}

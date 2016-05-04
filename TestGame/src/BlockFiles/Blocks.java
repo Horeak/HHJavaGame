@@ -14,17 +14,17 @@ import java.util.logging.Level;
 public class Blocks {
 	public static HashMap<Block, String> blockRegistry = new HashMap<>();
 
-	public static <T extends Block> Block addBlock(T bl, String id){
+	public static Block addBlock(Block bl, String id){
 		bl.registryValue = blockRegistry.size() + 1;
 		blockRegistry.put(bl, id);
 
-		LoggerUtil.out.log(Level.INFO, "Block registried: " + bl + ", id=" + id + ", registryNum=" + bl.registryValue);
+		LoggerUtil.out.log(Level.INFO, "Block registried: " + bl.getClass().getName() + ", id=" + id + ", registryNum=" + bl.registryValue);
 
 		return bl;
 	}
 
-	public static <T extends Block> Block addBlock(T bl){
-		return addBlock(bl, "block_" + bl.getClass().getName() + "_" + bl.getBlockDisplayName());
+	public static Block addBlock(Block bl){
+		return addBlock(bl, "block_" + bl.getClass().getName() + ":" + bl.getBlockDisplayName().replace(" ", "_"));
 	}
 
 	public static String getId(Block bl){
@@ -51,14 +51,12 @@ public class Blocks {
 
 	public static Block blockAir = addBlock(new BlockAir());
 
-	public static Block blockGrass = addBlock(new BlockGrass(0));
-	public static Block blockSnow = addBlock(new BlockGrass(1));
-
-	public static Block blockSnowLayer = addBlock(new BlockSnow());
-
+	public static Block blockGrass = addBlock(new BlockGrass());
 	public static Block blockDirt = addBlock(new BlockDirt());
 	public static Block blockSand = addBlock(new BlockSand());
 	public static Block blockSandStone = addBlock(new BlockSandstone());
+
+	public static Block blockSnowLayer = addBlock(new BlockSnowLayer());
 
 	public static Block blockStone = addBlock(new BlockStone());
 	public static Block blockCrackedStone =  addBlock(new BlockCrackedStone());

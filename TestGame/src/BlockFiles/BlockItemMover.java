@@ -50,7 +50,6 @@ public class BlockItemMover extends Block{
 	{
 		if(world == null){
 			return side == EnumBlockSide.TOP ? input : blockDirections[0];
-
 		}else {
 
 			ITickBlock bl = world.getTickBlock(x, y);
@@ -95,8 +94,8 @@ public class BlockItemMover extends Block{
 		blockDirections[0] = imageLoader.getImage("blocks", "itemMoverDirection").getFlippedCopy(true, true);
 		blockDirections[2] = imageLoader.getImage("blocks", "itemMoverDirection");
 
-		blockDirections[1] = imageLoader.getImage("blocks", "itemMoverDirectionRight").getFlippedCopy(true, true);
-		blockDirections[3] = imageLoader.getImage("blocks", "itemMoverDirectionRight");
+		blockDirections[1] = imageLoader.getImage("blocks", "itemMoverDirectionRight");
+		blockDirections[3] = imageLoader.getImage("blocks", "itemMoverDirectionRight").getFlippedCopy(true, true);
 
 		input = imageLoader.getImage("blocks", "itemMoverInput");
 		output = imageLoader.getImage("blocks", "itemMoverOutput");

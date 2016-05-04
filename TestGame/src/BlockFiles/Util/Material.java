@@ -9,6 +9,7 @@ public enum Material {
 	SNOW(BlockSounds.blockSnowWalk, null, null),
 	SAND(BlockSounds.blockSandWalk, null, null),
 	ROCK(BlockSounds.blockRockWalk, null, null),
+	ORE(BlockSounds.blockRockWalk, null, null),
 	MACHINE(null, null, null),
 	PLANT(null, null, null),
 	WOOD(null, null, null);

@@ -31,10 +31,10 @@ public class BackgroundBlockRender extends AbstractWindowRender {
 					int xx = (int) (x + plPos.x);
 					int yy = (int) (y + plPos.y);
 
-					if (!Chunk.shouldRangeLoad(xx / Chunk.chunkSize, yy / Chunk.chunkSize))
+					if (!Chunk.shouldRangeLoad(World.getChunkX(xx), World.getChunkY(yy)))
 						continue;
 
-					if (MainFile.game.getServer().getWorld().isChunkLoaded(xx / Chunk.chunkSize, yy / Chunk.chunkSize) && MainFile.game.getServer().getWorld().getChunk(xx, yy) != null && MainFile.game.getServer().getWorld().getChunk(xx, yy).shouldBeLoaded()) {
+					if (MainFile.game.getServer().getWorld().isChunkLoaded(World.getChunkX(xx), World.getChunkY(yy)) && MainFile.game.getServer().getWorld().getChunk(xx, yy) != null && MainFile.game.getServer().getWorld().getChunk(xx, yy).shouldBeLoaded()) {
 
 						float blockX = (float) (((xx) - plPos.x) + ConfigValues.renderRange);
 						float blockY = (float) (((yy) - plPos.y) + ConfigValues.renderRange);
@@ -53,6 +53,10 @@ public class BackgroundBlockRender extends AbstractWindowRender {
 
 						if (bb != null) {
 							float t = (float) bb.getLightValue() / (float) ILightSource.MAX_LIGHT_STRENGTH;
+
+							if(world.getBlock(xx, yy) != null){
+								t = (float)world.getBlock(xx, yy).getLightValue(world, xx, yy) / (float) ILightSource.MAX_LIGHT_STRENGTH;
+							}
 
 							Color temp = world.getLightUnit(x, y).getLightColor();
 							Color c = new Color(0, 0, 0, ConfigValues.brightness - t);
@@ -107,7 +111,7 @@ public class BackgroundBlockRender extends AbstractWindowRender {
 
 	//Use this to add special background blocks for different levels
 	public static Image getBlockImageFromDepth(int depth, int height, int x, int y){
-		Biome bm = MainFile.game.getServer().getWorld().getBiome(x / Chunk.chunkSize);
+		Biome bm = MainFile.game.getServer().getWorld().getBiome(World.getChunkX(x));
 
 		if(MainFile.game.getServer().getWorld() != null){
 			if(MainFile.game.getServer().getWorld().getStructure(x, y) != null) {

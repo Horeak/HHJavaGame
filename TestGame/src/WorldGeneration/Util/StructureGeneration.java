@@ -5,8 +5,8 @@ import WorldFiles.World;
 
 public abstract class StructureGeneration {
 
-	public abstract boolean canGenerate( Chunk chunk );
-	public abstract void generate( Chunk chunk );
+	public abstract boolean canGenerate( World world, Chunk chunk );
+	public abstract void generate( World world, Chunk chunk );
 
 	public abstract WorldGenPriority generationPriority();
 

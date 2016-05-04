@@ -15,6 +15,8 @@ public class ConfigValues {
 	public static final boolean PAUSE_GAME_IN_GUI = true;
 	public static final boolean PAUSE_GAME_IN_INV = false;
 
+	public static boolean isServer = false;
+
 	//Render and debug options
 	public static boolean debug = false;
 	public static boolean simpleBlockRender = false;

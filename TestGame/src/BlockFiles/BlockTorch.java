@@ -4,7 +4,6 @@ import BlockFiles.BlockRender.EnumBlockSide;
 import BlockFiles.Util.Block;
 import BlockFiles.Util.ILightSource;
 import BlockFiles.Util.Material;
-import Utils.RenderUtil;
 import Utils.TexutrePackFiles.TextureLoader;
 import WorldFiles.World;
 import org.newdawn.slick.Color;
@@ -20,7 +19,7 @@ public class BlockTorch extends Block implements ILightSource {
 
 	@Override
 	public Color getDefaultBlockColor() {
-		return RenderUtil.getColorWithAlpha(Color.yellow, 0.75F);
+		return Color.yellow;
 	}
 
 
@@ -34,11 +33,16 @@ public class BlockTorch extends Block implements ILightSource {
 	}
 
 	public boolean isBlockSolid() {
-		return false;
+		return true;
 	}
 
 	public boolean canPassThrough() {
 		return true;
+	}
+
+	@Override
+	public boolean opaqueRender() {
+		return false;
 	}
 
 	@Override
